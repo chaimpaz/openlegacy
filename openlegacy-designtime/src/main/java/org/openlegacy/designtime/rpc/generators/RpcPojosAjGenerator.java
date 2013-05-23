@@ -32,6 +32,7 @@ import japa.parser.ast.expr.AnnotationExpr;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
@@ -58,10 +59,13 @@ public class RpcPojosAjGenerator {
 	private GenerateUtil generateUtil;
 
 	public void generate(File javaFile) throws IOException, TemplateException, ParseException {
-
 		FileInputStream input = new FileInputStream(javaFile);
-
 		CompilationUnit compilationUnit = JavaParser.parse(input, CharEncoding.UTF_8);
+		generate(javaFile, compilationUnit);
+	}
+
+	public void generate(File javaFile, CompilationUnit compilationUnit) throws FileNotFoundException, IOException,
+			TemplateException, ParseException {
 
 		List<TypeDeclaration> types = compilationUnit.getTypes();
 
@@ -89,7 +93,7 @@ public class RpcPojosAjGenerator {
 			for (AnnotationExpr annotationExpr : annotations) {
 				RpcPojoCodeModel screenEntityCodeModel = null;
 				if (JavaParserUtil.hasAnnotation(annotationExpr, RpcAnnotationConstants.RPC_ENTITY_ANNOTATION)) {
-					screenEntityCodeModel = generateRpcEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration, baos);
+					screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration, baos);
 				}
 				// TODO RPC parts
 				if (screenEntityCodeModel != null && screenEntityCodeModel.isRelevant()) {
@@ -100,7 +104,7 @@ public class RpcPojosAjGenerator {
 
 	}
 
-	public RpcPojoCodeModel generateRpcEntity(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration typeDeclaration,
+	public RpcPojoCodeModel generateEntity(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration typeDeclaration,
 			OutputStream out) throws IOException, TemplateException, ParseException {
 		return generate(out, compilationUnit, typeDeclaration, "Rpc_Aspect.aj.template", null);
 	}
@@ -120,4 +124,5 @@ public class RpcPojosAjGenerator {
 
 		return rpcEntityCodeModel;
 	}
+
 }

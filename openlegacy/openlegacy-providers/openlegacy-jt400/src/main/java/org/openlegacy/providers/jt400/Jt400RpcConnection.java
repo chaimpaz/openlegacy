@@ -22,20 +22,12 @@ import java.util.List;
 public class Jt400RpcConnection implements RpcConnection {
 
 	private AS400 as400Session;
-	private String hostName;
+
+	public Jt400RpcConnection(AS400 as400Session) {
+		this.as400Session = as400Session;
+	}
 
 	public Object getDelegate() {
-		return as400Session;
-	}
-
-	public Jt400RpcConnection(String hostName) {
-		this.hostName = hostName;
-	}
-
-	public AS400 getAs400Session() {
-		if (as400Session == null) {
-			as400Session = new AS400(hostName);
-		}
 		return as400Session;
 	}
 
@@ -59,7 +51,7 @@ public class Jt400RpcConnection implements RpcConnection {
 			List<ProgramParameter> programParameters = new ArrayList<ProgramParameter>();
 
 			for (RpcField rpcField : fields) {
-				AS400DataType as400Field = initAs400DataType(rpcField);
+				AS400DataType as400Field = initAs400DataType(rpcField, Direction.INPUT);
 				if (as400Field == null) {
 					programParameters.add(new ProgramParameter(rpcField.getLength()));
 				} else {
@@ -85,7 +77,7 @@ public class Jt400RpcConnection implements RpcConnection {
 				int count = 0;
 				for (RpcField field : fields) {
 					if (field.getDirection() != Direction.INPUT) {
-						AS400DataType as400DataType = initAs400DataType(field);
+						AS400DataType as400DataType = initAs400DataType(field, Direction.OUTPUT);
 						Object value = as400DataType.toObject(programParameters.get(count).getOutputData());
 						field.setValue(value);
 					}
@@ -99,17 +91,18 @@ public class Jt400RpcConnection implements RpcConnection {
 		}
 	}
 
-	private AS400DataType initAs400DataType(RpcField rpcField) {
+	private AS400DataType initAs400DataType(RpcField rpcField, Direction direction) {
 		AS400DataType as400Field = null;
 		if (rpcField.getType() == String.class) {
-			if (rpcField.getDirection() != Direction.OUTPUT) {
+			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
 				as400Field = new AS400Text(rpcField.getLength(), as400Session);
 			}
 		} else if (rpcField.getType() == Integer.class) {
-			if (rpcField.getDirection() != Direction.OUTPUT) {
+			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
 				as400Field = new AS400ZonedDecimal(rpcField.getLength(), 0);
 			}
 		}
 		return as400Field;
 	}
+
 }

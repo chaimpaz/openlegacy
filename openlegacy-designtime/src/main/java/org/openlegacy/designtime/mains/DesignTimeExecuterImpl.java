@@ -22,6 +22,8 @@ import org.openlegacy.designtime.PreferencesConstants;
 import org.openlegacy.designtime.analyzer.SnapshotsAnalyzer;
 import org.openlegacy.designtime.generators.GenerateUtil;
 import org.openlegacy.designtime.newproject.ITemplateFetcher;
+import org.openlegacy.designtime.rpc.generators.RpcPojosAjGenerator;
+import org.openlegacy.designtime.rpc.generators.support.RpcAnnotationConstants;
 import org.openlegacy.designtime.terminal.analyzer.TerminalSnapshotsAnalyzer;
 import org.openlegacy.designtime.terminal.generators.ScreenEntityJavaGenerator;
 import org.openlegacy.designtime.terminal.generators.ScreenEntityMvcGenerator;
@@ -29,7 +31,9 @@ import org.openlegacy.designtime.terminal.generators.ScreenEntityWebGenerator;
 import org.openlegacy.designtime.terminal.generators.ScreenPojosAjGenerator;
 import org.openlegacy.designtime.terminal.generators.TrailJunitGenerator;
 import org.openlegacy.designtime.terminal.generators.support.CodeBasedDefinitionUtils;
+import org.openlegacy.designtime.terminal.generators.support.ScreenAnnotationConstants;
 import org.openlegacy.designtime.terminal.model.ScreenEntityDesigntimeDefinition;
+import org.openlegacy.designtime.utils.JavaParserUtil;
 import org.openlegacy.exceptions.GenerationException;
 import org.openlegacy.terminal.TerminalSnapshot;
 import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
@@ -575,9 +579,21 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 
 		OutputStream fos = null;
 		try {
-			ScreenPojosAjGenerator generator = getOrCreateApplicationContext(getProjectPath(javaFile)).getBean(
-					ScreenPojosAjGenerator.class);
-			generator.generate(javaFile);
+			FileInputStream input = new FileInputStream(javaFile);
+			CompilationUnit compilationUnit = JavaParser.parse(input, CharEncoding.UTF_8);
+
+			if (JavaParserUtil.hasAnnotation(compilationUnit, ScreenAnnotationConstants.SCREEN_ENTITY_ANNOTATION,
+					ScreenAnnotationConstants.SCREEN_ENTITY_SUPER_CLASS_ANNOTATION)) {
+				ScreenPojosAjGenerator generator = getOrCreateApplicationContext(getProjectPath(javaFile)).getBean(
+						ScreenPojosAjGenerator.class);
+				generator.generate(javaFile, compilationUnit);
+			} else if (JavaParserUtil.hasAnnotation(compilationUnit, RpcAnnotationConstants.RPC_ENTITY_ANNOTATION,
+					RpcAnnotationConstants.RPC_ENTITY_SUPER_CLASS_ANNOTATION)) {
+				RpcPojosAjGenerator generator = getOrCreateApplicationContext(getProjectPath(javaFile)).getBean(
+						RpcPojosAjGenerator.class);
+				generator.generate(javaFile, compilationUnit);
+
+			}
 		} catch (IOException e) {
 			throw (new GenerationException(e));
 		} catch (TemplateException e) {

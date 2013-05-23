@@ -45,7 +45,7 @@ public class RpcEntityAjGeneratorTest {
 
 		CompilationUnit compilationUnit = JavaParser.parse(getClass().getResourceAsStream(javaSource));
 
-		rpcPojosAjGenerator.generateRpcEntity(compilationUnit, getMainType(compilationUnit), baos);
+		rpcPojosAjGenerator.generateEntity(compilationUnit, getMainType(compilationUnit), baos);
 
 		byte[] expectedBytes = IOUtils.toByteArray(getClass().getResourceAsStream(expectAspect));
 

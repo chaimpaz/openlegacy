@@ -40,7 +40,7 @@
 	</bean>
 
 	<!-- Providers may override the default beans -->
-	<import resource="classpath*:/META-INF/*-openlegacy-provider.xml" /> 
+	<import resource="classpath*:/META-INF/*-openlegacy-rpc-provider.xml" /> 
 
 	<context:annotation-config />
 

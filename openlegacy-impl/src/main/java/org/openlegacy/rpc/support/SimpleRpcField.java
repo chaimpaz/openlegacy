@@ -61,6 +61,9 @@ public class SimpleRpcField implements RpcField {
 	@XmlAttribute
 	private Direction direction;
 
+	@XmlAttribute
+	private String name = null;
+
 	public Object getValue() {
 		if (value == null) {
 			value = "";
@@ -114,7 +117,10 @@ public class SimpleRpcField implements RpcField {
 		if (type != String.class) {
 			return type;
 		}
-		return value.getClass();
+		if (value != null) {
+			return value.getClass();
+		}
+		return String.class;
 	}
 
 	public void setType(Class<?> type) {
@@ -162,11 +168,14 @@ public class SimpleRpcField implements RpcField {
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	public Direction getDirection() {
 		return direction;
+	}
+
+	public void setDirection(Direction direction) {
+		this.direction = direction;
 	}
 }

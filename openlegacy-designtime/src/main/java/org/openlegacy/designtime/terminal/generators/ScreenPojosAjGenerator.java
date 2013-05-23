@@ -60,10 +60,12 @@ public class ScreenPojosAjGenerator {
 	private GenerateUtil generateUtil;
 
 	public void generate(File javaFile) throws IOException, TemplateException, ParseException {
-
 		FileInputStream input = new FileInputStream(javaFile);
-
 		CompilationUnit compilationUnit = JavaParser.parse(input, CharEncoding.UTF_8);
+		generate(javaFile, compilationUnit);
+	}
+
+	public void generate(File javaFile, CompilationUnit compilationUnit) throws IOException, TemplateException, ParseException {
 
 		List<TypeDeclaration> types = compilationUnit.getTypes();
 
@@ -93,7 +95,7 @@ public class ScreenPojosAjGenerator {
 				if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_ENTITY_ANNOTATION)
 						|| JavaParserUtil.hasAnnotation(annotationExpr,
 								ScreenAnnotationConstants.SCREEN_ENTITY_SUPER_CLASS_ANNOTATION)) {
-					screenEntityCodeModel = generateScreenEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
+					screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
 							baos);
 				}
 				if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_PART_ANNOTATION)) {
@@ -112,7 +114,7 @@ public class ScreenPojosAjGenerator {
 
 	}
 
-	public ScreenPojoCodeModel generateScreenEntity(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration typeDeclaration,
+	public ScreenPojoCodeModel generateEntity(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration typeDeclaration,
 			OutputStream out) throws IOException, TemplateException, ParseException {
 		return generate(out, compilationUnit, typeDeclaration, "Screen_Aspect.aj.template", null);
 	}
