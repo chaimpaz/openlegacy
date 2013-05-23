@@ -12,6 +12,7 @@ package org.openlegacy.designtime.terminal.generators;
 
 import freemarker.template.TemplateException;
 
+import org.openlegacy.designtime.generators.GenerateUtil;
 import org.openlegacy.designtime.terminal.analyzer.support.TerminalSnapshotsAnalyzerContext.TerminalSnapshotSequenceComparator;
 import org.openlegacy.designtime.terminal.model.ScreenEntityDesigntimeDefinition;
 import org.openlegacy.terminal.TerminalActionMapper;

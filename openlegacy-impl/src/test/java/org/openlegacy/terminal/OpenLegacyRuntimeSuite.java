@@ -4,6 +4,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.openlegacy.recognizers.RecognizersSuite;
+import org.openlegacy.rpc.definitions.RpcRegistryTest;
+import org.openlegacy.rpc.definitions.mock.RpcMockConnectionTest;
+import org.openlegacy.rpc.modules.trail.RpcTrailSerializeTest;
 import org.openlegacy.terminal.layout.DefaultBidiScreenPageBuilderTest;
 import org.openlegacy.terminal.layout.DefaultScreenPageBuilderTest;
 import org.openlegacy.terminal.mock_session.MockStateMachineTerminalConnectionTest;
@@ -42,7 +45,8 @@ import org.openlegacy.terminal.utils.TerminalEqualsHashcodeTest;
 		MockStateMachineTerminalConnectionTest.class, DefaultScreenPageBuilderTest.class, DefaultBidiScreenPageBuilderTest.class,
 		DefaultScreenRecordsProviderTest.class, TerminalSnapshotImageRendererTest.class, CustomBinderTest.class,
 		MultyLineFieldTest.class, DefaultSessionsManagerTest.class, ListFieldTest.class, ScreenEntityFieldAttributeTest.class,
-		ConditionalFieldTest.class, ConditionalFieldTest.class })
+		ConditionalFieldTest.class, ConditionalFieldTest.class, RpcRegistryTest.class, RpcMockConnectionTest.class,
+		RpcTrailSerializeTest.class })
 public class OpenLegacyRuntimeSuite {
 
 }

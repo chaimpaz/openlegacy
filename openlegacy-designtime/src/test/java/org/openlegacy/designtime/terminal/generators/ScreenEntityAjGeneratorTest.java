@@ -19,7 +19,6 @@ import japa.parser.ast.body.ClassOrInterfaceDeclaration;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -118,7 +117,7 @@ public class ScreenEntityAjGeneratorTest {
 	}
 
 	private void testGenerate() throws Exception {
-		String testMethodName = getTestMethodName();
+		String testMethodName = AssertUtils.getTestMethodName();
 		testGenerate(testMethodName + ".java.resource", testMethodName + "_Aspect.aj.expected");
 	}
 
@@ -132,27 +131,6 @@ public class ScreenEntityAjGeneratorTest {
 		byte[] expectedBytes = IOUtils.toByteArray(getClass().getResourceAsStream(expectAspect));
 
 		AssertUtils.assertContent(expectedBytes, baos.toByteArray());
-	}
-
-	protected String getTestMethodName() {
-		StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
-		String methodName = null;
-		for (StackTraceElement stackTraceElement : stackElements) {
-			String clsName = stackTraceElement.getClassName();
-			methodName = stackTraceElement.getMethodName();
-			try {
-				Class<?> cls = Class.forName(clsName);
-				Method method = cls.getMethod(methodName);
-				Test test = method.getAnnotation(Test.class);
-				if (test != null) {
-					methodName = method.getName();
-					break;
-				}
-			} catch (Exception ex) {
-				// do nothing
-			}
-		}
-		return methodName;
 	}
 
 }

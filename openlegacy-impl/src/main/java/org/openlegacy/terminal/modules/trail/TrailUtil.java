@@ -19,7 +19,6 @@ import org.openlegacy.modules.trail.SessionTrail;
 import org.openlegacy.modules.trail.Trail;
 import org.openlegacy.modules.trail.TrailWriter;
 import org.openlegacy.terminal.TerminalSession;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +30,6 @@ import java.util.Calendar;
 
 import javax.inject.Inject;
 
-@Component
 public class TrailUtil {
 
 	private final static Log logger = LogFactory.getLog(TrailUtil.class);
@@ -60,8 +58,8 @@ public class TrailUtil {
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HHmm");
 		try {
-			File trailFile = new File(trailPath, MessageFormat.format("{0}_{1}.trail",
-					terminalSession.getProperties().getId(), dateFormat.format(cal.getTime())));
+			File trailFile = new File(trailPath, MessageFormat.format("{0}_{1}.trail", terminalSession.getProperties().getId(),
+					dateFormat.format(cal.getTime())));
 			if (!trailFile.getParentFile().exists()) {
 				trailFile.getParentFile().mkdirs();
 			}

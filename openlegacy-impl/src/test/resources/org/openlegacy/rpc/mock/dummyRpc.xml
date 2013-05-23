@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rpc-trail>
+    <snapshot>
+        <invoke rpcName="rpctest">
+            <field value="hello" length="10" modified="true" />
+        </invoke>
+        <result>
+            <field value="hello" length="10" modified="true" />
+        </result>
+    </snapshot>
+</rpc-trail>
+
