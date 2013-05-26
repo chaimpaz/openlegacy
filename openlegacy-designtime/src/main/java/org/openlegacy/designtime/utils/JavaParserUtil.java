@@ -68,10 +68,12 @@ public class JavaParserUtil {
 			return false;
 		}
 		List<AnnotationExpr> annotationExpressions = types.get(0).getAnnotations();
-		for (AnnotationExpr annotationExpr : annotationExpressions) {
-			for (String annotation : annotations) {
-				if (JavaParserUtil.hasAnnotation(annotationExpr, annotation)) {
-					return true;
+		if (annotationExpressions != null) {
+			for (AnnotationExpr annotationExpr : annotationExpressions) {
+				for (String annotation : annotations) {
+					if (JavaParserUtil.hasAnnotation(annotationExpr, annotation)) {
+						return true;
+					}
 				}
 			}
 		}

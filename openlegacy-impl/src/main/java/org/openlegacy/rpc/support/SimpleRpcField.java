@@ -26,8 +26,12 @@ public class SimpleRpcField implements RpcField {
 
 	private static final long serialVersionUID = 1L;
 
-	@XmlAttribute
-	private String value;
+	@XmlTransient
+	private Object value;
+
+	@SuppressWarnings("unused")
+	@XmlAttribute(name = "value")
+	private String persistedValue;
 
 	@XmlAttribute
 	private Integer length;
@@ -76,7 +80,10 @@ public class SimpleRpcField implements RpcField {
 			this.originalValue = this.value;
 		}
 		this.modified = modified;
-		this.value = String.valueOf(value);
+		if (value instanceof Integer) {
+			this.value = Double.valueOf((Integer)value);
+		}
+		this.persistedValue = String.valueOf(value);
 
 	}
 

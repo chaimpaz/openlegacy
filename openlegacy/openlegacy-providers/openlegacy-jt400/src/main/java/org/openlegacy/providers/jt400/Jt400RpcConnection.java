@@ -97,7 +97,7 @@ public class Jt400RpcConnection implements RpcConnection {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
 				as400Field = new AS400Text(rpcField.getLength(), as400Session);
 			}
-		} else if (rpcField.getType() == Integer.class) {
+		} else if (Number.class.isAssignableFrom(rpcField.getType())) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
 				as400Field = new AS400ZonedDecimal(rpcField.getLength(), 0);
 			}

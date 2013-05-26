@@ -49,4 +49,39 @@ public class Jt400RpcConnectionTest {
 
 		Assert.assertEquals("My name is roi mor age        ", rpcResult.getRpcFields().get(2).getValue());
 	}
+
+	@Test
+	public void testJt400RpcSessionInt() {
+		RpcConnection rpcConnection = rpcConnectionFactory.getConnection();
+		SimpleRpcInvokeAction rpcInvokeAction = new SimpleRpcInvokeAction();
+
+		SimpleRpcField rpcField = new SimpleRpcField();
+		rpcField.setValue("roi");
+		rpcField.setLength(20);
+		rpcField.setDirection(Direction.INPUT);
+		rpcInvokeAction.getRpcFields().add(rpcField);
+
+		rpcField = new SimpleRpcField();
+		rpcField.setValue("mor");
+		rpcField.setLength(20);
+		rpcField.setDirection(Direction.INPUT);
+		rpcInvokeAction.getRpcFields().add(rpcField);
+
+		rpcField = new SimpleRpcField();
+		rpcField.setValue(37);
+		rpcField.setLength(3);
+		rpcField.setDirection(Direction.INPUT);
+		rpcInvokeAction.getRpcFields().add(rpcField);
+
+		rpcField = new SimpleRpcField();
+		rpcField.setLength(100);
+		rpcField.setDirection(Direction.OUTPUT);
+		rpcInvokeAction.getRpcFields().add(rpcField);
+
+		rpcInvokeAction.setRpcName("/QSYS.LIB/RMR2L1.LIB/RPGROI.PGM");
+
+		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
+
+		Assert.assertEquals("My name is roi mor age 37 years    ", rpcResult.getRpcFields().get(2).getValue());
+	}
 }
