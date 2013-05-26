@@ -7,9 +7,20 @@
 
     <context:property-placeholder location="classpath:/rpc.properties"/>
     
-	<import resource="classpath*:/openlegacy-rpc-basic-context.xml" />
+	<import resource="classpath*:/META-INF/openlegacy-rpc-basic-context.xml" />
 	
-	<import resource="classpath:/META-INF/jt400-openlegacy-rpc-provider.xml" />
+	<!-- <import resource="classpath:/META-INF/jt400-openlegacy-rpc-provider.xml" /> -->
 
+	<bean id="rpcSession" scope="prototype" parent="abstractRpcSession">
+		<property name="rpcConnection" ref="rpcConnection" />
+	</bean>
+
+	<bean id="rpcRegistry" class="org.openlegacy.rpc.support.DefaultRpcEntitiesRegistry">
+	    <property name="packages">
+	        <list>
+	            <value>org.openlegacy.providers.jt400.mockup</value>
+            </list>
+	    </property>
+    </bean>
 
 </beans>

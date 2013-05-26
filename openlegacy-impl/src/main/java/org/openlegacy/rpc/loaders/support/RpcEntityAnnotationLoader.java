@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.openlegacy.rpc.loaders.support;
 
-import java.lang.annotation.Annotation;
-import java.text.MessageFormat;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.EntitiesRegistry;
@@ -23,6 +20,9 @@ import org.openlegacy.rpc.services.RpcEntitiesRegistry;
 import org.openlegacy.utils.StringUtil;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.lang.annotation.Annotation;
+import java.text.MessageFormat;
 
 @Component
 @Order(1)
@@ -40,7 +40,7 @@ public class RpcEntityAnnotationLoader extends AbstractClassAnnotationLoader {
 		RpcEntity rpcEntity = (RpcEntity)annotation;
 		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
 
-		String rpcEntityName = rpcEntity.value().length() > 0 ? rpcEntity.value() : containingClass.getSimpleName();
+		String rpcEntityName = rpcEntity.name().length() > 0 ? rpcEntity.name() : containingClass.getSimpleName();
 		String displayName = rpcEntity.displayName().length() > 0 ? rpcEntity.displayName()
 				: StringUtil.toDisplayName(rpcEntityName);
 

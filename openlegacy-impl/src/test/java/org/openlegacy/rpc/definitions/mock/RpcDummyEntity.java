@@ -1,10 +1,14 @@
 package org.openlegacy.rpc.definitions.mock;
 
+import org.openlegacy.annotations.rpc.Action;
 import org.openlegacy.annotations.rpc.Direction;
+import org.openlegacy.annotations.rpc.RpcActions;
 import org.openlegacy.annotations.rpc.RpcEntity;
 import org.openlegacy.annotations.rpc.RpcField;
+import org.openlegacy.rpc.RpcActions.READ;
 
-@RpcEntity("/dir/name")
+@RpcEntity()
+@RpcActions(actions = { @Action(action = READ.class, path = "/dir/name") })
 public class RpcDummyEntity {
 
 	@RpcField(direction = Direction.INPUT, length = 20)

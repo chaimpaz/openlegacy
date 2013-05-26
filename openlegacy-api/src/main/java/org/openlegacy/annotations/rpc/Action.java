@@ -43,18 +43,13 @@ public @interface Action {
 	/**
 	 * The action class to invoke.
 	 * 
-	 * @return terminal action
+	 * @return rpc action
 	 */
 	Class<? extends RpcAction> action();
 
 	String displayName() default "";
 
-	/**
-	 * Not mandatory
-	 */
-	int row() default 0;
-
-	String alias() default "";
+	String path();
 
 	/**
 	 * Whether the action is global or not
@@ -62,5 +57,7 @@ public @interface Action {
 	 * @return Whether the action is global
 	 */
 	boolean global() default true;
+
+	String alias() default "";
 
 }

@@ -8,23 +8,20 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.rpc;
+package org.openlegacy.definitions;
 
-import org.openlegacy.RemoteAction;
-
-import java.util.List;
+import org.openlegacy.annotations.rpc.Action;
+import org.openlegacy.rpc.definitions.RpcEntityDefinition;
+import org.openlegacy.rpc.services.RpcEntitiesRegistry;
 
 /**
- * Defines a low level rpc send action on a {@link RpcConnection}. Contains rpc name and input fields.
+ * A session action definition. Translated from {@link Action} and store within a {@link RpcEntityDefinition} into
+ * {@link RpcEntitiesRegistry}
  * 
  * @author Roi Mor
  * 
  */
-public interface RpcInvokeAction extends RemoteAction {
+public interface RpcActionDefinition extends ActionDefinition {
 
-	List<RpcField> getRpcFields();
-
-	String getAction();
-
-	String getRpcPath();
+	String getProgramPath();
 }

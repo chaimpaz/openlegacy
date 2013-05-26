@@ -22,7 +22,7 @@ public class Jt400RpcConnectionTest {
 	private RpcConnectionFactory rpcConnectionFactory;
 
 	@Test
-	public void testJt400RpcSession() {
+	public void testJt400RpcConnection() {
 		RpcConnection rpcConnection = rpcConnectionFactory.getConnection();
 		SimpleRpcInvokeAction rpcInvokeAction = new SimpleRpcInvokeAction();
 
@@ -43,7 +43,7 @@ public class Jt400RpcConnectionTest {
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
-		rpcInvokeAction.setRpcName("/QSYS.LIB/RMR2L1.LIB/RPGROICH.PGM");
+		rpcInvokeAction.setRpcPath("/QSYS.LIB/RMR2L1.LIB/RPGROICH.PGM");
 
 		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
 
@@ -51,7 +51,7 @@ public class Jt400RpcConnectionTest {
 	}
 
 	@Test
-	public void testJt400RpcSessionInt() {
+	public void testJt400RpcConnectionWithNumber() {
 		RpcConnection rpcConnection = rpcConnectionFactory.getConnection();
 		SimpleRpcInvokeAction rpcInvokeAction = new SimpleRpcInvokeAction();
 
@@ -78,7 +78,7 @@ public class Jt400RpcConnectionTest {
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
-		rpcInvokeAction.setRpcName("/QSYS.LIB/RMR2L1.LIB/RPGROI.PGM");
+		rpcInvokeAction.setRpcPath("/QSYS.LIB/RMR2L1.LIB/RPGROI.PGM");
 
 		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
 

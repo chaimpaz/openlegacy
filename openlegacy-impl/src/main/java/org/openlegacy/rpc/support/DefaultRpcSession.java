@@ -1,46 +1,138 @@
 package org.openlegacy.rpc.support;
 
-import org.openlegacy.SessionProperties;
+import org.apache.commons.lang.StringUtils;
+import org.openlegacy.definitions.ActionDefinition;
+import org.openlegacy.definitions.FieldDefinition;
+import org.openlegacy.definitions.RpcActionDefinition;
 import org.openlegacy.exceptions.EntityNotFoundException;
+import org.openlegacy.rpc.RpcActionNotMappedException;
+import org.openlegacy.rpc.RpcActions;
+import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcEntity;
+import org.openlegacy.rpc.RpcField;
+import org.openlegacy.rpc.RpcResult;
 import org.openlegacy.rpc.RpcSession;
+import org.openlegacy.rpc.actions.RpcAction;
+import org.openlegacy.rpc.definitions.RpcEntityDefinition;
+import org.openlegacy.rpc.definitions.RpcFieldDefinition;
+import org.openlegacy.rpc.services.RpcEntitiesRegistry;
+import org.openlegacy.rpc.utils.SimpleRpcPojoFieldAccessor;
 import org.openlegacy.support.AbstractSession;
+import org.openlegacy.utils.ReflectionUtil;
+import org.springframework.util.Assert;
+
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
 
 public class DefaultRpcSession extends AbstractSession implements RpcSession {
 
+	private static final long serialVersionUID = 1L;
+
+	private RpcConnection rpcConnection;
+
+	@Inject
+	private RpcEntitiesRegistry rpcEntitiesRegistry;
+
 	public Object getDelegate() {
-		// TODO Auto-generated method stub
-		return null;
+		return rpcConnection;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T getEntity(Class<T> entityClass, Object... keys) throws EntityNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		T entity = ReflectionUtil.newInstance(entityClass);
+		SimpleRpcPojoFieldAccessor fieldAccesor = new SimpleRpcPojoFieldAccessor(entity);
+
+		RpcEntityDefinition rpcDefinition = rpcEntitiesRegistry.get(entityClass);
+		List<ActionDefinition> actions = rpcDefinition.getActions();
+
+		if (!actions.contains(org.openlegacy.rpc.RpcActions.READ())) {
+			throw (new RpcActionNotMappedException(
+					"No READ action is defined. Define @RpcActions(actions = { @Action(action = READ.class, path = ...) })"));
+		}
+
+		List<? extends FieldDefinition> keysDefinitions = rpcDefinition.getKeys();
+		Assert.isTrue(
+				keysDefinitions.size() == keys.length,
+				MessageFormat.format("Provided keys {0} doesnt match entity {1} keys", StringUtils.join(keys, "-"),
+						rpcDefinition.getEntityName()));
+		int index = 0;
+		for (FieldDefinition fieldDefinition : keysDefinitions) {
+			fieldAccesor.setFieldValue(fieldDefinition.getName(), keys[index]);
+			index++;
+		}
+
+		return (T)doAction(RpcActions.READ(), (RpcEntity)entity);
 	}
 
 	public Object getEntity(String entityName, Object... keys) throws EntityNotFoundException {
-		// TODO Auto-generated method stub
-		return null;
+		RpcEntityDefinition rpcDefinition = rpcEntitiesRegistry.get(entityName);
+		return getEntity(rpcDefinition.getEntityClass(), keys);
 	}
 
 	public void disconnect() {
-		// TODO Auto-generated method stub
-
+		rpcConnection.disconnect();
 	}
 
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
-		return false;
+		return rpcConnection.isConnected();
 	}
 
-	public SessionProperties getProperties() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setRpcConnection(RpcConnection rpcConnection) {
+		this.rpcConnection = rpcConnection;
 	}
 
-	public <R extends RpcEntity> R getEntity(R rpcEntity) {
-		// TODO Auto-generated method stub
-		return null;
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+		Assert.notNull(rpcConnection, "RPC connection bean has not been found");
+	}
+
+	@SuppressWarnings("unchecked")
+	public RpcEntity doAction(RpcAction action, RpcEntity rpcEntity) {
+		RpcEntityDefinition rpcDefinition = rpcEntitiesRegistry.get(rpcEntity.getClass());
+		RpcActionDefinition actionDefinition = (RpcActionDefinition)rpcDefinition.getAction(action.getClass());
+
+		SimpleRpcInvokeAction rpcAction = new SimpleRpcInvokeAction();
+		rpcAction.setRpcPath(actionDefinition.getProgramPath());
+		populateRpcFields(rpcEntity, rpcDefinition, rpcAction.getRpcFields());
+		RpcResult rpcResult = rpcConnection.invoke(rpcAction);
+		if (actionDefinition.getTargetEntity() != null) {
+			return (RpcEntity)getEntity(actionDefinition.getTargetEntity());
+		} else {
+			populateEntity(rpcEntity, rpcDefinition, rpcResult.getRpcFields());
+		}
+		return rpcEntity;
+
+	}
+
+	private static void populateRpcFields(RpcEntity rpcEntity, RpcEntityDefinition rpcEntityDefinition, List<RpcField> rpcFields) {
+
+		SimpleRpcPojoFieldAccessor fieldAccesor = new SimpleRpcPojoFieldAccessor(rpcEntity);
+
+		Collection<RpcFieldDefinition> fieldsDefinitions = rpcEntityDefinition.getFieldsDefinitions().values();
+		for (RpcFieldDefinition rpcFieldDefinition : fieldsDefinitions) {
+			Object value = fieldAccesor.getFieldValue(rpcFieldDefinition.getName());
+			SimpleRpcField rpcField = new SimpleRpcField();
+			rpcField.setValue(value);
+			rpcField.setLength(rpcFieldDefinition.getLength());
+			rpcField.setDirection(rpcFieldDefinition.getDirection());
+			rpcFields.add(rpcField);
+		}
+	}
+
+	private static void populateEntity(RpcEntity rpcEntity, RpcEntityDefinition rpcDefinition, List<RpcField> rpcFields) {
+		SimpleRpcPojoFieldAccessor fieldAccesor = new SimpleRpcPojoFieldAccessor(rpcEntity);
+
+		Collection<RpcFieldDefinition> fieldsDefinitions = rpcDefinition.getFieldsDefinitions().values();
+		int index = 0;
+		for (RpcFieldDefinition rpcFieldDefinition : fieldsDefinitions) {
+			fieldAccesor.setFieldValue(rpcFieldDefinition.getName(), rpcFields.get(index).getValue());
+			index++;
+		}
+
 	}
 
 }

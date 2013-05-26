@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openlegacy.EntityDefinition;
 import org.openlegacy.EntityType;
 import org.openlegacy.FieldType;
+import org.openlegacy.definitions.ActionDefinition;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.exceptions.RegistryException;
 import org.openlegacy.terminal.ScreenEntityType;
@@ -23,10 +24,10 @@ import org.openlegacy.terminal.ScreenEntityType;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 public abstract class AbstractEntityDefinition<F extends FieldDefinition> implements EntityDefinition<F> {
 
@@ -38,11 +39,16 @@ public abstract class AbstractEntityDefinition<F extends FieldDefinition> implem
 	private Class<? extends EntityType> entityType;
 
 	// LinkedHashMap preserve insert order
-	private final Map<String, F> fieldDefinitions = new TreeMap<String, F>();
+	private final Map<String, F> fieldDefinitions = new LinkedHashMap<String, F>();
 	private String displayName;
-	private ArrayList<F> keyFields;
+	private List<F> keyFields;
+	private List<ActionDefinition> actions = new ArrayList<ActionDefinition>();
 
 	private List<EntityDefinition<?>> childEntitiesDefinitions = new ArrayList<EntityDefinition<?>>();
+
+	public AbstractEntityDefinition() {
+		// for serialization purposes
+	}
 
 	public AbstractEntityDefinition(String entityName, Class<?> screenEntityClass) {
 		this.entityName = entityName;
@@ -149,4 +155,28 @@ public abstract class AbstractEntityDefinition<F extends FieldDefinition> implem
 		return childs;
 	}
 
+	public List<ActionDefinition> getActions() {
+		return actions;
+	}
+
+	public ActionDefinition getAction(Class<?> actionClass) {
+		for (ActionDefinition actionDefinition : actions) {
+			if (actionDefinition.getAction().getClass() == actionClass) {
+				return actionDefinition;
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<F> getFieldDefinitions(Class<? extends FieldType> fieldType) {
+		Collection<? extends FieldDefinition> fieldValues = fieldDefinitions.values();
+		List<FieldDefinition> matchedFieldsDefinitions = new ArrayList<FieldDefinition>();
+		for (FieldDefinition fieldDefinition : fieldValues) {
+			if (fieldDefinition.getType() == fieldType) {
+				matchedFieldsDefinitions.add(fieldDefinition);
+			}
+		}
+		return (List<F>)matchedFieldsDefinitions;
+	}
 }

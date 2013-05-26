@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * <br/>
  * Example:<br/>
  * <br/>
- * <code>@ScreenActions(actions = { @Action(action = TerminalActions.F2.class, displayName = "Save") }) <br/>public class ItemDetails {<br/>...<br/>}</code>
+ * <code>@RpcActions(actions = { @Action(action = RpcActions.UPDATE.class, displayName = "Update",path="/PATH-ON-HOST") }) <br/>public class ItemDetails {<br/>...<br/>}</code>
  * <br/>
  * 
  * @author Roi Mor

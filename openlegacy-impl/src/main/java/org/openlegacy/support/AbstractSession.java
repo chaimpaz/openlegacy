@@ -11,6 +11,8 @@
 package org.openlegacy.support;
 
 import org.openlegacy.Session;
+import org.openlegacy.SessionProperties;
+import org.openlegacy.SessionPropertiesProvider;
 import org.openlegacy.exceptions.OpenLegacyRuntimeException;
 import org.openlegacy.modules.SessionModule;
 import org.springframework.beans.factory.DisposableBean;
@@ -19,6 +21,8 @@ import org.springframework.beans.factory.InitializingBean;
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * An abstract session class which exposes modules management functionality
@@ -30,6 +34,11 @@ public abstract class AbstractSession implements Session, InitializingBean, Disp
 	private static final long serialVersionUID = 1L;
 
 	private SessionModules sessionModules;
+
+	@Inject
+	private SessionPropertiesProvider sessionPropertiesProvider;
+
+	private SessionProperties sessionProperties;
 
 	@SuppressWarnings("unchecked")
 	public <M extends SessionModule> M getModule(Class<M> module) {
@@ -51,6 +60,17 @@ public abstract class AbstractSession implements Session, InitializingBean, Disp
 
 	public SessionModules getSessionModules() {
 		return sessionModules;
+	}
+
+	public void setSessionPropertiesProvider(SessionPropertiesProvider sessionPropertiesProvider) {
+		this.sessionPropertiesProvider = sessionPropertiesProvider;
+	}
+
+	public SessionProperties getProperties() {
+		if (sessionProperties == null) {
+			sessionProperties = sessionPropertiesProvider.getSessionProperties();
+		}
+		return sessionProperties;
 	}
 
 	/**

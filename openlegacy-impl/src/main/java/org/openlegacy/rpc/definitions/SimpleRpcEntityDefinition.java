@@ -1,9 +1,5 @@
 package org.openlegacy.rpc.definitions;
 
-import java.util.List;
-
-import org.openlegacy.FieldType;
-import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.definitions.support.AbstractEntityDefinition;
 
 public class SimpleRpcEntityDefinition extends AbstractEntityDefinition<RpcFieldDefinition> implements RpcEntityDefinition {
@@ -22,8 +18,4 @@ public class SimpleRpcEntityDefinition extends AbstractEntityDefinition<RpcField
 		this.programPath = programPath;
 	}
 
-	public List<? extends FieldDefinition> getFieldDefinitions(
-			Class<? extends FieldType> fieldType) {
-		return null;
-	}
 }

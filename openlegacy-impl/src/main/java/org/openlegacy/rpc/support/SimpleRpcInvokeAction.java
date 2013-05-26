@@ -26,14 +26,14 @@ public class SimpleRpcInvokeAction implements RpcInvokeAction, Serializable {
 	private String action;
 
 	@XmlAttribute
-	private String rpcName;
+	private String rpcPath;
 
 	public SimpleRpcInvokeAction() {
 		// for serialization
 	}
 
 	public SimpleRpcInvokeAction(String rpcName) {
-		this.rpcName = rpcName;
+		this.rpcPath = rpcName;
 	}
 
 	public List<RpcField> getRpcFields() {
@@ -44,12 +44,12 @@ public class SimpleRpcInvokeAction implements RpcInvokeAction, Serializable {
 		return action;
 	}
 
-	public String getRpcName() {
-		return rpcName;
+	public String getRpcPath() {
+		return rpcPath;
 	}
 
-	public void setRpcName(String rpcName) {
-		this.rpcName = rpcName;
+	public void setRpcPath(String rpcPath) {
+		this.rpcPath = rpcPath;
 	}
 
 }

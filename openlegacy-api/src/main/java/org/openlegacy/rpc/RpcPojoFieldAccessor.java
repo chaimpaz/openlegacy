@@ -10,21 +10,13 @@
  *******************************************************************************/
 package org.openlegacy.rpc;
 
-import org.openlegacy.RemoteAction;
-
-import java.util.List;
+import org.openlegacy.EntityFieldAccessor;
 
 /**
- * Defines a low level rpc send action on a {@link RpcConnection}. Contains rpc name and input fields.
+ * An interface for accessing POJO's marked with {@link RpcEntity} annotations
  * 
  * @author Roi Mor
- * 
  */
-public interface RpcInvokeAction extends RemoteAction {
+public interface RpcPojoFieldAccessor extends EntityFieldAccessor {
 
-	List<RpcField> getRpcFields();
-
-	String getAction();
-
-	String getRpcPath();
 }

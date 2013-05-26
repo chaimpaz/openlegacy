@@ -8,6 +8,7 @@
 
     <context:property-placeholder location="classpath*:/jt400.properties"/>
 
+	<bean id="rpcConnection" class="org.openlegacy.providers.jt400.Jt400RpcConnection" factory-bean="rpcConnectionFactory" factory-method="getConnection" />
 	<bean id="rpcConnectionFactory" class="org.openlegacy.providers.jt400.Jt400RpcConnectionFactory" />
 	
 	<bean id="as400Session" scope="prototype" class="com.ibm.as400.access.AS400" p:userId="${rpc.user}" p:password="${rpc.password}" p:guiAvailable="false">

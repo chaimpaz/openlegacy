@@ -12,7 +12,9 @@
 
 	<import resource="classpath*:/META-INF/openlegacy-rpc-basic-context.xml" />
 
-	<bean id="rpcSession" class="org.openlegacy.rpc.support.DefaultRpcSession" scope="prototype" parent="abstractRpcSession" />
+	<bean id="rpcSession" class="org.openlegacy.rpc.support.DefaultRpcSession" scope="prototype" parent="abstractRpcSession">
+		<property name="rpcConnection" ref="rpcConnection" />
+	</bean>
 
 	<bean id="rpcRegistry" class="org.openlegacy.rpc.support.DefaultRpcEntitiesRegistry">
 	    <property name="packages">

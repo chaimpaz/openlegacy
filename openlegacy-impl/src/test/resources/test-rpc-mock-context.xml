@@ -7,6 +7,8 @@
 
 	<import resource="classpath:/test-rpc-basic-context.xml" />
 
+	<bean id="rpcConnection" class="org.openlegacy.rpc.mock.MockRpcConnection" factory-bean="rpcConnectionFactory" factory-method="getConnection" />
+	
 	<bean id="rpcConnectionFactory"
 		class="org.openlegacy.rpc.mock.MockRpcConnectionFactory">
 		<property name="root" value="/org/openlegacy/rpc/mock" />

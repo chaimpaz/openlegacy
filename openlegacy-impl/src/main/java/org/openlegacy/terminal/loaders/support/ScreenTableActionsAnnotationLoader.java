@@ -76,7 +76,7 @@ public class ScreenTableActionsAnnotationLoader extends AbstractClassAnnotationL
 					throw (new RegistryException("Only a single table action can be defined as default action"));
 				}
 				if (action.defaultAction()) {
-					actionDefinition.setDefault(action.defaultAction());
+					actionDefinition.setDefaultAction(action.defaultAction());
 					defaultAction = actionDefinition;
 				}
 
@@ -90,7 +90,7 @@ public class ScreenTableActionsAnnotationLoader extends AbstractClassAnnotationL
 			if (defaultAction == null && screenTableDefinition.getActions().size() > 0) {
 				SimpleTerminalActionDefinition firstAction = (SimpleTerminalActionDefinition)screenTableDefinition.getActions().get(
 						0);
-				firstAction.setDefault(true);
+				firstAction.setDefaultAction(true);
 				logger.warn(MessageFormat.format(
 						"First screen table action {0} was selected as default action for \"{0}\". You may want to set a different default action",
 						firstAction.getAlias(), screenTableDefinition.getTableClass()));

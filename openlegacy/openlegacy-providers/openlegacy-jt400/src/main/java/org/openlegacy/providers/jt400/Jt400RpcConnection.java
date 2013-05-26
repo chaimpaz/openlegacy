@@ -45,7 +45,7 @@ public class Jt400RpcConnection implements RpcConnection {
 		ProgramCall program = new ProgramCall(as400Session);
 		try {
 			// Initialize the name of the program to run.
-			String programName = rpcInvokeAction.getRpcName();
+			String programName = rpcInvokeAction.getRpcPath();
 
 			List<RpcField> fields = rpcInvokeAction.getRpcFields();
 			List<ProgramParameter> programParameters = new ArrayList<ProgramParameter>();

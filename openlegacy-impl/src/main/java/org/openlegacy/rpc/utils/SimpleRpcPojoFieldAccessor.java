@@ -8,23 +8,15 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.rpc;
+package org.openlegacy.rpc.utils;
 
-import org.openlegacy.RemoteAction;
+import org.openlegacy.rpc.RpcPojoFieldAccessor;
+import org.openlegacy.terminal.utils.AbstractPojoFieldAccessor;
 
-import java.util.List;
+public class SimpleRpcPojoFieldAccessor extends AbstractPojoFieldAccessor implements RpcPojoFieldAccessor {
 
-/**
- * Defines a low level rpc send action on a {@link RpcConnection}. Contains rpc name and input fields.
- * 
- * @author Roi Mor
- * 
- */
-public interface RpcInvokeAction extends RemoteAction {
+	public SimpleRpcPojoFieldAccessor(Object target) {
+		super(target);
+	}
 
-	List<RpcField> getRpcFields();
-
-	String getAction();
-
-	String getRpcPath();
 }

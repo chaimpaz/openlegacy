@@ -4,7 +4,16 @@ import org.openlegacy.FieldType;
 import org.openlegacy.annotations.screen.AnnotationConstants;
 import org.openlegacy.rpc.RpcFieldTypes;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 public @interface RpcField {
+
+	boolean key() default false;
 
 	Direction direction();
 

@@ -24,7 +24,7 @@ public class RpcTrailSerializeTest {
 		rpcField.setValue("hello");
 
 		rpcInvokeAction.getRpcFields().add(rpcField);
-		rpcInvokeAction.setRpcName("rpctest");
+		rpcInvokeAction.setRpcPath("rpctest");
 
 		rpcSnapshot.setRpcInvokeAction(rpcInvokeAction);
 

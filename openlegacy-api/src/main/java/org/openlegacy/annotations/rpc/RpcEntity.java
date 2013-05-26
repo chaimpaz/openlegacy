@@ -11,12 +11,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface RpcEntity {
 
-	/**
-	 * Path to the RPC program
-	 * 
-	 * @return path
-	 */
-	String value();
+	String name() default AnnotationConstants.NULL;
 
 	String displayName() default AnnotationConstants.NULL;
 }

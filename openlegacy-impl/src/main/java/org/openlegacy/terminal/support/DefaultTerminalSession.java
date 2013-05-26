@@ -14,8 +14,6 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.OpenLegacyProperties;
-import org.openlegacy.SessionProperties;
-import org.openlegacy.SessionPropertiesProvider;
 import org.openlegacy.exceptions.EntityNotAccessibleException;
 import org.openlegacy.exceptions.EntityNotFoundException;
 import org.openlegacy.exceptions.OpenLegacyRuntimeException;
@@ -84,9 +82,6 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 	private ScreenEntityUtils screenEntityUtils;
 
 	@Inject
-	private SessionPropertiesProvider sessionPropertiesProvider;
-
-	@Inject
 	private OpenLegacyProperties openLegacyProperties;
 
 	@Inject
@@ -99,8 +94,6 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 	private boolean useProxyForEntities = true;
 
 	private ConnectionProperties connectionProperties;
-
-	private SessionProperties sessionProperties;
 
 	private ScreenEntitiesRegistry screenEntitiesRegistry;
 
@@ -449,17 +442,6 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 
 	public void setUseProxyForEntities(boolean useProxyForEntities) {
 		this.useProxyForEntities = useProxyForEntities;
-	}
-
-	public void setSessionPropertiesProvider(SessionPropertiesProvider sessionPropertiesProvider) {
-		this.sessionPropertiesProvider = sessionPropertiesProvider;
-	}
-
-	public SessionProperties getProperties() {
-		if (sessionProperties == null) {
-			sessionProperties = sessionPropertiesProvider.getSessionProperties();
-		}
-		return sessionProperties;
 	}
 
 	public ConnectionProperties getConnectionProperties() {

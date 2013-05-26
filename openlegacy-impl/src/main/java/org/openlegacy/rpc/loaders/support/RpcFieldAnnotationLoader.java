@@ -13,7 +13,6 @@ package org.openlegacy.rpc.loaders.support;
 import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.annotations.rpc.RpcField;
 import org.openlegacy.annotations.screen.AnnotationConstants;
-import org.openlegacy.annotations.screen.ScreenField;
 import org.openlegacy.definitions.support.SimpleDateFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleListFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
@@ -37,7 +36,7 @@ import java.util.Date;
 public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 
 	public boolean match(Annotation annotation) {
-		return annotation.annotationType() == ScreenField.class;
+		return annotation.annotationType() == RpcField.class;
 	}
 
 	@SuppressWarnings({ "rawtypes" })
@@ -57,6 +56,8 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 			rpcFieldDefinition.setDisplayName(fieldAnnotation.displayName());
 		}
 
+		rpcFieldDefinition.setLength(fieldAnnotation.length());
+		rpcFieldDefinition.setDirection(fieldAnnotation.direction());
 		rpcFieldDefinition.setSampleValue(fieldAnnotation.sampleValue());
 		rpcFieldDefinition.setJavaType(field.getType());
 
