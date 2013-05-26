@@ -14,6 +14,8 @@ import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.exceptions.OpenLegacyRuntimeException;
 import org.openlegacy.rpc.RpcField;
 
+import java.math.BigDecimal;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -81,7 +83,13 @@ public class SimpleRpcField implements RpcField {
 		}
 		this.modified = modified;
 		if (value instanceof Integer) {
-			this.value = Double.valueOf((Integer)value);
+			this.value = BigDecimal.valueOf((Integer)value);
+		} else if (value instanceof Long) {
+			this.value = BigDecimal.valueOf((Long)value);
+		} else if (value instanceof Float) {
+			this.value = BigDecimal.valueOf((Float)value);
+		} else {
+			this.value = value;
 		}
 		this.persistedValue = String.valueOf(value);
 

@@ -82,6 +82,9 @@ public class Jt400RpcConnectionTest {
 
 		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
 
-		Assert.assertEquals("My name is roi mor age 37 years    ", rpcResult.getRpcFields().get(2).getValue());
+		System.out.println(rpcResult.getRpcFields().get(3).getValue());
+		Assert.assertEquals(
+				"My name is roi mor age 37 years !                                                                   ",
+				rpcResult.getRpcFields().get(3).getValue());
 	}
 }

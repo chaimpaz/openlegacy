@@ -1,14 +1,20 @@
 package org.openlegacy.providers.jt400;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.Trace;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcConnectionFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 
 import javax.inject.Inject;
 
-public class Jt400RpcConnectionFactory implements RpcConnectionFactory {
+public class Jt400RpcConnectionFactory implements RpcConnectionFactory, InitializingBean {
+
+	private final static Log logger = LogFactory.getLog(Jt400RpcConnectionFactory.class);
 
 	@Inject
 	private ApplicationContext applicationContext;
@@ -21,6 +27,19 @@ public class Jt400RpcConnectionFactory implements RpcConnectionFactory {
 	public void disconnect(RpcConnection rpcConnection) {
 		rpcConnection.disconnect();
 
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		if (logger.isTraceEnabled()) {
+			Trace.setTraceOn(true);
+			Trace.setTraceDiagnosticOn(true);
+			Trace.setTraceInformationOn(true);
+			Trace.setTraceWarningOn(true);
+			Trace.setTraceErrorOn(true);
+			Trace.setTraceDatastreamOn(true);
+			Trace.setTraceThreadOn(true);
+			Trace.setTraceJDBCOn(true);
+		}
 	}
 
 }
