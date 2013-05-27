@@ -8,6 +8,7 @@ import org.openlegacy.rpc.support.SimpleRpcResult;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -22,6 +23,19 @@ public class RpcPersistedSnapshot implements RpcSnapshot {
 
 	@XmlElement(name = "result", type = SimpleRpcResult.class)
 	private RpcResult rpcResult;
+
+	@XmlAttribute
+	private Integer sequence = null;
+
+	public RpcPersistedSnapshot() {
+		// for serialization purposes
+	}
+
+	public RpcPersistedSnapshot(RpcInvokeAction rpInvokeAction, RpcResult rpcResult, Integer sequence) {
+		this.rpcInvokeAction = rpInvokeAction;
+		this.rpcResult = rpcResult;
+		this.sequence = sequence;
+	}
 
 	public RpcInvokeAction getRpcInvokeAction() {
 		return rpcInvokeAction;
@@ -39,4 +53,11 @@ public class RpcPersistedSnapshot implements RpcSnapshot {
 		this.rpcResult = rpcResult;
 	}
 
+	public Integer getSequence() {
+		return sequence;
+	}
+
+	public void setSequence(Integer sequence) {
+		this.sequence = sequence;
+	}
 }

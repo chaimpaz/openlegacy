@@ -58,7 +58,7 @@
 	<bean id="sessionsManager" class="org.openlegacy.support.DefaultSessionsManager" />
 		
 	<bean id="abstractTerminalSession" class="org.openlegacy.terminal.support.DefaultTerminalSession" abstract="true">
-		<property name="terminalConnection">
+		<property name="connection">
 			<bean class="org.openlegacy.terminal.support.TerminalConnectionDelegator" />
 		</property>
 		<property name="sessionModules">

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.terminal.modules.trail;
 
+import org.openlegacy.ApplicationConnection;
 import org.openlegacy.modules.trail.SessionTrail;
 import org.openlegacy.modules.trail.Trail;
 import org.openlegacy.terminal.TerminalConnection;
@@ -29,13 +30,13 @@ public class DefaultTerminalTrailModule extends TerminalSessionModuleAdapter imp
 	}
 
 	@Override
-	public void beforeConnect(TerminalConnection terminalConnection) {
+	public void beforeConnect(ApplicationConnection<?, ?> terminalConnection) {
 		sessionTrail.clear();
 	}
 
 	@Override
-	public void afterConnect(TerminalConnection terminalConnection) {
-		sessionTrail.appendSnapshot(terminalConnection.getSnapshot());
+	public void afterConnect(ApplicationConnection<?, ?> terminalConnection) {
+		sessionTrail.appendSnapshot((TerminalSnapshot)terminalConnection.getSnapshot());
 	}
 
 	@Override

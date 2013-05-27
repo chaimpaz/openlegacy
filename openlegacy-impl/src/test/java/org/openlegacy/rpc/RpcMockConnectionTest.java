@@ -1,4 +1,4 @@
-package org.openlegacy.rpc.definitions.mock;
+package org.openlegacy.rpc;
 
 import org.junit.Assert;
 import org.junit.Test;

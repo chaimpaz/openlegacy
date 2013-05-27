@@ -8,18 +8,16 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal;
-
-import org.openlegacy.ApplicationConnectionListener;
+package org.openlegacy;
 
 /**
- * Define a terminal session override-able methods which happens before & after a terminal session action
+ * Define a session override-able methods which happens before & after a connection action
  * 
  */
-public interface TerminalConnectionListener extends ApplicationConnectionListener {
+public interface ApplicationConnectionListener {
 
-	void beforeSendAction(TerminalConnection terminalConnection, TerminalSendAction terminalSendAction);
+	void beforeConnect(ApplicationConnection<?, ?> applicationConnection);
 
-	void afterSendAction(TerminalConnection terminalConnection);
+	void afterConnect(ApplicationConnection<?, ?> applicationConnection);
 
 }

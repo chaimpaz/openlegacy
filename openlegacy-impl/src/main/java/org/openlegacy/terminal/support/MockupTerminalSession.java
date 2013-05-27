@@ -55,7 +55,7 @@ public class MockupTerminalSession extends DefaultTerminalSession {
 	@SuppressWarnings("unchecked")
 	private <S> void setupMockup(Class<S> screenEntityClass) {
 		if (getScreenEntitiesRegistry().isDirty()) {
-			preserveSnapshots(getTerminalConnection());
+			preserveSnapshots(getConnection());
 		}
 		screenEntityClass = (Class<S>)ProxyUtil.getOriginalClass(screenEntityClass);
 		SnapshotsList snapshotsList = snapshotsMap.get(screenEntityClass);
@@ -64,7 +64,7 @@ public class MockupTerminalSession extends DefaultTerminalSession {
 					+ "was not found in the recorded trail"));
 		}
 		SnapshotInfo snapshotInfo = snapshotsList.getCurrent();
-		getTerminalConnection().setCurrentIndex(snapshotInfo.getIndexInSession());
+		getConnection().setCurrentIndex(snapshotInfo.getIndexInSession());
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class MockupTerminalSession extends DefaultTerminalSession {
 	}
 
 	public void setTerminalConnection(MockTerminalConnection terminalConnection) {
-		super.setTerminalConnection(terminalConnection);
+		super.setConnection(terminalConnection);
 
 		preserveSnapshots(terminalConnection);
 	}
@@ -125,8 +125,8 @@ public class MockupTerminalSession extends DefaultTerminalSession {
 	}
 
 	@Override
-	protected MockTerminalConnection getTerminalConnection() {
-		return (MockTerminalConnection)super.getTerminalConnection();
+	protected MockTerminalConnection getConnection() {
+		return (MockTerminalConnection)super.getConnection();
 	}
 
 	/**

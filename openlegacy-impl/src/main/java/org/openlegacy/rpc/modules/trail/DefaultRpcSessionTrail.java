@@ -8,18 +8,14 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal;
+package org.openlegacy.rpc.modules.trail;
 
-import org.openlegacy.ApplicationConnectionListener;
+import org.openlegacy.modules.support.trail.AbstractSessionTrail;
+import org.openlegacy.rpc.RpcSnapshot;
 
-/**
- * Define a terminal session override-able methods which happens before & after a terminal session action
- * 
- */
-public interface TerminalConnectionListener extends ApplicationConnectionListener {
+import java.io.Serializable;
 
-	void beforeSendAction(TerminalConnection terminalConnection, TerminalSendAction terminalSendAction);
+public class DefaultRpcSessionTrail extends AbstractSessionTrail<RpcSnapshot> implements RpcSessionTrail, Serializable {
 
-	void afterSendAction(TerminalConnection terminalConnection);
-
+	private static final long serialVersionUID = 1L;
 }

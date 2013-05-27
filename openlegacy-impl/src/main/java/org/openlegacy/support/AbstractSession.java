@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.openlegacy.support;
 
+import org.openlegacy.ApplicationConnection;
+import org.openlegacy.ApplicationConnectionListener;
 import org.openlegacy.Session;
 import org.openlegacy.SessionProperties;
 import org.openlegacy.SessionPropertiesProvider;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -64,6 +67,26 @@ public abstract class AbstractSession implements Session, InitializingBean, Disp
 
 	public void setSessionPropertiesProvider(SessionPropertiesProvider sessionPropertiesProvider) {
 		this.sessionPropertiesProvider = sessionPropertiesProvider;
+	}
+
+	protected abstract ApplicationConnection<?, ?> getConnection();
+
+	protected void notifyModulesBeforeConnect() {
+		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
+		for (SessionModule sessionModule : modulesList) {
+			if (sessionModule instanceof ApplicationConnectionListener) {
+				((ApplicationConnectionListener)sessionModule).beforeConnect(getConnection());
+			}
+		}
+	}
+
+	protected void notifyModulesAfterConnect() {
+		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
+		for (SessionModule sessionModule : modulesList) {
+			if (sessionModule instanceof ApplicationConnectionListener) {
+				((ApplicationConnectionListener)sessionModule).afterConnect(getConnection());
+			}
+		}
 	}
 
 	public SessionProperties getProperties() {

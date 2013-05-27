@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.terminal.modules.registry;
 
+import org.openlegacy.ApplicationConnection;
 import org.openlegacy.SessionsRegistry;
 import org.openlegacy.modules.registry.Registry;
 import org.openlegacy.support.SimpleSessionProperties;
@@ -29,12 +30,12 @@ public class DefaultSessionRegistryModule extends TerminalSessionModuleAdapter i
 	private SessionsRegistry sessionsRegistry;
 
 	@Override
-	public void beforeConnect(TerminalConnection terminalConnection) {
+	public void beforeConnect(ApplicationConnection<?, ?> terminalConnection) {
 		sessionsRegistry.register(getSession());
 	}
 
 	@Override
-	public void afterConnect(TerminalConnection terminalConnection) {
+	public void afterConnect(ApplicationConnection<?, ?> terminalConnection) {
 		setLastActivity();
 	}
 

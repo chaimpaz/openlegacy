@@ -14,6 +14,7 @@ import org.openlegacy.rpc.RpcField;
 import org.openlegacy.rpc.RpcInvocationException;
 import org.openlegacy.rpc.RpcInvokeAction;
 import org.openlegacy.rpc.RpcResult;
+import org.openlegacy.rpc.RpcSnapshot;
 import org.openlegacy.rpc.support.SimpleRpcResult;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 public class Jt400RpcConnection implements RpcConnection {
 
 	private AS400 as400Session;
+	private Integer sequence = 0;
 
 	public Jt400RpcConnection(AS400 as400Session) {
 		this.as400Session = as400Session;
@@ -72,6 +74,7 @@ public class Jt400RpcConnection implements RpcConnection {
 			}
 			// Else no error, get output data.
 			else {
+				sequence++;
 				SimpleRpcResult rpcResult = new SimpleRpcResult();
 				rpcResult.setRpcFields(fields);
 				int count = 0;
@@ -103,6 +106,25 @@ public class Jt400RpcConnection implements RpcConnection {
 			}
 		}
 		return as400Field;
+	}
+
+	public RpcSnapshot getSnapshot() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public RpcSnapshot fetchSnapshot() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void doAction(RpcInvokeAction sendAction) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public Integer getSequence() {
+		return sequence;
 	}
 
 }

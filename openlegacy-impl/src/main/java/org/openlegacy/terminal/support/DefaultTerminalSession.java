@@ -236,24 +236,6 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		return (R)getEntity();
 	}
 
-	private void notifyModulesBeforeConnect() {
-		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
-		for (SessionModule sessionModule : modulesList) {
-			if (sessionModule instanceof TerminalConnectionListener) {
-				((TerminalConnectionListener)sessionModule).beforeConnect(terminalConnection);
-			}
-		}
-	}
-
-	private void notifyModulesAfterConnect() {
-		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
-		for (SessionModule sessionModule : modulesList) {
-			if (sessionModule instanceof TerminalConnectionListener) {
-				((TerminalConnectionListener)sessionModule).afterConnect(terminalConnection);
-			}
-		}
-	}
-
 	protected void notifyModulesBeforeSend(TerminalSendAction terminalSendAction) {
 		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
 		for (SessionModule sessionModule : modulesList) {
@@ -290,7 +272,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		return terminalConnection.getDelegate();
 	}
 
-	public void setTerminalConnection(TerminalConnection terminalConnection) {
+	public void setConnection(TerminalConnection terminalConnection) {
 		this.terminalConnection = terminalConnection;
 	}
 
@@ -399,7 +381,8 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		return terminalConnection.fetchSnapshot();
 	}
 
-	protected TerminalConnection getTerminalConnection() {
+	@Override
+	protected TerminalConnection getConnection() {
 		return terminalConnection;
 	}
 

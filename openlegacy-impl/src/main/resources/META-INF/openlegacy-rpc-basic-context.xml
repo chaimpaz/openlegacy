@@ -16,6 +16,7 @@
 	    </property>
  	</bean>
 
+	<bean id="trailWriter" class="org.openlegacy.rpc.modules.trail.RpcTrailXmlWriter" />
  	<bean id="registryLoader" class="org.openlegacy.support.DefaultRegistryLoader"/>
  	
 	<context:component-scan base-package="org.openlegacy"
@@ -34,6 +35,13 @@
 			<bean class="org.openlegacy.support.SessionModules">
 				<property name="modules">
 					<list>
+						<bean
+							class="org.openlegacy.rpc.modules.trail.DefaultRpcTrailModule">
+							<property name="sessionTrail">
+								<bean class="org.openlegacy.rpc.modules.trail.DefaultRpcSessionTrail"
+									p:historyCount="3" />
+							</property>
+						</bean>
 					</list>
 				</property>
 			</bean>

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.terminal.modules.globals;
 
+import org.openlegacy.ApplicationConnection;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.modules.globals.Globals;
 import org.openlegacy.terminal.ScreenEntity;
@@ -46,7 +47,7 @@ public class DefaultGlobalsModule extends TerminalSessionModuleAdapter implement
 	}
 
 	@Override
-	public void afterConnect(TerminalConnection terminalConnection) {
+	public void afterConnect(ApplicationConnection<?, ?> terminalConnection) {
 		collectGlobals();
 	}
 
@@ -75,5 +76,11 @@ public class DefaultGlobalsModule extends TerminalSessionModuleAdapter implement
 				globals.put(globalFieldName, globalFieldValue);
 			}
 		}
+	}
+
+	@Override
+	public void beforeConnect(ApplicationConnection<?, ?> applicationConnection) {
+		// TODO Auto-generated method stub
+
 	}
 }

@@ -1,6 +1,8 @@
 package org.openlegacy.rpc;
 
-public interface RpcConnection {
+import org.openlegacy.ApplicationConnection;
+
+public interface RpcConnection extends ApplicationConnection<RpcSnapshot, RpcInvokeAction> {
 
 	Object getDelegate();
 
@@ -9,4 +11,6 @@ public interface RpcConnection {
 	void disconnect();
 
 	RpcResult invoke(RpcInvokeAction rpcInvokeAction);
+
+	Integer getSequence();
 }

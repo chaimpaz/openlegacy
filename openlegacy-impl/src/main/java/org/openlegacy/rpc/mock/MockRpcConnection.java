@@ -11,6 +11,8 @@ public class MockRpcConnection implements RpcConnection {
 
 	private List<RpcSnapshot> snapshots;
 
+	private RpcSnapshot lastSnapshpot;
+
 	public MockRpcConnection(List<RpcSnapshot> rpcSnapshots) {
 		snapshots = rpcSnapshots;
 	}
@@ -28,7 +30,31 @@ public class MockRpcConnection implements RpcConnection {
 	}
 
 	public RpcResult invoke(RpcInvokeAction rpcInvokeAction) {
-		return snapshots.get(0).getRpcResult();
+		if (lastSnapshpot == null || lastSnapshpot.getSequence() >= snapshots.size()) {
+			lastSnapshpot = snapshots.get(0);
+		} else {
+			lastSnapshpot = snapshots.get(lastSnapshpot.getSequence() + 1);
+		}
+		return lastSnapshpot.getRpcResult();
+	}
+
+	public Integer getSequence() {
+		if (lastSnapshpot == null) {
+			return 0;
+		}
+		return lastSnapshpot.getSequence();
+	}
+
+	public RpcSnapshot getSnapshot() {
+		return lastSnapshpot;
+	}
+
+	public RpcSnapshot fetchSnapshot() {
+		return lastSnapshpot;
+	}
+
+	public void doAction(RpcInvokeAction sendAction) {
+		// do nothing. TODO implemented verifySend
 	}
 
 }

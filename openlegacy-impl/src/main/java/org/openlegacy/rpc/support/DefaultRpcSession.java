@@ -1,10 +1,12 @@
 package org.openlegacy.rpc.support;
 
 import org.apache.commons.lang.StringUtils;
+import org.openlegacy.ApplicationConnection;
 import org.openlegacy.definitions.ActionDefinition;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.definitions.RpcActionDefinition;
 import org.openlegacy.exceptions.EntityNotFoundException;
+import org.openlegacy.modules.SessionModule;
 import org.openlegacy.rpc.RpcActionNotMappedException;
 import org.openlegacy.rpc.RpcActions;
 import org.openlegacy.rpc.RpcConnection;
@@ -80,7 +82,12 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		return rpcConnection.isConnected();
 	}
 
-	public void setRpcConnection(RpcConnection rpcConnection) {
+	@Override
+	protected ApplicationConnection<?, ?> getConnection() {
+		return rpcConnection;
+	}
+
+	public void setConnection(RpcConnection rpcConnection) {
 		this.rpcConnection = rpcConnection;
 	}
 
@@ -98,7 +105,7 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		SimpleRpcInvokeAction rpcAction = new SimpleRpcInvokeAction();
 		rpcAction.setRpcPath(actionDefinition.getProgramPath());
 		populateRpcFields(rpcEntity, rpcDefinition, rpcAction.getRpcFields());
-		RpcResult rpcResult = rpcConnection.invoke(rpcAction);
+		RpcResult rpcResult = invoke(rpcAction);
 		if (actionDefinition.getTargetEntity() != null) {
 			return (RpcEntity)getEntity(actionDefinition.getTargetEntity());
 		} else {
@@ -106,6 +113,19 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		}
 		return rpcEntity;
 
+	}
+
+	private RpcResult invoke(SimpleRpcInvokeAction rpcAction) {
+		RpcResult rpcResult = rpcConnection.invoke(rpcAction);
+		notifyModulesAfterSend(rpcAction, rpcResult);
+		return rpcResult;
+	}
+
+	protected void notifyModulesAfterSend(SimpleRpcInvokeAction rpcAction, RpcResult rpcResult) {
+		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
+		for (SessionModule sessionModule : modulesList) {
+			((RpcSessionModuleAdapter)sessionModule).afterInvokeAction((RpcConnection)getConnection(), rpcAction, rpcResult);
+		}
 	}
 
 	private static void populateRpcFields(RpcEntity rpcEntity, RpcEntityDefinition rpcEntityDefinition, List<RpcField> rpcFields) {
@@ -129,6 +149,9 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		Collection<RpcFieldDefinition> fieldsDefinitions = rpcDefinition.getFieldsDefinitions().values();
 		int index = 0;
 		for (RpcFieldDefinition rpcFieldDefinition : fieldsDefinitions) {
+			if (index >= rpcFields.size()) {
+				break;
+			}
 			fieldAccesor.setFieldValue(rpcFieldDefinition.getName(), rpcFields.get(index).getValue());
 			index++;
 		}

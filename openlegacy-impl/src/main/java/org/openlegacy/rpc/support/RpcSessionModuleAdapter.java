@@ -8,45 +8,45 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.support;
+package org.openlegacy.rpc.support;
 
-import org.openlegacy.ApplicationConnection;
+import org.openlegacy.rpc.RpcConnection;
+import org.openlegacy.rpc.RpcInvokeAction;
+import org.openlegacy.rpc.RpcResult;
+import org.openlegacy.rpc.RpcSession;
+import org.openlegacy.rpc.RpcSessionModule;
 import org.openlegacy.support.SessionModuleAdapter;
 import org.openlegacy.terminal.TerminalConnection;
-import org.openlegacy.terminal.TerminalConnectionListener;
-import org.openlegacy.terminal.TerminalSendAction;
-import org.openlegacy.terminal.TerminalSession;
-import org.openlegacy.terminal.TerminalSessionModule;
 import org.openlegacy.utils.SpringUtil;
 
 import java.io.Serializable;
 
 /**
- * Define a terminal session override-able methods which happens before & after a terminal session action
+ * Define an rpc session override-able methods which happens before & after a terminal session action
  * 
  */
-public abstract class TerminalSessionModuleAdapter extends SessionModuleAdapter<TerminalSession> implements TerminalSessionModule, TerminalConnectionListener, Serializable {
+public abstract class RpcSessionModuleAdapter extends SessionModuleAdapter<RpcSession> implements RpcSessionModule, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * for serialization purpose only
 	 */
-	public TerminalSessionModuleAdapter() {}
+	public RpcSessionModuleAdapter() {}
 
-	public void beforeConnect(ApplicationConnection<?, ?> terminalConnection) {
+	public void beforeConnect(TerminalConnection terminalConnection) {
 		// allow override
 	}
 
-	public void afterConnect(ApplicationConnection<?, ?> terminalConnection) {
+	public void afterConnect(TerminalConnection terminalConnection) {
 		// allow override
 	}
 
-	public void beforeSendAction(TerminalConnection terminalConnection, TerminalSendAction terminalSendAction) {
+	public void beforeInvokeAction(RpcConnection rpcConnection, RpcInvokeAction rpcInvokeAction) {
 		// allow override
 	}
 
-	public void afterSendAction(TerminalConnection terminalConnection) {
+	public void afterInvokeAction(RpcConnection rpcConnection, RpcInvokeAction rpcInvokeAction, RpcResult rpcResult) {
 		// allow override
 	}
 
@@ -55,7 +55,7 @@ public abstract class TerminalSessionModuleAdapter extends SessionModuleAdapter<
 	}
 
 	public Object readResolve() {
-		TerminalSession bean = SpringUtil.getApplicationContext().getBean(TerminalSession.class);
+		RpcSession bean = SpringUtil.getApplicationContext().getBean(RpcSession.class);
 		setSession(bean);
 		return this;
 	}
