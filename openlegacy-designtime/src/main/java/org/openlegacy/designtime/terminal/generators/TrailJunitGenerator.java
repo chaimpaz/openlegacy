@@ -21,7 +21,6 @@ import org.openlegacy.terminal.TerminalSnapshot;
 import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
 import org.openlegacy.terminal.definitions.ScreenFieldDefinition;
 import org.openlegacy.utils.StringUtil;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,7 +35,6 @@ import javax.inject.Inject;
 /**
  * A generator which generates a junit test from a given trail
  */
-@Component
 public class TrailJunitGenerator {
 
 	@Inject

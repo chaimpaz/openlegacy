@@ -5,6 +5,7 @@ import com.ibm.as400.access.Trace;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openlegacy.FieldFormatter;
 import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcConnectionFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,9 +20,14 @@ public class Jt400RpcConnectionFactory implements RpcConnectionFactory, Initiali
 	@Inject
 	private ApplicationContext applicationContext;
 
+	@Inject
+	private FieldFormatter fieldFormatter;
+
 	public RpcConnection getConnection() {
 		AS400 as400 = applicationContext.getBean(AS400.class);
-		return new Jt400RpcConnection(as400);
+		Jt400RpcConnection rpcConnection = new Jt400RpcConnection(as400);
+		rpcConnection.setFieldFormatter(fieldFormatter);
+		return rpcConnection;
 	}
 
 	public void disconnect(RpcConnection rpcConnection) {

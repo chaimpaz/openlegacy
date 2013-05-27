@@ -1,21 +1,22 @@
 package org.openlegacy.rpc.definitions;
 
+import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.definitions.support.AbstractEntityDefinition;
 
 public class SimpleRpcEntityDefinition extends AbstractEntityDefinition<RpcFieldDefinition> implements RpcEntityDefinition {
 
-	private String programPath;
+	private Languages language;
 
 	public SimpleRpcEntityDefinition(String entityName, Class<?> entityClass) {
 		super(entityName, entityClass);
 	}
 
-	public String getProgramPath() {
-		return programPath;
+	public Languages getLanguage() {
+		return language;
 	}
 
-	public void setProgramPath(String programPath) {
-		this.programPath = programPath;
+	public void setLanguage(Languages language) {
+		this.language = language;
 	}
 
 }

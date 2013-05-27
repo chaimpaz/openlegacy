@@ -7,18 +7,19 @@ import org.openlegacy.definitions.support.AbstractFieldDefinition;
 public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDefinition> implements RpcFieldDefinition {
 
 	private static final long serialVersionUID = 1L;
-	private int length;
+	private double length;
 	private Direction direction;
+	private String originalName;
 
 	public SimpleRpcFieldDefinition(String name, Class<? extends FieldType> type) {
 		super(name, type);
 	}
 
-	public int getLength() {
+	public double getLength() {
 		return length;
 	}
 
-	public void setLength(int length) {
+	public void setLength(double length) {
 		this.length = length;
 	}
 
@@ -28,6 +29,14 @@ public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDe
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	public String getOriginalName() {
+		return originalName;
+	}
+
+	public void setOriginalName(String originalName) {
+		this.originalName = originalName;
 	}
 
 }

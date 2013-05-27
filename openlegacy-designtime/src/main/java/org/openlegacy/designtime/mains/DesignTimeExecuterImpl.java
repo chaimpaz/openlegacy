@@ -596,8 +596,6 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 			}
 		} catch (IOException e) {
 			throw (new GenerationException(e));
-		} catch (TemplateException e) {
-			throw (new GenerationException(e));
 		} catch (ParseException e) {
 			logger.warn("Failed parsing java file:" + e.getMessage());
 			// non compiled java class. Ignore it

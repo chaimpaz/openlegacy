@@ -24,12 +24,12 @@ public class RpcTrailSerializeTest {
 		SimpleRpcInvokeAction rpcInvokeAction = new SimpleRpcInvokeAction("test");
 
 		SimpleRpcField rpcField = new SimpleRpcField();
-		rpcField.setLength(10);
+		rpcField.setLength(10.0);
 		rpcField.setValue("hello");
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
-		rpcField.setLength(5);
+		rpcField.setLength(5.0);
 		rpcField.setValue(1234);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 

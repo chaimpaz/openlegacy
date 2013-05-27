@@ -12,16 +12,16 @@ package org.openlegacy.designtime.rpc.generators;
 
 import freemarker.template.TemplateException;
 
-import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openlegacy.designtime.generators.AbstractPojosAjGenerator;
 import org.openlegacy.designtime.generators.GenerateUtil;
 import org.openlegacy.designtime.rpc.generators.support.DefaultRpcPojoCodeModel;
 import org.openlegacy.designtime.rpc.generators.support.RpcAnnotationConstants;
 import org.openlegacy.designtime.utils.JavaParserUtil;
+import org.openlegacy.exceptions.GenerationException;
 import org.springframework.stereotype.Component;
 
-import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.BodyDeclaration;
@@ -31,8 +31,6 @@ import japa.parser.ast.expr.AnnotationExpr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
@@ -51,21 +49,15 @@ import javax.inject.Inject;
  * 
  */
 @Component
-public class RpcPojosAjGenerator {
+public class RpcPojosAjGenerator extends AbstractPojosAjGenerator {
 
 	private final static Log logger = LogFactory.getLog(RpcPojosAjGenerator.class);
 
 	@Inject
 	private GenerateUtil generateUtil;
 
-	public void generate(File javaFile) throws IOException, TemplateException, ParseException {
-		FileInputStream input = new FileInputStream(javaFile);
-		CompilationUnit compilationUnit = JavaParser.parse(input, CharEncoding.UTF_8);
-		generate(javaFile, compilationUnit);
-	}
-
-	public void generate(File javaFile, CompilationUnit compilationUnit) throws FileNotFoundException, IOException,
-			TemplateException, ParseException {
+	@Override
+	public void generate(File javaFile, CompilationUnit compilationUnit) throws GenerationException {
 
 		List<TypeDeclaration> types = compilationUnit.getTypes();
 
@@ -89,16 +81,21 @@ public class RpcPojosAjGenerator {
 			if (annotations == null) {
 				continue;
 			}
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			for (AnnotationExpr annotationExpr : annotations) {
-				RpcPojoCodeModel screenEntityCodeModel = null;
-				if (JavaParserUtil.hasAnnotation(annotationExpr, RpcAnnotationConstants.RPC_ENTITY_ANNOTATION)) {
-					screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration, baos);
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				for (AnnotationExpr annotationExpr : annotations) {
+					RpcPojoCodeModel screenEntityCodeModel = null;
+					if (JavaParserUtil.hasAnnotation(annotationExpr, RpcAnnotationConstants.RPC_ENTITY_ANNOTATION)) {
+						screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
+								baos);
+					}
+					// TODO RPC parts
+					if (screenEntityCodeModel != null && screenEntityCodeModel.isRelevant()) {
+						GenerateUtil.writeToFile(javaFile, baos, screenEntityCodeModel, parentClassName);
+					}
 				}
-				// TODO RPC parts
-				if (screenEntityCodeModel != null && screenEntityCodeModel.isRelevant()) {
-					GenerateUtil.writeToFile(javaFile, baos, screenEntityCodeModel, parentClassName);
-				}
+			} catch (Exception e) {
+				throw (new GenerationException(e));
 			}
 		}
 

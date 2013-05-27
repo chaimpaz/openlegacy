@@ -90,7 +90,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 		private boolean hasSetter;
 		private boolean hasGetterField;
 		private String type;
-		private boolean editable;
+		private boolean editable = true;
 		private boolean primitiveType;
 		private String helpText;
 		private FieldTypeDefinition fieldTypeDefiniton;

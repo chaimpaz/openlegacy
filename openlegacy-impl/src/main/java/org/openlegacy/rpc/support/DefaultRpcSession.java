@@ -2,6 +2,7 @@ package org.openlegacy.rpc.support;
 
 import org.apache.commons.lang.StringUtils;
 import org.openlegacy.ApplicationConnection;
+import org.openlegacy.FieldFormatter;
 import org.openlegacy.definitions.ActionDefinition;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.definitions.RpcActionDefinition;
@@ -38,6 +39,9 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 	@Inject
 	private RpcEntitiesRegistry rpcEntitiesRegistry;
 
+	@Inject
+	private FieldFormatter fieldFormatter;
+
 	public Object getDelegate() {
 		return rpcConnection;
 	}
@@ -48,9 +52,9 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		SimpleRpcPojoFieldAccessor fieldAccesor = new SimpleRpcPojoFieldAccessor(entity);
 
 		RpcEntityDefinition rpcDefinition = rpcEntitiesRegistry.get(entityClass);
-		List<ActionDefinition> actions = rpcDefinition.getActions();
+		ActionDefinition action = rpcDefinition.getAction(RpcActions.READ.class);
 
-		if (!actions.contains(org.openlegacy.rpc.RpcActions.READ())) {
+		if (action == null) {
 			throw (new RpcActionNotMappedException(
 					"No READ action is defined. Define @RpcActions(actions = { @Action(action = READ.class, path = ...) })"));
 		}

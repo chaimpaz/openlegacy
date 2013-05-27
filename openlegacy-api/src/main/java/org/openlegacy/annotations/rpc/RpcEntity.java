@@ -14,4 +14,7 @@ public @interface RpcEntity {
 	String name() default AnnotationConstants.NULL;
 
 	String displayName() default AnnotationConstants.NULL;
+
+	Languages language() default Languages.UNDEFINED;
+
 }

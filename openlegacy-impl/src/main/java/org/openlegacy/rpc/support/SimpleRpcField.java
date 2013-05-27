@@ -35,7 +35,7 @@ public class SimpleRpcField implements RpcField {
 	private String persistedValue;
 
 	@XmlAttribute
-	private Integer length;
+	private Double length;
 
 	/**
 	 * NOTE! - All Boolean fields should have default value set. XML serializer checks if the default value change, and reset it
@@ -103,7 +103,11 @@ public class SimpleRpcField implements RpcField {
 		} else {
 			this.value = value;
 		}
-		this.persistedValue = String.valueOf(value);
+		if (value == null) {
+			this.persistedValue = "";
+		} else {
+			this.persistedValue = String.valueOf(value);
+		}
 
 	}
 
@@ -111,11 +115,11 @@ public class SimpleRpcField implements RpcField {
 		setValue(value, true);
 	}
 
-	public int getLength() {
+	public Double getLength() {
 		return length;
 	}
 
-	public void setLength(int length) {
+	public void setLength(Double length) {
 		this.length = length;
 	}
 

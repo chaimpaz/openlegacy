@@ -13,11 +13,13 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface RpcField {
 
+	String originalName() default "";
+
 	boolean key() default false;
 
 	Direction direction();
 
-	int length();
+	double length();
 
 	Class<? extends FieldType> fieldType() default RpcFieldTypes.General.class;
 
@@ -26,4 +28,7 @@ public @interface RpcField {
 	String sampleValue() default "";
 
 	String helpText() default "";
+
+	boolean editable() default true;
+
 }

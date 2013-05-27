@@ -12,7 +12,7 @@
 	<!-- <import resource="classpath:/META-INF/jt400-openlegacy-rpc-provider.xml" /> -->
 
 	<bean id="rpcSession" scope="prototype" parent="abstractRpcSession">
-		<property name="rpcConnection" ref="rpcConnection" />
+		<property name="connection" ref="rpcConnection" />
 	</bean>
 
 	<bean id="rpcRegistry" class="org.openlegacy.rpc.support.DefaultRpcEntitiesRegistry">

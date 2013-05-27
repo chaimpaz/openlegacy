@@ -37,15 +37,16 @@ public class RpcEntityAnnotationLoader extends AbstractClassAnnotationLoader {
 	@SuppressWarnings("rawtypes")
 	public void load(EntitiesRegistry entitiesRegistry, Annotation annotation, Class<?> containingClass) {
 
-		RpcEntity rpcEntity = (RpcEntity)annotation;
+		RpcEntity rpcAnnotation = (RpcEntity)annotation;
 		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
 
-		String rpcEntityName = rpcEntity.name().length() > 0 ? rpcEntity.name() : containingClass.getSimpleName();
-		String displayName = rpcEntity.displayName().length() > 0 ? rpcEntity.displayName()
+		String rpcEntityName = rpcAnnotation.name().length() > 0 ? rpcAnnotation.name() : containingClass.getSimpleName();
+		String displayName = rpcAnnotation.displayName().length() > 0 ? rpcAnnotation.displayName()
 				: StringUtil.toDisplayName(rpcEntityName);
 
 		SimpleRpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition(rpcEntityName, containingClass);
 		rpcEntityDefinition.setDisplayName(displayName);
+		rpcEntityDefinition.setLanguage(rpcAnnotation.language());
 
 		logger.info(MessageFormat.format("RPC \"{0}\" was added to the RPC registry ({1})", rpcEntityName,
 				containingClass.getName()));

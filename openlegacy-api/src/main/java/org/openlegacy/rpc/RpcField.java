@@ -50,11 +50,11 @@ public interface RpcField extends Serializable, Cloneable {
 	void setValue(Object value);
 
 	/**
-	 * The length of the field. Typically determined by distance between end position and position
+	 * The length of the field. Double as it Can contain
 	 * 
 	 * @return the length of the field
 	 */
-	int getLength();
+	Double getLength();
 
 	/**
 	 * Is the field editable on the host screen (protected)

@@ -18,6 +18,7 @@ import org.openlegacy.definitions.support.SimpleListFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimplePasswordFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
+import org.openlegacy.exceptions.RegistryException;
 import org.openlegacy.loaders.support.AbstractFieldAnnotationLoader;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcFieldDefinition;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.Date;
 
 @Component
@@ -56,8 +58,14 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 			rpcFieldDefinition.setDisplayName(fieldAnnotation.displayName());
 		}
 
+		if (fieldAnnotation.length() % 1 > 0 && field.getType() == String.class) {
+			throw (new RegistryException(MessageFormat.format(
+					"Length with floating point cannot be set for String field {0}.{1}", containingClass.getSimpleName(),
+					field.getName())));
+		}
 		rpcFieldDefinition.setLength(fieldAnnotation.length());
 		rpcFieldDefinition.setDirection(fieldAnnotation.direction());
+		rpcFieldDefinition.setOriginalName(fieldAnnotation.originalName());
 		rpcFieldDefinition.setKey(fieldAnnotation.key());
 		rpcFieldDefinition.setSampleValue(fieldAnnotation.sampleValue());
 		rpcFieldDefinition.setJavaType(field.getType());

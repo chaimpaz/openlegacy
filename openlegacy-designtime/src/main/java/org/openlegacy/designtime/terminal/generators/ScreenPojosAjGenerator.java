@@ -12,16 +12,16 @@ package org.openlegacy.designtime.terminal.generators;
 
 import freemarker.template.TemplateException;
 
-import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openlegacy.designtime.generators.AbstractPojosAjGenerator;
 import org.openlegacy.designtime.generators.GenerateUtil;
 import org.openlegacy.designtime.terminal.generators.support.DefaultScreenPojoCodeModel;
 import org.openlegacy.designtime.terminal.generators.support.ScreenAnnotationConstants;
 import org.openlegacy.designtime.utils.JavaParserUtil;
+import org.openlegacy.exceptions.GenerationException;
 import org.springframework.stereotype.Component;
 
-import japa.parser.JavaParser;
 import japa.parser.ParseException;
 import japa.parser.ast.CompilationUnit;
 import japa.parser.ast.body.BodyDeclaration;
@@ -31,7 +31,6 @@ import japa.parser.ast.expr.AnnotationExpr;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
@@ -52,20 +51,15 @@ import javax.inject.Inject;
  * 
  */
 @Component
-public class ScreenPojosAjGenerator {
+public class ScreenPojosAjGenerator extends AbstractPojosAjGenerator {
 
 	private final static Log logger = LogFactory.getLog(ScreenPojosAjGenerator.class);
 
 	@Inject
 	private GenerateUtil generateUtil;
 
-	public void generate(File javaFile) throws IOException, TemplateException, ParseException {
-		FileInputStream input = new FileInputStream(javaFile);
-		CompilationUnit compilationUnit = JavaParser.parse(input, CharEncoding.UTF_8);
-		generate(javaFile, compilationUnit);
-	}
-
-	public void generate(File javaFile, CompilationUnit compilationUnit) throws IOException, TemplateException, ParseException {
+	@Override
+	public void generate(File javaFile, CompilationUnit compilationUnit) throws GenerationException {
 
 		List<TypeDeclaration> types = compilationUnit.getTypes();
 
@@ -92,22 +86,27 @@ public class ScreenPojosAjGenerator {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			for (AnnotationExpr annotationExpr : annotations) {
 				ScreenPojoCodeModel screenEntityCodeModel = null;
-				if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_ENTITY_ANNOTATION)
-						|| JavaParserUtil.hasAnnotation(annotationExpr,
-								ScreenAnnotationConstants.SCREEN_ENTITY_SUPER_CLASS_ANNOTATION)) {
-					screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
-							baos);
-				}
-				if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_PART_ANNOTATION)) {
-					screenEntityCodeModel = generateScreenPart(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
-							baos, parentClassName);
-				}
-				if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_TABLE_ANNOTATION)) {
-					screenEntityCodeModel = generateScreenTable(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
-							baos, parentClassName);
-				}
-				if (screenEntityCodeModel != null && screenEntityCodeModel.isRelevant()) {
-					GenerateUtil.writeToFile(javaFile, baos, screenEntityCodeModel, parentClassName);
+				try {
+					if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_ENTITY_ANNOTATION)
+							|| JavaParserUtil.hasAnnotation(annotationExpr,
+									ScreenAnnotationConstants.SCREEN_ENTITY_SUPER_CLASS_ANNOTATION)) {
+						screenEntityCodeModel = generateEntity(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
+								baos);
+					}
+					if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_PART_ANNOTATION)) {
+						screenEntityCodeModel = generateScreenPart(compilationUnit, (ClassOrInterfaceDeclaration)typeDeclaration,
+								baos, parentClassName);
+					}
+					if (JavaParserUtil.hasAnnotation(annotationExpr, ScreenAnnotationConstants.SCREEN_TABLE_ANNOTATION)) {
+						screenEntityCodeModel = generateScreenTable(compilationUnit,
+								(ClassOrInterfaceDeclaration)typeDeclaration, baos, parentClassName);
+					}
+					if (screenEntityCodeModel != null && screenEntityCodeModel.isRelevant()) {
+						GenerateUtil.writeToFile(javaFile, baos, screenEntityCodeModel, parentClassName);
+					}
+
+				} catch (Exception e) {
+					throw (new GenerationException(e));
 				}
 			}
 		}

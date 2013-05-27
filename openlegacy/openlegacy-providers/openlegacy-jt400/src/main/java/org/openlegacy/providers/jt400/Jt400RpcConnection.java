@@ -8,6 +8,7 @@ import com.ibm.as400.access.AS400ZonedDecimal;
 import com.ibm.as400.access.ProgramCall;
 import com.ibm.as400.access.ProgramParameter;
 
+import org.openlegacy.FieldFormatter;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcField;
@@ -25,8 +26,14 @@ public class Jt400RpcConnection implements RpcConnection {
 	private AS400 as400Session;
 	private Integer sequence = 0;
 
+	private FieldFormatter fieldFormatter;
+
 	public Jt400RpcConnection(AS400 as400Session) {
 		this.as400Session = as400Session;
+	}
+
+	public void setFieldFormatter(FieldFormatter fieldFormatter) {
+		this.fieldFormatter = fieldFormatter;
 	}
 
 	public Object getDelegate() {
@@ -55,7 +62,7 @@ public class Jt400RpcConnection implements RpcConnection {
 			for (RpcField rpcField : fields) {
 				AS400DataType as400Field = initAs400DataType(rpcField, Direction.INPUT);
 				if (as400Field == null) {
-					programParameters.add(new ProgramParameter(rpcField.getLength()));
+					programParameters.add(new ProgramParameter(rpcField.getLength().intValue()));
 				} else {
 					programParameters.add(new ProgramParameter(as400Field.toBytes(rpcField.getValue())));
 				}
@@ -82,6 +89,9 @@ public class Jt400RpcConnection implements RpcConnection {
 					if (field.getDirection() != Direction.INPUT) {
 						AS400DataType as400DataType = initAs400DataType(field, Direction.OUTPUT);
 						Object value = as400DataType.toObject(programParameters.get(count).getOutputData());
+						if (value instanceof String) {
+							value = fieldFormatter.format((String)value);
+						}
 						field.setValue(value);
 					}
 					count++;
@@ -98,11 +108,13 @@ public class Jt400RpcConnection implements RpcConnection {
 		AS400DataType as400Field = null;
 		if (rpcField.getType() == String.class) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
-				as400Field = new AS400Text(rpcField.getLength(), as400Session);
+				as400Field = new AS400Text(rpcField.getLength().intValue(), as400Session);
 			}
 		} else if (Number.class.isAssignableFrom(rpcField.getType())) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
-				as400Field = new AS400ZonedDecimal(rpcField.getLength(), 0);
+				// find the numbers after the digits. e.g: 1.23 -> 23
+				int floatingPart = Integer.valueOf(String.valueOf(rpcField.getLength()).split("\\.")[1]);
+				as400Field = new AS400ZonedDecimal(rpcField.getLength().intValue(), floatingPart);
 			}
 		}
 		return as400Field;

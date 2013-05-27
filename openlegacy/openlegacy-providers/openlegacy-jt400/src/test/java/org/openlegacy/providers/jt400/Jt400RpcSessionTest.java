@@ -28,9 +28,6 @@ public class Jt400RpcSessionTest {
 		rpcStrNum.setAge(40);
 		rpcStrNum = rpcSession.doAction(RpcActions.READ(), rpcStrNum);
 
-		System.out.println(rpcStrNum.getMessage());
-		Assert.assertEquals(
-				"My name is John Doe age 40 years !                                                                  ",
-				rpcStrNum.getMessage());
+		Assert.assertEquals("My name is John Doe age 40 years !", rpcStrNum.getMessage());
 	}
 }

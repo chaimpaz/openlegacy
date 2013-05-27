@@ -28,18 +28,18 @@ public class Jt400RpcConnectionTest {
 
 		SimpleRpcField rpcField = new SimpleRpcField();
 		rpcField.setValue("roi");
-		rpcField.setLength(20);
+		rpcField.setLength(20.0);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
 		rpcField.setValue("mor");
-		rpcField.setLength(20);
+		rpcField.setLength(20.0);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
-		rpcField.setLength(30);
+		rpcField.setLength(30.0);
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
@@ -47,7 +47,7 @@ public class Jt400RpcConnectionTest {
 
 		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
 
-		Assert.assertEquals("My name is roi mor age        ", rpcResult.getRpcFields().get(2).getValue());
+		Assert.assertEquals("My name is roi mor age", rpcResult.getRpcFields().get(2).getValue());
 	}
 
 	@Test
@@ -57,24 +57,24 @@ public class Jt400RpcConnectionTest {
 
 		SimpleRpcField rpcField = new SimpleRpcField();
 		rpcField.setValue("roi");
-		rpcField.setLength(20);
+		rpcField.setLength(20.0);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
 		rpcField.setValue("mor");
-		rpcField.setLength(20);
+		rpcField.setLength(20.0);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
 		rpcField.setValue(37);
-		rpcField.setLength(3);
+		rpcField.setLength(3.0);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
 		rpcField = new SimpleRpcField();
-		rpcField.setLength(100);
+		rpcField.setLength(100.0);
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getRpcFields().add(rpcField);
 
@@ -83,8 +83,6 @@ public class Jt400RpcConnectionTest {
 		RpcResult rpcResult = rpcConnection.invoke(rpcInvokeAction);
 
 		System.out.println(rpcResult.getRpcFields().get(3).getValue());
-		Assert.assertEquals(
-				"My name is roi mor age 37 years !                                                                   ",
-				rpcResult.getRpcFields().get(3).getValue());
+		Assert.assertEquals("My name is roi mor age 37 years !", rpcResult.getRpcFields().get(3).getValue());
 	}
 }
