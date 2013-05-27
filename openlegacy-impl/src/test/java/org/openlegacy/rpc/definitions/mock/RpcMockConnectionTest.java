@@ -32,5 +32,9 @@ public class RpcMockConnectionTest {
 		RpcField rpcField = rpcResult.getRpcFields().get(0);
 		Assert.assertNotNull(rpcField);
 		Assert.assertEquals("hello", rpcField.getValue());
+
+		rpcField = rpcResult.getRpcFields().get(1);
+		Assert.assertNotNull(rpcField);
+		Assert.assertEquals(1234, rpcField.getValue());
 	}
 }

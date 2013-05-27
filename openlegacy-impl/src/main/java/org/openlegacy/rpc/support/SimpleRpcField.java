@@ -31,7 +31,6 @@ public class SimpleRpcField implements RpcField {
 	@XmlTransient
 	private Object value;
 
-	@SuppressWarnings("unused")
 	@XmlAttribute(name = "value")
 	private String persistedValue;
 
@@ -72,8 +71,18 @@ public class SimpleRpcField implements RpcField {
 
 	public Object getValue() {
 		if (value == null) {
-			value = "";
+			value = persistedValue;
+			if (value != null) {
+				if (type == Integer.class) {
+					value = Integer.parseInt(String.valueOf(value));
+				} else if (type == Float.class) {
+					value = Float.parseFloat(String.valueOf(value));
+				} else if (type == Double.class) {
+					value = Double.parseDouble(String.valueOf(value));
+				}
+			}
 		}
+
 		return value;
 	}
 
@@ -84,10 +93,13 @@ public class SimpleRpcField implements RpcField {
 		this.modified = modified;
 		if (value instanceof Integer) {
 			this.value = BigDecimal.valueOf((Integer)value);
+			this.type = Integer.class;
 		} else if (value instanceof Long) {
 			this.value = BigDecimal.valueOf((Long)value);
+			this.type = Long.class;
 		} else if (value instanceof Float) {
 			this.value = BigDecimal.valueOf((Float)value);
+			this.type = Float.class;
 		} else {
 			this.value = value;
 		}
