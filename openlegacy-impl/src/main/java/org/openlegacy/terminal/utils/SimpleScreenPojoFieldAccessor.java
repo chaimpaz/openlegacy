@@ -18,7 +18,7 @@ import org.openlegacy.terminal.TerminalSnapshot;
 
 import java.text.MessageFormat;
 
-public class SimpleScreenPojoFieldAccessor extends AbstractPojoFieldAccessor implements ScreenPojoFieldAccessor {
+public class SimpleScreenPojoFieldAccessor extends SimplePojoFieldAccessor implements ScreenPojoFieldAccessor {
 
 	protected static final String FIELD_SUFFIX = "Field";
 

@@ -16,6 +16,9 @@ public class RpcActions {
 
 	}
 
+	public static class CREATE extends RpcActionAdapter {
+	}
+
 	public static class READ extends RpcActionAdapter {
 	}
 
@@ -23,6 +26,10 @@ public class RpcActions {
 	}
 
 	public static class DELETE extends RpcActionAdapter {
+	}
+
+	public static CREATE CREATE() {
+		return new CREATE();
 	}
 
 	public static READ READ() {

@@ -24,21 +24,21 @@
 
 
 	<!-- Project controllers -->
-	<context:component-scan base-package="org.openlegacy.terminal.samples.model.web"
+	<context:component-scan base-package="org.openlegacy.rpc.samples.model.web"
 		use-default-filters="false">
 		<context:include-filter expression="org.springframework.stereotype.Controller"
 			type="annotation" />
 	</context:component-scan>
 
-	<!-- Common controllers for terminal sessions -->
-	<context:component-scan base-package="org.openlegacy.terminal.mvc"
+	<!-- Common controllers for rpc sessions -->
+	<context:component-scan base-package="org.openlegacy.rpc.mvc"
 		use-default-filters="false" resource-pattern="*.class">
 		<context:include-filter expression="org.springframework.stereotype.Controller"
 			type="annotation" />
 	</context:component-scan>
 
-	<!-- Common web controllers for terminal sessions -->
-	<context:component-scan base-package="org.openlegacy.terminal.mvc.web"
+	<!-- Common web controllers for rpc sessions -->
+	<context:component-scan base-package="org.openlegacy.rpc.mvc.web"
 		use-default-filters="false" resource-pattern="*.class">
 		<context:include-filter expression="org.springframework.stereotype.Controller"
 			type="annotation" />
@@ -67,12 +67,9 @@
 		<!-- On pre-handle, manage the user's site preference -->
 		<bean class="org.springframework.mobile.device.site.SitePreferenceHandlerInterceptor" />
 
-		<bean class="org.openlegacy.mvc.web.interceptors.InsertPluginsDataInterceptor"/>
-
-		<bean class="org.openlegacy.terminal.mvc.web.interceptors.InsertEntityDefinitionsInterceptor" />
-		<bean class="org.openlegacy.terminal.mvc.web.interceptors.InsertMessagesInterceptor" />
-		<bean class="org.openlegacy.terminal.mvc.web.interceptors.InsertGlobalsInterceptor" />
-		<bean class="org.openlegacy.terminal.mvc.web.interceptors.DesigntimeInterceptor" />
+		<bean class="org.openlegacy.rpc.mvc.web.interceptors.InsertEntityDefinitionsInterceptor" />
+		<bean class="org.openlegacy.rpc.mvc.web.interceptors.InsertGlobalsInterceptor" />
+		<bean class="org.openlegacy.rpc.mvc.web.interceptors.DesigntimeInterceptor" />
         <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" p:paramName="lang"/>
 	</mvc:interceptors>
 	
@@ -99,7 +96,7 @@
 		- is to propagate all exceptions to the servlet container: this will happen 
 		- here with all other types of exceptions. -->
 	<bean
-		class="org.openlegacy.terminal.mvc.web.OpenLegacyExceptionResolver" p:defaultErrorView="uncaughtException">
+		class="org.openlegacy.rpc.mvc.web.OpenLegacyExceptionResolver" p:defaultErrorView="uncaughtException">
 		<property name="exceptionMappings">
 			<props>
 				<prop key=".TypeMismatchException">resourceNotFound</prop>
@@ -121,7 +118,7 @@
 	   <property name="viewClass" value="org.springframework.js.ajax.tiles2.AjaxTilesView"/>
 	</bean>
 	
-	<bean class="org.openlegacy.web.tiles.OpenLegacyTilesConfigurer"
+	<bean class="org.springframework.web.servlet.view.tiles2.TilesConfigurer"
 		id="tilesConfigurer">
 		<property name="definitions">
 			<list>

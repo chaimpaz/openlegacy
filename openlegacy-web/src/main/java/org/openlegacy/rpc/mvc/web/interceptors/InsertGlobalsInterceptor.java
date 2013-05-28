@@ -8,39 +8,31 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web.interceptors;
+package org.openlegacy.rpc.mvc.web.interceptors;
 
-import org.openlegacy.modules.messages.Messages;
+import org.openlegacy.mvc.MvcUtils;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
-
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Intercepter class for spring MVC. Injects messages into the page context so they can be display within the web page
+ * Intercepter class for spring MVC. Injects various globals (login info, etc) into the page context so they can be display within
+ * the web page\
+ * 
  * 
  * @author RoiM
  * 
  */
-public class InsertMessagesInterceptor extends AbstractScreensInterceptor {
+public class InsertGlobalsInterceptor extends AbstractRpcInterceptor {
+
+	@Inject
+	private MvcUtils mvcUtils;
 
 	@Override
 	protected void insertModelData(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
-		if (!getSession().isConnected()) {
-			return;
-		}
-		Messages messagesModule = getSession().getModule(Messages.class);
-		if (messagesModule == null) {
-			return;
-		}
-
-		List<String> messages = messagesModule.getMessages();
-		if (messages.size() > 0) {
-			modelAndView.addObject("ol_messages", messages.toArray());
-		}
-		messagesModule.resetMessages();
-
+		mvcUtils.insertGlobalData(modelAndView, request, response, getSession());
 	}
+
 }

@@ -9,15 +9,6 @@
 
 	<div class="actions">
 		<ul>
-			<li>
-				<spring:message code="label_submit" var="label_submit" htmlEscape="false" />
-				<a href="javascript:doPost('${definitions.entityName}');">
-					<span class="emily_actions_icon emily_actions_submit"><!--  --></span> <!-- 
-					This comment need to make correct margin between span and text
-					 --><img src="${pageContext.request.contextPath}/icons/submit.png"
-					width="15" height="14" alt="Submit" /> ${label_submit}
-				</a>
-			</li>
 			<c:forEach items="${definitions.actions}" var="action">
 				<c:if test="${action.global}">
 					<c:set var="image" value="/icons/${action.alias}.png" />
@@ -34,7 +25,7 @@
 					</li>
 				</c:if>
 			</c:forEach>
-			<c:if test="${fn:length(definitions.tableDefinitions) > 0}">
+			<c:if test="${ol:hasProperty(definitions,'tableDefinitions') and fn:length(definitions.tableDefinitions) > 0}">
 				<li class="right">
 					<spring:message code="label_excel" var="label_excel" htmlEscape="false" />
 					<a href="${pageContext.request.contextPath}/${definitions.entityName}/excel">

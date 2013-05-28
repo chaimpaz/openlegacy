@@ -11,9 +11,9 @@
 package org.openlegacy.rpc.utils;
 
 import org.openlegacy.rpc.RpcPojoFieldAccessor;
-import org.openlegacy.terminal.utils.AbstractPojoFieldAccessor;
+import org.openlegacy.terminal.utils.SimplePojoFieldAccessor;
 
-public class SimpleRpcPojoFieldAccessor extends AbstractPojoFieldAccessor implements RpcPojoFieldAccessor {
+public class SimpleRpcPojoFieldAccessor extends SimplePojoFieldAccessor implements RpcPojoFieldAccessor {
 
 	public SimpleRpcPojoFieldAccessor(Object target) {
 		super(target);

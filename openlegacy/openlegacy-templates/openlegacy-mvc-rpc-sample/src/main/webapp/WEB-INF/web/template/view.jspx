@@ -5,7 +5,7 @@
 	<jsp:output omit-xml-declaration="yes" />
 	 
 	<div class="actions_container">
-		<tiles:insertAttribute name="actions" ignore="true" />
+		<tiles:insertAttribute name="actions" />
 		<tiles:insertAttribute name="body" />
 	</div>
 </jsp:root>

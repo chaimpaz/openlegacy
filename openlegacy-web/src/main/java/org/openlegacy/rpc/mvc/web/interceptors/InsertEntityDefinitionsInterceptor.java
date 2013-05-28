@@ -8,11 +8,13 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web.interceptors;
+package org.openlegacy.rpc.mvc.web.interceptors;
 
-import org.openlegacy.modules.globals.Globals;
-import org.openlegacy.modules.login.Login;
+import org.apache.commons.lang.StringUtils;
 import org.openlegacy.mvc.MvcUtils;
+import org.openlegacy.rpc.RpcEntity;
+import org.openlegacy.rpc.services.RpcEntitiesRegistry;
+import org.openlegacy.support.AbstractEntitiesRegistry;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
@@ -20,28 +22,31 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Intercepter class for spring MVC. Injects various globals (login info, etc) into the page context so they can be display within
- * the web page\
- * 
+ * Intercepter class for spring MVC. Injects commonly used beans into the page context so they can be accessed via the web page
  * 
  * @author RoiM
  * 
  */
-public class InsertGlobalsInterceptor extends AbstractScreensInterceptor {
+public class InsertEntityDefinitionsInterceptor extends AbstractRpcInterceptor {
+
+	@Inject
+	private RpcEntitiesRegistry entitiesRegistry;
 
 	@Inject
 	private MvcUtils mvcUtils;
 
 	@Override
 	protected void insertModelData(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
+		String modelName = StringUtils.uncapitalize(modelAndView.getViewName());
+		RpcEntity entity = (RpcEntity)modelAndView.getModel().get(modelName);
 
-		mvcUtils.insertGlobalData(modelAndView, request, response, getSession());
+		mvcUtils.insertModelObjects(modelAndView, entity, entitiesRegistry);
 
-		Login loginModule = getSession().getModule(Login.class);
-		if (loginModule.isLoggedIn()) {
-			modelAndView.addObject("ol_loggedInUser", loginModule.getLoggedInUser());
+		if (entitiesRegistry.isDirty()) {
+			// set the registry back to clean - for design-time purposes only!
+			((AbstractEntitiesRegistry<?, ?>)entitiesRegistry).setDirty(false);
 		}
-		modelAndView.addObject("ol_globals", getSession().getModule(Globals.class).getGlobals());
+
 	}
 
 }

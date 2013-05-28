@@ -16,7 +16,7 @@ package org.openlegacy;
  * @author Roi Mor
  * 
  */
-public interface EntityFieldAccessor {
+public interface PojoFieldAccessor {
 
 	boolean isExists(String fieldName);
 
@@ -56,5 +56,7 @@ public interface EntityFieldAccessor {
 	 * @return the field value
 	 */
 	Object getFieldValue(String fieldName);
+
+	Object evaluateFieldValue(String name);
 
 }

@@ -13,7 +13,7 @@ package org.openlegacy.terminal.utils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openlegacy.EntityFieldAccessor;
+import org.openlegacy.PojoFieldAccessor;
 import org.openlegacy.utils.ProxyUtil;
 import org.openlegacy.utils.StringUtil;
 import org.springframework.beans.DirectFieldAccessor;
@@ -23,19 +23,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AbstractPojoFieldAccessor implements EntityFieldAccessor {
+public class SimplePojoFieldAccessor implements PojoFieldAccessor {
 
 	protected DirectFieldAccessor directFieldAccessor;
 
 	private Object target;
 
-	private final static Log logger = LogFactory.getLog(AbstractPojoFieldAccessor.class);
+	private final static Log logger = LogFactory.getLog(SimplePojoFieldAccessor.class);
 
 	private Map<String, DirectFieldAccessor> partAccessors;
 
 	private String concatSeperator = " - ";
 
-	public AbstractPojoFieldAccessor(Object target) {
+	public SimplePojoFieldAccessor(Object target) {
 		target = ProxyUtil.getTargetObject(target);
 		directFieldAccessor = new DirectFieldAccessor(target);
 		this.target = target;

@@ -27,6 +27,10 @@
 
 	<!-- Place holder for code generation --> 
 
+	<definition name="ItemDetails" extends="template"> 
+		<put-attribute name="body" value="/WEB-INF/web/views/ItemDetails.jspx" />
+	</definition> 
+
 	<!-- A generic API page view -->
 	<definition name="generic" extends="template">
 		<put-attribute name="body" value="/WEB-INF/web/views/generic.jspx" />

@@ -14,48 +14,30 @@
 	
     <context:property-placeholder location="classpath*:/*.properties"/>
 	
-	<import resource="classpath*:/META-INF/openlegacy-webenabling-context.xml"/>
-
-	<import resource="classpath:/META-INF/spring/actions-mappings.xml"/>
+	<import resource="classpath:/META-INF/openlegacy-rpc-basic-context.xml" /> 
+	
+	<bean id="openLegacyWebProperties" class="org.openlegacy.mvc.SimpleOpenLegacyWebProperties" />
 		
-	<bean id="screensRegistry" class="org.openlegacy.terminal.support.DefaultScreenEntitiesRegistry">
+	<bean id="rpcRegistry" class="org.openlegacy.rpc.support.DefaultRpcEntitiesRegistry">
 	    <property name="packages">
 	        <list>
-	            <value>apps.inventory.screens</value>
+	            <value>org.openlegacy.rpc.samples.model</value>
             </list>
 	    </property>
     </bean>
 	
-<!--
- 	<bean id="htmlProportionsHandler" class="org.openlegacy.terminal.web.render.support.DefaultHtmlProportionsHandler" p:rowProportion="22" p:columnProportion="11" p:fontSize="19" p:inputHeight="22" />
- -->
-
 <!-- Use this definition to replay a mock-up session application
- 	<bean id="terminalConnectionFactory"
-		class="org.openlegacy.terminal.mock.MockTerminalConnectionFactory">
+ 	<bean id="rpcConnectionFactory"
+		class="org.openlegacy.rpc.mock.MockRpcConnectionFactory">
 		<property name="root" value="/trails" />
 		<property name="trailName" value="demo_session.trail" />
 	</bean>
-	
-	<bean id="terminalSession" class="org.openlegacy.terminal.support.MockupTerminalSession" scope="session" parent="abstractTerminalSession">
-		<property name="terminalConnection">
-			<bean class="org.openlegacy.terminal.mock.MockTerminalConnection" factory-bean="terminalConnectionFactory" factory-method="getConnection">
-				<constructor-arg>
-					<bean class="org.openlegacy.terminal.support.SimpleConnectionProperties" />
-				</constructor-arg>
-			</bean>
-		</property>
+-->
+	<bean id="rpcSession" parent="abstractRpcSession" scope="session">
+		<property name="connection" ref="rpcConnection" />
 	    <aop:scoped-proxy/>
 	</bean>
--->
 
- 	<util:map id="ipDevice">
-		<!-- example of set device for IP - add more (ipV4 and ipV6 style)
-   		<entry key="127.0.0.1" value="device1" />
-		<entry key="0:0:0:0:0:0:0:1" value="device2" />
-		-->
-	</util:map>
- 
  	<bean id="sessionPropertiesProvider" scope="request" class="org.openlegacy.terminal.web.RequestBasedSessionPropertiesProvider">
  		<property name="ipDevice" ref="ipDevice" />
  		<aop:scoped-proxy/>

@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.openlegacy.rpc;
 
-import org.openlegacy.EntityFieldAccessor;
+import org.openlegacy.PojoFieldAccessor;
 
 /**
  * An interface for accessing POJO's marked with {@link RpcEntity} annotations
  * 
  * @author Roi Mor
  */
-public interface RpcPojoFieldAccessor extends EntityFieldAccessor {
+public interface RpcPojoFieldAccessor extends PojoFieldAccessor {
 
 }

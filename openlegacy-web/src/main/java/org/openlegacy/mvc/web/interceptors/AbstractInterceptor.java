@@ -8,20 +8,16 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web.interceptors;
+package org.openlegacy.mvc.web.interceptors;
 
-import org.openlegacy.terminal.TerminalSession;
+import org.openlegacy.Session;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public abstract class AbstractInterceptor extends HandlerInterceptorAdapter {
-
-	@Inject
-	private TerminalSession terminalSession;
+public abstract class AbstractInterceptor<S extends Session> extends HandlerInterceptorAdapter {
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
@@ -38,9 +34,7 @@ public abstract class AbstractInterceptor extends HandlerInterceptorAdapter {
 		insertModelData(modelAndView, request, response);
 	}
 
-	protected TerminalSession getTerminalSession() {
-		return terminalSession;
-	}
+	protected abstract Session getSession();
 
 	protected abstract void insertModelData(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response);
 }

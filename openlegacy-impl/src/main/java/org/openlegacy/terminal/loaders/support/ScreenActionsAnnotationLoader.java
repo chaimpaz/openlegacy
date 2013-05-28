@@ -64,7 +64,7 @@ public class ScreenActionsAnnotationLoader extends AbstractClassAnnotationLoader
 				}
 				SimpleTerminalActionDefinition actionDefinition = null;
 				String displayName = action.displayName().length() > 0 ? action.displayName()
-						: StringUtil.toDisplayName(action.action().getClass().getSimpleName());
+						: StringUtil.toDisplayName(action.action().getSimpleName());
 				if (action.additionalKey() != AdditionalKey.NONE || position != null) {
 					actionDefinition = new SimpleTerminalActionDefinition(TerminalActions.combined(action.additionalKey(),
 							theAction), action.additionalKey(), displayName, position);

@@ -29,6 +29,8 @@
 	
 	<!-- Open legacy default beans -->
 
+
+	<bean id="openLegacyProperties" class="org.openlegacy.utils.SimpleOpenLegacyProperties" />
 	<bean id="sessionPropertiesProvider" class="org.openlegacy.support.SimpleSessionPropertiesProvider" />
 	<bean id="fieldFormatter" class="org.openlegacy.support.SimpleFieldFormatter" p:trim="true" />
 

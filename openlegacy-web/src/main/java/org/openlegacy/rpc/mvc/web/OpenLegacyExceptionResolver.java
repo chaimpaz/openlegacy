@@ -8,13 +8,13 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web;
+package org.openlegacy.rpc.mvc.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.exceptions.SessionEndedException;
 import org.openlegacy.mvc.MvcUtils;
-import org.openlegacy.terminal.TerminalSession;
+import org.openlegacy.rpc.RpcSession;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
 
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class OpenLegacyExceptionResolver extends SimpleMappingExceptionResolver {
 
-	public static final String TERMINAL_SESSION_WEB_SESSION_ATTRIBUTE_NAME = "scopedTarget.terminalSession";
+	public static final String RPC_SESSION_WEB_SESSION_ATTRIBUTE_NAME = "scopedTarget.rpcSession";
 
 	@Inject
 	private MvcUtils mvcUtils;
@@ -33,28 +33,21 @@ public class OpenLegacyExceptionResolver extends SimpleMappingExceptionResolver 
 
 	@Override
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-		TerminalSession terminalSession = (TerminalSession)request.getSession().getAttribute(
-				TERMINAL_SESSION_WEB_SESSION_ATTRIBUTE_NAME);
+		RpcSession rpcSession = (RpcSession)request.getSession().getAttribute(RPC_SESSION_WEB_SESSION_ATTRIBUTE_NAME);
 		if (ex instanceof SessionEndedException) {
-			if (terminalSession != null) {
+			if (rpcSession != null) {
 				try {
-					terminalSession.disconnect();
+					rpcSession.disconnect();
 				} catch (Exception e) {
 					// do nothing
 				}
-			}
-		} else {
-			try {
-				logger.error("Error occoured. Current screen is:\n" + terminalSession.getSnapshot());
-			} catch (Exception e) {
-				logger.fatal("Unable to print current screen", e);
 			}
 		}
 
 		logger.fatal(ex.getMessage(), ex);
 
 		ModelAndView modelAndView = super.resolveException(request, response, handler, ex);
-		mvcUtils.insertGlobalData(modelAndView, request, response, terminalSession);
+		mvcUtils.insertGlobalData(modelAndView, request, response, rpcSession);
 		return modelAndView;
 	}
 }

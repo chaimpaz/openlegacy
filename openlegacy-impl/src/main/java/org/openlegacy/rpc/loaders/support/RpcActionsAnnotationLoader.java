@@ -53,11 +53,11 @@ public class RpcActionsAnnotationLoader extends AbstractClassAnnotationLoader {
 
 				SimpleRpcActionDefinition actionDefinition = null;
 				String displayName = action.displayName().length() > 0 ? action.displayName()
-						: StringUtil.toDisplayName(action.action().getClass().getSimpleName());
+						: StringUtil.toDisplayName(action.action().getSimpleName());
 				actionDefinition = new SimpleRpcActionDefinition(ReflectionUtil.newInstance(theAction), displayName);
 
 				if (StringUtils.isEmpty(action.alias())) {
-					actionDefinition.setAlias(displayName);
+					actionDefinition.setAlias(StringUtils.uncapitalize(displayName));
 				} else {
 					actionDefinition.setAlias(action.alias());
 				}

@@ -39,7 +39,6 @@ public class SimpleScreenFieldDefinition extends AbstractFieldDefinition<ScreenF
 
 	private TerminalPosition endPosition;
 
-	private boolean rightToLeft;
 	private String whenFilter;
 	private String unlessFilter;
 
@@ -126,14 +125,6 @@ public class SimpleScreenFieldDefinition extends AbstractFieldDefinition<ScreenF
 
 	public boolean isMultyLine() {
 		return getEndPosition().getRow() != getPosition().getRow();
-	}
-
-	public boolean isRightToLeft() {
-		return rightToLeft;
-	}
-
-	public void setRightToLeft(boolean rightToLeft) {
-		this.rightToLeft = rightToLeft;
 	}
 
 	public FieldAttributeType getAttribute() {

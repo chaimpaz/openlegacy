@@ -38,8 +38,8 @@ import org.openlegacy.terminal.services.ScreenEntitiesRegistry;
 import org.openlegacy.terminal.services.ScreensRecognizer;
 import org.openlegacy.terminal.services.SessionNavigator;
 import org.openlegacy.terminal.support.proxy.ScreenEntityMethodInterceptor;
-import org.openlegacy.terminal.utils.ScreenEntityUtils;
 import org.openlegacy.terminal.wait_conditions.WaitCondition;
+import org.openlegacy.utils.EntityUtils;
 import org.openlegacy.utils.ProxyUtil;
 import org.openlegacy.utils.ReflectionUtil;
 import org.openlegacy.utils.SpringUtil;
@@ -79,7 +79,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 	private TerminalActionMapper terminalActionMapper;
 
 	@Inject
-	private ScreenEntityUtils screenEntityUtils;
+	private EntityUtils entityUtils;
 
 	@Inject
 	private OpenLegacyProperties openLegacyProperties;
@@ -95,6 +95,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 
 	private ConnectionProperties connectionProperties;
 
+	@Inject
 	private ScreenEntitiesRegistry screenEntitiesRegistry;
 
 	@SuppressWarnings("unchecked")
@@ -109,7 +110,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		if (entity == null) {
 			entity = getEntityInner();
 		}
-		if (!screenEntityUtils.isEntitiesEquals(entity, screenEntityClass, keys)) {
+		if (!entityUtils.isEntitiesEquals(screenEntitiesRegistry, entity, screenEntityClass, keys)) {
 			resetEntity();
 		}
 		ScreenEntityDefinition definitions = getScreenEntitiesRegistry().get(screenEntityClass);

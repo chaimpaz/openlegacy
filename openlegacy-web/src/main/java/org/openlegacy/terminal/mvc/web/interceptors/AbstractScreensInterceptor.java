@@ -8,9 +8,21 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web;
+package org.openlegacy.terminal.mvc.web.interceptors;
 
-public class WebConstants {
+import org.openlegacy.mvc.web.interceptors.AbstractInterceptor;
+import org.openlegacy.terminal.TerminalSession;
 
-	public static final String TERMINAL_SESSION_WEB_SESSION_ATTRIBUTE_NAME = "scopedTarget.terminalSession";
+import javax.inject.Inject;
+
+public abstract class AbstractScreensInterceptor extends AbstractInterceptor<TerminalSession> {
+
+	@Inject
+	private TerminalSession terminalSession;
+
+	@Override
+	protected TerminalSession getSession() {
+		return terminalSession;
+	}
+
 }

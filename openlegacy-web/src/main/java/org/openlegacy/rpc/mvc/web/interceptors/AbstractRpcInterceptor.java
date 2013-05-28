@@ -8,22 +8,20 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.mvc.web.interceptors;
+package org.openlegacy.rpc.mvc.web.interceptors;
 
-import org.openlegacy.Session;
-import org.openlegacy.mvc.web.interceptors.AbstractDesigntimeInterceptor;
-import org.openlegacy.terminal.TerminalSession;
+import org.openlegacy.mvc.web.interceptors.AbstractInterceptor;
+import org.openlegacy.rpc.RpcSession;
 
 import javax.inject.Inject;
 
-public class DesigntimeInterceptor extends AbstractDesigntimeInterceptor {
+public abstract class AbstractRpcInterceptor extends AbstractInterceptor<RpcSession> {
 
 	@Inject
-	private TerminalSession terminalSession;
+	private RpcSession rpcSession;
 
 	@Override
-	protected Session getSession() {
-		return terminalSession;
+	protected RpcSession getSession() {
+		return rpcSession;
 	}
-
 }

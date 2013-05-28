@@ -40,6 +40,8 @@ public abstract class AbstractFieldDefinition<D extends FieldDefinition> impleme
 	private Class<?> javaType;
 	private String javaTypeName;
 
+	private boolean rightToLeft;
+
 	public AbstractFieldDefinition(String name, Class<? extends FieldType> type) {
 		this.name = name;
 		this.type = type;
@@ -147,6 +149,14 @@ public abstract class AbstractFieldDefinition<D extends FieldDefinition> impleme
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
+	}
+
+	public boolean isRightToLeft() {
+		return rightToLeft;
+	}
+
+	public void setRightToLeft(boolean rightToLeft) {
+		this.rightToLeft = rightToLeft;
 	}
 
 }

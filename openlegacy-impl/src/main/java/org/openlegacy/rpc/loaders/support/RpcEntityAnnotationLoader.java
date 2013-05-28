@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.annotations.rpc.RpcEntity;
+import org.openlegacy.annotations.screen.AnnotationConstants;
 import org.openlegacy.loaders.support.AbstractClassAnnotationLoader;
 import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 import org.openlegacy.rpc.services.RpcEntitiesRegistry;
@@ -40,9 +41,10 @@ public class RpcEntityAnnotationLoader extends AbstractClassAnnotationLoader {
 		RpcEntity rpcAnnotation = (RpcEntity)annotation;
 		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
 
-		String rpcEntityName = rpcAnnotation.name().length() > 0 ? rpcAnnotation.name() : containingClass.getSimpleName();
-		String displayName = rpcAnnotation.displayName().length() > 0 ? rpcAnnotation.displayName()
-				: StringUtil.toDisplayName(rpcEntityName);
+		String rpcEntityName = rpcAnnotation.name().equals(AnnotationConstants.NULL) ? containingClass.getSimpleName()
+				: rpcAnnotation.name();
+		String displayName = rpcAnnotation.displayName().equals(AnnotationConstants.NULL) ? StringUtil.toDisplayName(rpcEntityName)
+				: rpcAnnotation.displayName();
 
 		SimpleRpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition(rpcEntityName, containingClass);
 		rpcEntityDefinition.setDisplayName(displayName);
