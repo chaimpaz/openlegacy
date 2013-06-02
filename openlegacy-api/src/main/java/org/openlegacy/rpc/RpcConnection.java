@@ -11,6 +11,4 @@ public interface RpcConnection extends ApplicationConnection<RpcSnapshot, RpcInv
 	void disconnect();
 
 	RpcResult invoke(RpcInvokeAction rpcInvokeAction);
-
-	Integer getSequence();
 }

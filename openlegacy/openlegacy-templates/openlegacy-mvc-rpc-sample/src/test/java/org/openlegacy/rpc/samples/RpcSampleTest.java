@@ -26,7 +26,7 @@ public class RpcSampleTest {
 		ItemDetails itemDetails = rpcSession.getEntity(ItemDetails.class, 123);
 		Assert.assertNotNull(itemDetails);
 		Assert.assertEquals("Domino cubes", itemDetails.getItemName());
-		Assert.assertEquals("Dominos cubes black/white", itemDetails.getItemDescription());
+		Assert.assertEquals("Dominos cubes black/red", itemDetails.getItemDescription());
 		Assert.assertEquals(Integer.valueOf(5), itemDetails.getItemWeight());
 	}
 }

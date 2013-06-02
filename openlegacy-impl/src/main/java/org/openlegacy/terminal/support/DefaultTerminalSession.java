@@ -13,6 +13,7 @@ package org.openlegacy.terminal.support;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openlegacy.ApplicationConnectionListener;
 import org.openlegacy.OpenLegacyProperties;
 import org.openlegacy.exceptions.EntityNotAccessibleException;
 import org.openlegacy.exceptions.EntityNotFoundException;
@@ -25,7 +26,6 @@ import org.openlegacy.terminal.ScreenEntity;
 import org.openlegacy.terminal.ScreenEntityBinder;
 import org.openlegacy.terminal.TerminalActionMapper;
 import org.openlegacy.terminal.TerminalConnection;
-import org.openlegacy.terminal.TerminalConnectionListener;
 import org.openlegacy.terminal.TerminalField;
 import org.openlegacy.terminal.TerminalSendAction;
 import org.openlegacy.terminal.TerminalSession;
@@ -240,17 +240,17 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 	protected void notifyModulesBeforeSend(TerminalSendAction terminalSendAction) {
 		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
 		for (SessionModule sessionModule : modulesList) {
-			if (sessionModule instanceof TerminalConnectionListener) {
-				((TerminalConnectionListener)sessionModule).beforeSendAction(terminalConnection, terminalSendAction);
+			if (sessionModule instanceof ApplicationConnectionListener) {
+				((ApplicationConnectionListener)sessionModule).beforeAction(terminalConnection, terminalSendAction);
 			}
 		}
 	}
 
-	protected void notifyModulesAfterSend() {
+	protected void notifyModulesAfterAction(TerminalSendAction sendAction) {
 		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
 		for (SessionModule sessionModule : modulesList) {
-			if (sessionModule instanceof TerminalConnectionListener) {
-				((TerminalConnectionListener)sessionModule).afterSendAction(terminalConnection);
+			if (sessionModule instanceof ApplicationConnectionListener) {
+				((ApplicationConnectionListener)sessionModule).afterAction(terminalConnection, sendAction, getSnapshot());
 			}
 		}
 	}
@@ -345,9 +345,10 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		resetEntity();
 
 		performWait(waitConditions);
-		notifyModulesAfterSend();
 
 		logScreenAfter();
+
+		notifyModulesAfterAction(sendAction);
 	}
 
 	protected void formatSendAction(TerminalSendAction sendAction) {
@@ -445,7 +446,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		terminalConnection.flip();
 		// force update
 		terminalConnection.fetchSnapshot();
-		notifyModulesAfterSend();
+		notifyModulesAfterAction(null);
 	}
 
 }

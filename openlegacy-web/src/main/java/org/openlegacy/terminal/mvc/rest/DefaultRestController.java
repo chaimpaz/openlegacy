@@ -26,7 +26,6 @@ import org.openlegacy.terminal.ScreenEntity;
 import org.openlegacy.terminal.TerminalSession;
 import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
 import org.openlegacy.terminal.json.ScreenEntitySerializationUtils;
-import org.openlegacy.terminal.modules.trail.TrailUtil;
 import org.openlegacy.terminal.services.ScreenEntitiesRegistry;
 import org.openlegacy.terminal.support.SimpleScreenEntityWrapper;
 import org.openlegacy.terminal.utils.ScreenEntityUtils;
@@ -81,9 +80,6 @@ public class DefaultRestController {
 
 	@Inject
 	private ScreenEntityUtils screenEntityUtils;
-
-	@Inject
-	private TrailUtil trailUtil;
 
 	@RequestMapping(value = "/login", consumes = { JSON, XML })
 	public void login(@RequestParam(USER) String user, @RequestParam(PASSWORD) String password, HttpServletResponse response)

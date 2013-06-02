@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.openlegacy.rpc.modules.trail;
 
+import org.openlegacy.ApplicationConnection;
+import org.openlegacy.RemoteAction;
+import org.openlegacy.Snapshot;
 import org.openlegacy.modules.trail.SessionTrail;
 import org.openlegacy.modules.trail.Trail;
 import org.openlegacy.rpc.RpcConnection;
@@ -34,8 +37,8 @@ public class DefaultRpcTrailModule extends RpcSessionModuleAdapter implements Tr
 	}
 
 	@Override
-	public void afterInvokeAction(RpcConnection rpcConnection, RpcInvokeAction rpcInvokeAction, RpcResult rpcResult) {
-		sessionTrail.appendSnapshot(new RpcPersistedSnapshot(rpcInvokeAction, rpcResult, rpcConnection.getSequence()));
+	public void afterAction(ApplicationConnection<?, ?> connection, RemoteAction action, Snapshot result) {
+		sessionTrail.appendSnapshot(new RpcPersistedSnapshot((RpcInvokeAction)action, (RpcResult)result, connection.getSequence()));
 	}
 
 	public void setSessionTrail(SessionTrail<RpcSnapshot> sessionTrail) {

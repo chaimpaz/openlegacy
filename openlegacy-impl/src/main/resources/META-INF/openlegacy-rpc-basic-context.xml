@@ -30,6 +30,7 @@
 	<!-- Open legacy default beans -->
 
 
+	<bean id="sessionsRegistry" class="org.openlegacy.support.SimpleSessionsRegistry" />
 	<bean id="openLegacyProperties" class="org.openlegacy.utils.SimpleOpenLegacyProperties" />
 	<bean id="sessionPropertiesProvider" class="org.openlegacy.support.SimpleSessionPropertiesProvider" />
 	<bean id="fieldFormatter" class="org.openlegacy.support.SimpleFieldFormatter" p:trim="true" />
@@ -46,6 +47,7 @@
 									p:historyCount="3" />
 							</property>
 						</bean>
+						<bean class="org.openlegacy.rpc.modules.registry.DefaultSessionRegistryModule" />
 					</list>
 				</property>
 			</bean>

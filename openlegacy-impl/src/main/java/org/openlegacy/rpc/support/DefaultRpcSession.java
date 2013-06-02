@@ -1,8 +1,9 @@
 package org.openlegacy.rpc.support;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openlegacy.ApplicationConnection;
-import org.openlegacy.FieldFormatter;
+import org.openlegacy.ApplicationConnectionListener;
 import org.openlegacy.definitions.ActionDefinition;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.definitions.RpcActionDefinition;
@@ -38,9 +39,6 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 
 	@Inject
 	private RpcEntitiesRegistry rpcEntitiesRegistry;
-
-	@Inject
-	private FieldFormatter fieldFormatter;
 
 	public Object getDelegate() {
 		return rpcConnection;
@@ -120,15 +118,19 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 	}
 
 	private RpcResult invoke(SimpleRpcInvokeAction rpcAction) {
+		// clone to avoid modifications by connection of fields collection
+		SimpleRpcInvokeAction clonedRpcAction = (SimpleRpcInvokeAction)SerializationUtils.clone(rpcAction);
 		RpcResult rpcResult = rpcConnection.invoke(rpcAction);
-		notifyModulesAfterSend(rpcAction, rpcResult);
+		notifyModulesAfterSend(clonedRpcAction, rpcResult);
 		return rpcResult;
 	}
 
 	protected void notifyModulesAfterSend(SimpleRpcInvokeAction rpcAction, RpcResult rpcResult) {
 		Collection<? extends SessionModule> modulesList = getSessionModules().getModules();
 		for (SessionModule sessionModule : modulesList) {
-			((RpcSessionModuleAdapter)sessionModule).afterInvokeAction((RpcConnection)getConnection(), rpcAction, rpcResult);
+			if (sessionModule instanceof ApplicationConnectionListener) {
+				((ApplicationConnectionListener)sessionModule).afterAction(getConnection(), rpcAction, rpcResult);
+			}
 		}
 	}
 

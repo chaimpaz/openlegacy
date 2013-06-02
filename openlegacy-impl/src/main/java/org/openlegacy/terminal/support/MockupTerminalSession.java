@@ -83,11 +83,6 @@ public class MockupTerminalSession extends DefaultTerminalSession {
 		snapshotsList.next();
 	}
 
-	@Override
-	protected void notifyModulesAfterSend() {
-		super.notifyModulesAfterSend();
-	}
-
 	public void setTerminalConnection(MockTerminalConnection terminalConnection) {
 		super.setConnection(terminalConnection);
 

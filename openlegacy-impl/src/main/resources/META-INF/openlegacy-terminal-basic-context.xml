@@ -28,7 +28,7 @@
 	
 	<!-- Open legacy default beans -->
 
-	<bean class="org.openlegacy.terminal.modules.trail.TrailUtil" />
+	<bean class="org.openlegacy.modules.trail.TrailUtil" />
 	
 	<bean id="openLegacyProperties" class="org.openlegacy.utils.SimpleOpenLegacyProperties" />
 	

@@ -16,8 +16,12 @@ package org.openlegacy;
  */
 public interface ApplicationConnectionListener {
 
-	void beforeConnect(ApplicationConnection<?, ?> applicationConnection);
+	void beforeConnect(ApplicationConnection<?, ?> connection);
 
-	void afterConnect(ApplicationConnection<?, ?> applicationConnection);
+	void afterConnect(ApplicationConnection<?, ?> connection);
+
+	void beforeAction(ApplicationConnection<?, ?> connection, RemoteAction action);
+
+	void afterAction(ApplicationConnection<?, ?> connection, RemoteAction action, Snapshot result);
 
 }

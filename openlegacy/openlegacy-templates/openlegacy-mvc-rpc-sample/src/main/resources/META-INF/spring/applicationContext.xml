@@ -39,7 +39,6 @@
 	</bean>
 
  	<bean id="sessionPropertiesProvider" scope="request" class="org.openlegacy.terminal.web.RequestBasedSessionPropertiesProvider">
- 		<property name="ipDevice" ref="ipDevice" />
  		<aop:scoped-proxy/>
  	</bean>
 		

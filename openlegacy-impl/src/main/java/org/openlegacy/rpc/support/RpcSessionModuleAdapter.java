@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.openlegacy.rpc.support;
 
-import org.openlegacy.rpc.RpcConnection;
-import org.openlegacy.rpc.RpcInvokeAction;
-import org.openlegacy.rpc.RpcResult;
 import org.openlegacy.rpc.RpcSession;
 import org.openlegacy.rpc.RpcSessionModule;
 import org.openlegacy.support.SessionModuleAdapter;
-import org.openlegacy.terminal.TerminalConnection;
 import org.openlegacy.utils.SpringUtil;
 
 import java.io.Serializable;
@@ -33,22 +29,6 @@ public abstract class RpcSessionModuleAdapter extends SessionModuleAdapter<RpcSe
 	 * for serialization purpose only
 	 */
 	public RpcSessionModuleAdapter() {}
-
-	public void beforeConnect(TerminalConnection terminalConnection) {
-		// allow override
-	}
-
-	public void afterConnect(TerminalConnection terminalConnection) {
-		// allow override
-	}
-
-	public void beforeInvokeAction(RpcConnection rpcConnection, RpcInvokeAction rpcInvokeAction) {
-		// allow override
-	}
-
-	public void afterInvokeAction(RpcConnection rpcConnection, RpcInvokeAction rpcInvokeAction, RpcResult rpcResult) {
-		// allow override
-	}
 
 	public void destroy() {
 		// allow override

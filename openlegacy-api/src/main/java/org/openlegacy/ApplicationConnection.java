@@ -36,4 +36,6 @@ public interface ApplicationConnection<S extends Snapshot, A extends RemoteActio
 	void disconnect();
 
 	void doAction(A sendAction);
+
+	Integer getSequence();
 }

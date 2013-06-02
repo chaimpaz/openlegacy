@@ -8,18 +8,12 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal;
+package org.openlegacy.rpc.modules.registry;
 
-import org.openlegacy.ApplicationConnectionListener;
+import org.openlegacy.modules.registry.Registry;
+import org.openlegacy.terminal.modules.registry.AbstractSessionRegistryModule;
 
-/**
- * Define a terminal session override-able methods which happens before & after a terminal session action
- * 
- */
-public interface TerminalConnectionListener extends ApplicationConnectionListener {
+public class DefaultSessionRegistryModule extends AbstractSessionRegistryModule implements Registry {
 
-	void beforeSendAction(TerminalConnection terminalConnection, TerminalSendAction terminalSendAction);
-
-	void afterSendAction(TerminalConnection terminalConnection);
-
+	private static final long serialVersionUID = 1L;
 }

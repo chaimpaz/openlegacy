@@ -3,6 +3,9 @@ package org.openlegacy.providers.jt400;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openlegacy.Snapshot;
+import org.openlegacy.modules.trail.SessionTrail;
+import org.openlegacy.modules.trail.Trail;
 import org.openlegacy.providers.jt400.mockup.RpgStrNum;
 import org.openlegacy.rpc.RpcActions;
 import org.openlegacy.rpc.RpcSession;
@@ -28,6 +31,7 @@ public class Jt400RpcSessionTest {
 		rpcStrNum.setAge(40);
 		rpcStrNum = rpcSession.doAction(RpcActions.READ(), rpcStrNum);
 
+		SessionTrail<? extends Snapshot> trail = rpcSession.getModule(Trail.class).getSessionTrail();
 		Assert.assertEquals("My name is John Doe age 40 years !", rpcStrNum.getMessage());
 	}
 }

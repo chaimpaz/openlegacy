@@ -8,17 +8,14 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.modules.trail;
+package org.openlegacy.modules.trail;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.OpenLegacyProperties;
+import org.openlegacy.Session;
 import org.openlegacy.Snapshot;
-import org.openlegacy.modules.trail.SessionTrail;
-import org.openlegacy.modules.trail.Trail;
-import org.openlegacy.modules.trail.TrailWriter;
-import org.openlegacy.terminal.TerminalSession;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +37,7 @@ public class TrailUtil {
 	@Inject
 	private TrailWriter trailWriter;
 
-	public void saveTrail(TerminalSession terminalSession) {
+	public void saveTrail(Session session) {
 
 		String trailPath = openLegacyProperties.getProperty(OpenLegacyProperties.TRAIL_FOLDER_PATH);
 
@@ -48,17 +45,17 @@ public class TrailUtil {
 			return;
 		}
 
-		if (!terminalSession.isConnected()) {
+		if (!session.isConnected()) {
 			return;
 		}
 
-		SessionTrail<? extends Snapshot> trail = terminalSession.getModule(Trail.class).getSessionTrail();
+		SessionTrail<? extends Snapshot> trail = session.getModule(Trail.class).getSessionTrail();
 		OutputStream trailOut = null;
 
 		Calendar cal = Calendar.getInstance();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("HHmm");
 		try {
-			File trailFile = new File(trailPath, MessageFormat.format("{0}_{1}.trail", terminalSession.getProperties().getId(),
+			File trailFile = new File(trailPath, MessageFormat.format("{0}_{1}.trail", session.getProperties().getId(),
 					dateFormat.format(cal.getTime())));
 			if (!trailFile.getParentFile().exists()) {
 				trailFile.getParentFile().mkdirs();

@@ -11,11 +11,12 @@
 package org.openlegacy.terminal.modules.globals;
 
 import org.openlegacy.ApplicationConnection;
+import org.openlegacy.RemoteAction;
+import org.openlegacy.Snapshot;
 import org.openlegacy.definitions.FieldDefinition;
 import org.openlegacy.modules.globals.Globals;
 import org.openlegacy.terminal.ScreenEntity;
 import org.openlegacy.terminal.ScreenPojoFieldAccessor;
-import org.openlegacy.terminal.TerminalConnection;
 import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
 import org.openlegacy.terminal.services.ScreenEntitiesRegistry;
 import org.openlegacy.terminal.support.TerminalSessionModuleAdapter;
@@ -52,7 +53,7 @@ public class DefaultGlobalsModule extends TerminalSessionModuleAdapter implement
 	}
 
 	@Override
-	public void afterSendAction(TerminalConnection terminalConnection) {
+	public void afterAction(ApplicationConnection<?, ?> connection, RemoteAction action, Snapshot result) {
 		collectGlobals();
 	}
 
