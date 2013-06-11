@@ -1,0 +1,61 @@
+<pcml version="1.0">
+
+<!-- PCML source for calling "Open List of Authorized Users" (QGYOLAUS) API -->
+    
+  <!-- Format AUTU0150 - Other formats are available -->
+  <struct name="autu0150">
+    <data name="name"         type="char" length="10" />
+    <data name="userOrGroup"  type="char" length="1"  />
+    <data name="groupMembers" type="char" length="1"  />
+    <data name="description"  type="char" length="50" />
+  </struct>
+    
+  <!-- List information structure (common for "Open List" type APIs) -->
+  <struct name="listInfo">
+    <data name="totalRcds"    type="int"  length="4" />
+    <data name="rcdsReturned" type="int"  length="4" />
+    <data name="rqsHandle"    type="byte" length="4" />
+    <data name="rcdLength"    type="int"  length="4" />
+    <data name="infoComplete" type="char" length="1" />
+    <data name="dateCreated"  type="char" length="7" />
+    <data name="timeCreated"  type="char" length="6" />
+    <data name="listStatus"   type="char" length="1" />
+    <data                     type="byte" length="1" />
+    <data name="lengthOfInfo" type="int"  length="4" />
+    <data name="firstRecord"  type="int"  length="4" />
+    <data                     type="byte" length="40" />
+  </struct>
+        
+  <!-- Program QGYOLAUS and its parameter list for retrieving AUTU0150 format -->
+  <program name="qgyolaus" path="/QSYS.lib/QGY.lib/QGYOLAUS.pgm" parseorder="listInfo receiver">
+    <data   name="receiver"       type="struct" struct="autu0150" usage="output" 
+              count="listInfo.rcdsReturned" outputsize="receiverLength" />
+    <data   name="receiverLength" type="int"    length="4"        usage="input" init="16384" />
+    <data   name="listInfo"       type="struct" struct="listInfo" usage="output" />
+    <data   name="rcdsToReturn"   type="int"    length="4"        usage="input" init="264" />
+    <data   name="format"         type="char"   length="10"       usage="input" init="AUTU0150" />
+    <data   name="selection"      type="char"   length="10"       usage="input" init="*USER" />
+    <data   name="member"         type="char"   length="10"       usage="input" init="*NONE" />
+    <data   name="errorCode"      type="int"    length="4"        usage="input" init="0" />
+
+  </program>
+    
+  <!-- Program QGYGTLE returned additional "records" from the list
+       created by QGYOLAUS. -->
+  <program name="qgygtle" path="/QSYS.lib/QGY.lib/QGYGTLE.pgm" parseorder="listInfo receiver">
+    <data   name="receiver"       type="struct" struct="autu0150" usage="output" 
+            count="listInfo.rcdsReturned" outputsize="receiverLength" />
+    <data   name="receiverLength" type="int"    length="4"        usage="input" init="16384" />
+    <data   name="requestHandle"  type="byte"   length="4"        usage="input" />
+    <data   name="listInfo"       type="struct" struct="listInfo" usage="output" />
+    <data   name="rcdsToReturn"   type="int"    length="4"        usage="input" init="264" />
+    <data   name="startingRcd"    type="int"    length="4"        usage="input" />
+    <data   name="errorCode"      type="int"    length="4"        usage="input" init="0" />
+  </program>
+    
+  <!-- Program QGYCLST closes the list, freeing resources on the server -->
+  <program name="qgyclst" path="/QSYS.lib/QGY.lib/QGYCLST.pgm" >
+    <data   name="requestHandle"  type="byte"   length="4"        usage="input" />
+    <data   name="errorCode"      type="int"    length="4"        usage="input" init="0" />
+  </program>
+</pcml>

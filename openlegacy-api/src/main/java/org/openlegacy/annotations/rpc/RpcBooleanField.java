@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.openlegacy.annotations.rpc;
 
+import org.openlegacy.annotations.screen.ScreenField;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,7 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines that a {@link Boolean} Java field is an terminal screen boolean field. This annotation applied to Boolean Java fields
+ * Defines that a {@link Boolean} Java field is an rpc screen boolean field. This annotation applied to Boolean Java fields
  * already marked with {@link ScreenField} annotation. The annotation determine <code>trueValue</code> and <code>falseValue</code>
  * which are sent to the host for according to the field true/false state. When the java field value is null, the field is
  * ignored. <br/>

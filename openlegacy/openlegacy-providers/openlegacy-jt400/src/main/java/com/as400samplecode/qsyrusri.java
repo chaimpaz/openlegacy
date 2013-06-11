@@ -2,20 +2,32 @@ package com.as400samplecode;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400Message;
+import com.ibm.as400.access.Trace;
 import com.ibm.as400.data.PcmlException;
 import com.ibm.as400.data.ProgramCallDocument;
+
+import java.io.UnsupportedEncodingException;
 
 // Example program to call "Retrieve User Information" (QSYRUSRI) API
 public class qsyrusri {
 
 	public qsyrusri() {}
 
-	public static void main(String[] argv) {
+	public static void main(String[] argv) throws UnsupportedEncodingException {
 		AS400 as400System; // com.ibm.as400.access.AS400
 		ProgramCallDocument pcml; // com.ibm.as400.data.ProgramCallDocument
 		boolean rc = false; // Return code from ProgramCallDocument.callProgram()
 		String msgId, msgText; // Messages returned from the server
 		Object value; // Return value from ProgramCallDocument.getValue()
+
+		Trace.setTraceOn(true);
+		Trace.setTraceDiagnosticOn(true);
+		Trace.setTraceInformationOn(true);
+		Trace.setTraceWarningOn(true);
+		Trace.setTraceErrorOn(true);
+		Trace.setTraceDatastreamOn(true);
+		Trace.setTraceThreadOn(true);
+		Trace.setTraceJDBCOn(true);
 
 		System.setErr(System.out);
 
@@ -73,6 +85,11 @@ public class qsyrusri {
 				System.out.println("        Previous signon date:" + value);
 				value = pcml.getValue("qsyrusri.receiver.previousSignonTime");
 				System.out.println("        Previous signon time:" + value);
+				value = pcml.getValue("qsyrusri.receiver.noPassword");
+				System.out.println("        noPassword:" + value);
+				byte[] valueBytes = (byte[])pcml.getValue("qsyrusri.receiver.passwordChangeDate");
+				System.out.println("        passwordChangeDate:" + new String(valueBytes, "ISO-8859-1"));
+
 			}
 		} catch (PcmlException e) {
 			System.out.println(e.getLocalizedMessage());

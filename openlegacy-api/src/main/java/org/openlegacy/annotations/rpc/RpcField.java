@@ -27,9 +27,11 @@ public @interface RpcField {
 
 	boolean key() default false;
 
-	Direction direction();
+	Direction direction() default Direction.DEFAULT;
 
-	double length();
+	int length();
+
+	int decimalPlaces() default 0;
 
 	Class<? extends FieldType> fieldType() default RpcFieldTypes.General.class;
 
@@ -41,4 +43,5 @@ public @interface RpcField {
 
 	boolean editable() default true;
 
+	Scope scope() default Scope.PUBLIC;
 }
