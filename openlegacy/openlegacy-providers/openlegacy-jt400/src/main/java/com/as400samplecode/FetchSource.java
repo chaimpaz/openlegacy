@@ -23,18 +23,22 @@ public class FetchSource {
 	public static void main(String[] args) {
 
 		if (args.length < 3) {
-			System.out.println("Usage:" + CallCobolProgramPcml.class.getSimpleName() + " host user password");
+			System.out.println("Usage:" + CallCobolProgramPcml.class.getSimpleName() + " host user password [file]");
 			return;
 		}
 
 		String host = args[0];
 		String user = args[1];
 		String password = args[2];
+		String fileName = "/QSYS.LIB/RMR2L1.LIB/QRPGLESRC.FILE/RPGROICH.MBR";
 
+		if (args.length==4)
+			fileName = args[3];
+		
 		try {
 			AS400 as400 = new AS400(host, user, password);
 			as400.connectService(AS400.RECORDACCESS);
-			QSYSObjectPathName filename = new QSYSObjectPathName("/QSYS.LIB/RMR2L1.LIB/QRPGLESRC.FILE/RPGROICH.MBR");
+			QSYSObjectPathName filename = new QSYSObjectPathName(fileName);
 			SequentialFile file = new SequentialFile(as400, filename.getPath());
 			// Retrieve the record format for the file
 			AS400FileRecordDescription recordDescription = new AS400FileRecordDescription(as400, filename.getPath());
