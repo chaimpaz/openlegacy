@@ -82,7 +82,7 @@ public class EnumFieldsBinder implements ScreenEntityBinder, Serializable {
 		}
 	}
 
-	public void populateSendAction(TerminalSendAction sendAction, TerminalSnapshot terminalSnapshot, Object entity) {
+	public void populateAction(TerminalSendAction sendAction, TerminalSnapshot terminalSnapshot, Object entity) {
 
 		if (entity == null) {
 			return;

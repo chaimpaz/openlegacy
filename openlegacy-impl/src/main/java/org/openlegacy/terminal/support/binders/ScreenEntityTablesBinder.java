@@ -111,7 +111,7 @@ public class ScreenEntityTablesBinder implements ScreenEntityBinder {
 		this.fieldFormatter = fieldFormatter;
 	}
 
-	public void populateSendAction(TerminalSendAction sendAction, TerminalSnapshot terminalScreen, Object entity) {
+	public void populateAction(TerminalSendAction sendAction, TerminalSnapshot terminalScreen, Object entity) {
 		ScreenPojoFieldAccessor fieldAccessor = new SimpleScreenPojoFieldAccessor(entity);
 
 		Map<String, ScreenTableDefinition> tableDefinitions = tablesDefinitionProvider.getTableDefinitions(entity.getClass());

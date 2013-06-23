@@ -219,13 +219,13 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 				ScreenEntityDefinition screenEntityDefinition = getScreenEntitiesRegistry().get(screenEntity.getClass());
 				if (screenEntityDefinition.isPerformDefaultBinding()) {
 					for (ScreenEntityBinder screenEntityBinder : screenEntityBinders) {
-						screenEntityBinder.populateSendAction(sendAction, getSnapshot(), screenEntity);
+						screenEntityBinder.populateAction(sendAction, getSnapshot(), screenEntity);
 					}
 				}
 				List<ScreenEntityBinder> binders = screenEntityDefinition.getBinders();
 				if (binders != null) {
 					for (ScreenEntityBinder screenEntityBinder : binders) {
-						screenEntityBinder.populateSendAction(sendAction, getSnapshot(), screenEntity);
+						screenEntityBinder.populateAction(sendAction, getSnapshot(), screenEntity);
 
 					}
 				}

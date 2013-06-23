@@ -60,7 +60,7 @@ public class ScreenEntityPartsBinder implements ScreenEntityBinder, Serializable
 
 	}
 
-	public void populateSendAction(TerminalSendAction sendAction, TerminalSnapshot terminalSnapshot, Object entity) {
+	public void populateAction(TerminalSendAction sendAction, TerminalSnapshot terminalSnapshot, Object entity) {
 
 		ScreenEntitiesRegistry screenEntitiesRegistry = SpringUtil.getBean(applicationContext, ScreenEntitiesRegistry.class);
 

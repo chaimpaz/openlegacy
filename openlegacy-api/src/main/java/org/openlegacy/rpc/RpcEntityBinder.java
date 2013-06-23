@@ -8,35 +8,38 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy;
+package org.openlegacy.rpc;
+
+import org.openlegacy.EntitiesRegistry;
+import org.openlegacy.EntityDefinition;
 
 /**
- * Define a bidirectional binder between a session snapshot and an entity. Used for building a entity from a snapshot and
- * collecting data for send from a given entity. Binders are used to bind entities java types fields to a send action
+ * Defines a binder between a screen entity instance from a {@link RpcResult} and to a {@link RpcInvokeAction}, typically using
+ * field mappings defined using {@link RpcField} annotations.
  * 
  * @author Roi Mor
+ * 
  */
-public interface EntityBinder<S extends Snapshot, A extends RemoteAction> {
+public interface RpcEntityBinder {
 
 	/**
-	 * populates the given entity with values from the given snapshot. Typically using metadata on {@link EntityDefinition} from
-	 * the {@link EntitiesRegistry}
+	 * populates the given entity with values from the given result. Typically using metadata on {@link EntityDefinition} from the
+	 * {@link EntitiesRegistry}
 	 * 
 	 * @param entity
-	 * @param snapshot
+	 * @param result
 	 */
-	void populateEntity(Object entity, S snapshot);
+	void populateEntity(Object entity, RpcResult result);
 
 	/**
 	 * Populates the given send action with values from the entity
 	 * 
-	 * @param sendAction
+	 * @param remoteAction
 	 *            The send action to populate
 	 * @param snapshot
 	 *            used for comparing current values of fields to new values from the entity
 	 * @param entity
 	 *            the entity from which new values are taken
 	 */
-	void populateSendAction(A sendAction, S snapshot, Object entity);
-
+	void populateAction(RpcInvokeAction remoteAction, Object entity);
 }

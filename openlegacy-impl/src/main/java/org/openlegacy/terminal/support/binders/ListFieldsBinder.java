@@ -86,7 +86,7 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void populateSendAction(TerminalSendAction sendAction, TerminalSnapshot snapshot, Object entity) {
+	public void populateAction(TerminalSendAction sendAction, TerminalSnapshot snapshot, Object entity) {
 		if (entity == null) {
 			return;
 		}
