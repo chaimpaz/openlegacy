@@ -49,7 +49,8 @@ public class ScreenFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public void load(EntitiesRegistry entitiesRegistry, Field field, Annotation annotation, Class<?> containingClass) {
+	public void load(EntitiesRegistry entitiesRegistry, Field field, Annotation annotation, Class<?> containingClass,
+			int fieldOrder) {
 		ScreenEntitiesRegistry screenEntitiesRegistry = (ScreenEntitiesRegistry)entitiesRegistry;
 
 		ScreenField fieldAnnotation = (ScreenField)annotation;

@@ -13,7 +13,7 @@ package org.openlegacy.rpc.definitions;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.definitions.FieldDefinition;
 
-public interface RpcFieldDefinition extends FieldDefinition {
+public interface RpcFieldDefinition extends FieldDefinition, OrderedField {
 
 	String getOriginalName();
 
@@ -25,4 +25,5 @@ public interface RpcFieldDefinition extends FieldDefinition {
 	 * @return
 	 */
 	double getLength();
+
 }

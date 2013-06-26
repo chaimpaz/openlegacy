@@ -21,6 +21,7 @@ import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 import org.openlegacy.exceptions.RegistryException;
 import org.openlegacy.loaders.support.AbstractFieldAnnotationLoader;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
+import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcFieldDefinition;
 import org.openlegacy.rpc.services.RpcEntitiesRegistry;
 import org.openlegacy.utils.StringUtil;
@@ -42,7 +43,8 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	public void load(EntitiesRegistry entitiesRegistry, Field field, Annotation annotation, Class<?> containingClass) {
+	public void load(EntitiesRegistry entitiesRegistry, Field field, Annotation annotation, Class<?> containingClass,
+			int fieldOrder) {
 		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
 
 		RpcField fieldAnnotation = (RpcField)annotation;
@@ -51,6 +53,8 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 
 		String fieldName = field.getName();
 		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(fieldName, fieldAnnotation.fieldType());
+
+		rpcFieldDefinition.setOrder(fieldOrder);
 
 		if (fieldAnnotation.displayName().equals(AnnotationConstants.NULL)) {
 			rpcFieldDefinition.setDisplayName(StringUtil.toDisplayName(fieldName));
@@ -75,7 +79,18 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 
 		setupFieldType(field, rpcFieldDefinition);
 
-		rpcEntityDefinition.getFieldsDefinitions().put(fieldName, rpcFieldDefinition);
+		if (rpcEntityDefinition != null) {
+			rpcEntityDefinition.getFieldsDefinitions().put(fieldName, rpcFieldDefinition);
+		} else {
+			// look in screen entities parts
+			RpcPartEntityDefinition rpcPart = rpcEntitiesRegistry.getPart(containingClass);
+			if (rpcPart != null) {
+				fieldName = MessageFormat.format("{0}.{1}", rpcPart.getPartName(), fieldName);
+				rpcFieldDefinition.setName(fieldName);
+				rpcPart.getFieldsDefinitions().put(fieldName, rpcFieldDefinition);
+			}
+
+		}
 	}
 
 	private static void setupFieldType(Field field, SimpleRpcFieldDefinition rpcFieldDefinition) {

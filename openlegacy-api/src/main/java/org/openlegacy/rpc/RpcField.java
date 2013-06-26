@@ -13,6 +13,7 @@ package org.openlegacy.rpc;
 import org.openlegacy.annotations.rpc.Direction;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Defines an rpc field to send
@@ -113,4 +114,6 @@ public interface RpcField extends Serializable, Cloneable {
 	RpcField clone();
 
 	Direction getDirection();
+
+	List<RpcField> getChildren();
 }

@@ -8,32 +8,32 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.terminal.loaders.support;
+package org.openlegacy.rpc.loaders.support;
 
 import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.loaders.FieldLoader;
-import org.openlegacy.terminal.definitions.ScreenPartEntityDefinition;
-import org.openlegacy.terminal.services.ScreenEntitiesRegistry;
+import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
+import org.openlegacy.rpc.services.RpcEntitiesRegistry;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 
 @Component
-public class ScreenPartFieldsLoader implements FieldLoader {
+public class RpcPartFieldsLoader implements FieldLoader {
 
 	@SuppressWarnings("rawtypes")
 	public boolean match(EntitiesRegistry entitiesRegistry, Field field) {
-		ScreenEntitiesRegistry screenEntitiesRegistry = (ScreenEntitiesRegistry)entitiesRegistry;
-		return (screenEntitiesRegistry.getPart(field.getType()) != null);
+		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
+		return (rpcEntitiesRegistry.getPart(field.getType()) != null);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public void load(EntitiesRegistry entitiesRegistry, Field field, Class<?> containingClass, int fieldOrder) {
-		ScreenEntitiesRegistry screenEntitiesRegistry = (ScreenEntitiesRegistry)entitiesRegistry;
+		RpcEntitiesRegistry rpcEntitiesRegistry = (RpcEntitiesRegistry)entitiesRegistry;
 
-		ScreenPartEntityDefinition partDefinition = screenEntitiesRegistry.getPart(field.getType());
+		RpcPartEntityDefinition partDefinition = rpcEntitiesRegistry.getPart(field.getType());
 		if (partDefinition != null) {
-			screenEntitiesRegistry.get(containingClass).getPartsDefinitions().put(field.getName(), partDefinition);
+			rpcEntitiesRegistry.get(containingClass).getPartsDefinitions().put(field.getName(), partDefinition);
 		}
 
 	}

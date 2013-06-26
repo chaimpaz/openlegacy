@@ -15,10 +15,13 @@ import org.openlegacy.exceptions.OpenLegacyRuntimeException;
 import org.openlegacy.rpc.RpcField;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -68,6 +71,9 @@ public class SimpleRpcField implements RpcField {
 
 	@XmlAttribute
 	private String name = null;
+
+	@XmlElement(name = "child", type = SimpleRpcField.class)
+	private List<RpcField> children = new ArrayList<RpcField>();
 
 	public Object getValue() {
 		if (value == null) {
@@ -208,5 +214,9 @@ public class SimpleRpcField implements RpcField {
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	public List<RpcField> getChildren() {
+		return children;
 	}
 }
