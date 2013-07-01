@@ -16,6 +16,10 @@ import org.openlegacy.definitions.support.AbstractEntityDefinition;
 public class SimpleRpcEntityDefinition extends AbstractEntityDefinition<RpcFieldDefinition> implements RpcEntityDefinition {
 
 	private Languages language;
+	
+	public SimpleRpcEntityDefinition(String entityName) {
+		super(entityName, null);
+	}
 
 	public SimpleRpcEntityDefinition(String entityName, Class<?> entityClass) {
 		super(entityName, entityClass);

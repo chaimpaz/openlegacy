@@ -12,7 +12,10 @@ package org.openlegacy.designtime.rpc.source;
 
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 
+import java.io.IOException;
+
 public interface CodeParser {
 
-	RpcEntityDefinition parse(String source);
+	RpcEntityDefinition parse(String source, String entityName) throws IOException;
+
 }
