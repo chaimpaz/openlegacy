@@ -4,13 +4,13 @@ import java.util.List;
 
 public interface ParameterStructure {
 
-	public String getVariableDeclartion();
+	public String getVariableDeclaration();
 
 	public int getLevel();
 
 	public String getFieldName();
 
-	public List<ParameterStructure> getSubFieldsList();
+	public List<ParameterStructure> getSubFields();
 
 	public boolean isSimple();
 

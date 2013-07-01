@@ -16,7 +16,6 @@ public class KoopaParameterStructure implements ParameterStructure {
 
 	private static final char OPEN_BRACKET_SMBOL = '(';
 
-	// private final static Log logger = LogFactory.getLog(DefaultRegistryLoader.class);
 	private static String genarteFlatPic(CommonTree picNodes) {
 
 		StringBuilder x = new StringBuilder();
@@ -45,12 +44,12 @@ public class KoopaParameterStructure implements ParameterStructure {
 	 * 
 	 * @see org.openlegacy.designtime.rpc.source.parsers.ParameterStructure#getvariableDeclartion()
 	 */
-	public String getVariableDeclartion() {
+	public String getVariableDeclaration() {
 		return variableDeclartion;
 	}
 
-	KoopaParameterStructure(CommonTree parameterNode) {
-
+	public KoopaParameterStructure(CommonTree parameterNode) {
+		// TODO What are the numbers
 		fieldLevel = Integer.parseInt(parameterNode.getChild(0).getChild(0).getText());
 		fieldName = parameterNode.getChild(1).getChild(0).getChild(0).getText();
 		if (parameterNode.getChildCount() == 4) {
@@ -61,7 +60,7 @@ public class KoopaParameterStructure implements ParameterStructure {
 		}
 	}
 
-	public void CollectSubFields(List<ParameterStructure> paramtersNodes, int startIdx) {
+	public void collectSubFields(List<ParameterStructure> paramtersNodes, int startIdx) {
 		int idx = startIdx + 1;
 		int handleLevel = paramtersNodes.get(idx).getLevel();
 		while (idx < paramtersNodes.size()) {
@@ -70,7 +69,7 @@ public class KoopaParameterStructure implements ParameterStructure {
 				subFieldsList.add(cobolField);
 				paramtersNodes.remove(idx);
 				if (!cobolField.isSimple()) {
-					cobolField.CollectSubFields(paramtersNodes, idx);
+					cobolField.collectSubFields(paramtersNodes, idx);
 				}
 			} else {
 				return;
@@ -102,7 +101,7 @@ public class KoopaParameterStructure implements ParameterStructure {
 	 * 
 	 * @see org.openlegacy.designtime.rpc.source.parsers.ParameterStructure#getSubFieldsList()
 	 */
-	public List<ParameterStructure> getSubFieldsList() {
+	public List<ParameterStructure> getSubFields() {
 		return subFieldsList;
 	}
 

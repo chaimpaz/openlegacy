@@ -3,11 +3,11 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CobolNuberForamtTest {
+public class CobolNumberFormatterTest {
 
 	@Test
 	public void testInt() {
-		CobolNuberFormater intTemplat = new CobolNuberFormater("999");
+		CobolNumberFormatter intTemplat = new CobolNumberFormatter("999");
 		Assert.assertEquals(0, intTemplat.getScale());
 		Assert.assertEquals(3, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(0, intTemplat.getDigitAfterDot());
@@ -16,7 +16,7 @@ public class CobolNuberForamtTest {
 
 	@Test
 	public void testFloat() {
-		CobolNuberFormater intTemplat = new CobolNuberFormater("S99V999");
+		CobolNumberFormatter intTemplat = new CobolNumberFormatter("S99V999");
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
 		Assert.assertEquals(true, intTemplat.isSigned());
@@ -24,7 +24,7 @@ public class CobolNuberForamtTest {
 
 	@Test
 	public void testScale() {
-		CobolNuberFormater intTemplat = new CobolNuberFormater("PP99V999");
+		CobolNumberFormatter intTemplat = new CobolNumberFormatter("PP99V999");
 		Assert.assertEquals(2, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
@@ -32,7 +32,7 @@ public class CobolNuberForamtTest {
 
 	@Test
 	public void testScale2() {
-		CobolNuberFormater intTemplat = new CobolNuberFormater("99V999PP");
+		CobolNumberFormatter intTemplat = new CobolNumberFormatter("99V999PP");
 		Assert.assertEquals(-2, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
@@ -40,7 +40,7 @@ public class CobolNuberForamtTest {
 
 	@Test
 	public void testEexp() {
-		CobolNuberFormater intTemplat = new CobolNuberFormater("99V999E9");
+		CobolNumberFormatter intTemplat = new CobolNumberFormatter("99V999E9");
 		Assert.assertEquals(0, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());

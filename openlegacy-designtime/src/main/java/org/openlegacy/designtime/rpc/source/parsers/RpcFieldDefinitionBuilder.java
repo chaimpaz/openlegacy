@@ -7,14 +7,14 @@ import org.openlegacy.utils.StringUtil;
 
 public class RpcFieldDefinitionBuilder {
 
-	private static FieldFormaterFactory fieldFormaterFactory = null;
+	private static FieldFormatterFactory fieldFormaterFactory = null;
 
-	RpcFieldDefinitionBuilder(FieldFormaterFactory fieldFormaterFactory) {
+	public RpcFieldDefinitionBuilder(FieldFormatterFactory fieldFormaterFactory) {
 		RpcFieldDefinitionBuilder.fieldFormaterFactory = fieldFormaterFactory;
 	}
 
-	RpcFieldDefinition getRpcFieldDefinition(String fieldName, String Vareclartion) {
-		FieldFormater fieldFormater = fieldFormaterFactory.getObject(Vareclartion);
+	public RpcFieldDefinition getRpcFieldDefinition(String fieldName, String Vareclartion) {
+		FieldFormatter fieldFormater = fieldFormaterFactory.getObject(Vareclartion);
 
 		String javaFieldName = StringUtil.toJavaFieldName(fieldName);
 		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(javaFieldName, General.class);

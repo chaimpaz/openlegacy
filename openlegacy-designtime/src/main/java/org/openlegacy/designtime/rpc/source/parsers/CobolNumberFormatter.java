@@ -3,7 +3,7 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 
-public class CobolNuberFormater implements FieldFormater {
+public class CobolNumberFormatter implements FieldFormatter {
 
 	private static final char DIGIT_SYMBOL = '9';
 	private static final char DOT_SYMBOL = 'V';
@@ -17,7 +17,7 @@ public class CobolNuberFormater implements FieldFormater {
 	private int digitAfterDot = 0;
 	private int exponentDigits = 0;
 
-	CobolNuberFormater(String flatPic) {
+	CobolNumberFormatter(String flatPic) {
 		int idx = 0;
 		int lastCharIdx = flatPic.length() - 1;
 		if (flatPic.charAt(0) == SIGHN_SYMBOL) {

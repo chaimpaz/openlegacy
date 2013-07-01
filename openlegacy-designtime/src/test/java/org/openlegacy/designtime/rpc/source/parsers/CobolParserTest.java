@@ -23,12 +23,12 @@ import koopa.tokenizers.cobol.SourceFormat;
 public class CobolParserTest {
 
 	@Test
-	public void testCobolParserSimpleNumbe() throws IOException, DesigntimeException {
+	public void testCobolParserSimpleNumber() throws IOException, DesigntimeException {
 		OpenlegacyCobolParser cobolParser = new OpenlegacyCobolParser();
 		cobolParser.setFormat(SourceFormat.FREE);
 
 		String sourceFile = "simpleNumber.cbl";
-		String entityName = sourceFile.substring(0, sourceFile.indexOf(".") > 0 ? sourceFile.indexOf(".") : sourceFile.length());
+		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		RpcEntityDefinition rpcEntityDefinition = cobolParser.parse(source, entityName);
 		Assert.assertNotNull(rpcEntityDefinition);

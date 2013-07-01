@@ -1,20 +1,20 @@
 package org.openlegacy.designtime.rpc.source.parsers;
 
-public class CobolFieldFormaterFactory implements FieldFormaterFactory {
+public class CobolFieldFormatterFactory implements FieldFormatterFactory {
 
-	private static final char SIGHN_SYMBOL = 'S';
+	private static final char SIGN_SYMBOL = 'S';
 	private static final char DIGIT_SYMBOL = '9';
 	private static final char SCAL_SYMBOL = 'P';
 
 	private enum CobolFieldTypes {
 		SIMPLE,
 		NUMERIC,
-		HIRARCHY;
+		HIERARCHY;
 	}
 
 	private static boolean isNumber(char firstChar) {
 
-		if (firstChar == SIGHN_SYMBOL || firstChar == DIGIT_SYMBOL || firstChar == SCAL_SYMBOL) {
+		if (firstChar == SIGN_SYMBOL || firstChar == DIGIT_SYMBOL || firstChar == SCAL_SYMBOL) {
 			return true;
 		}
 		return false;
@@ -22,7 +22,7 @@ public class CobolFieldFormaterFactory implements FieldFormaterFactory {
 
 	private static CobolFieldTypes getCobolFieldTypes(String flatePicture) {
 		if (flatePicture == null) {
-			return CobolFieldTypes.HIRARCHY;
+			return CobolFieldTypes.HIERARCHY;
 		}
 
 		if (isNumber(flatePicture.charAt(0))) {
@@ -37,13 +37,13 @@ public class CobolFieldFormaterFactory implements FieldFormaterFactory {
 	 * 
 	 * @see org.openlegacy.designtime.rpc.source.parsers.FieldFormaterFactory#getObject(java.lang.String)
 	 */
-	public FieldFormater getObject(String flatePicture) {
+	public FieldFormatter getObject(String flatePicture) {
 		CobolFieldTypes cobolFieldType = getCobolFieldTypes(flatePicture);
 		if (CobolFieldTypes.NUMERIC == cobolFieldType) {
-			return new CobolNuberFormater(flatePicture);
+			return new CobolNumberFormatter(flatePicture);
 		}
 		if (CobolFieldTypes.SIMPLE == cobolFieldType) {
-			return new CobolTextFormater(flatePicture);
+			return new CobolTextFormatter(flatePicture);
 		}
 		return null;
 

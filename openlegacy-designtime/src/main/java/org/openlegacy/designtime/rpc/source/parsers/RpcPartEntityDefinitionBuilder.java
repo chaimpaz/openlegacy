@@ -12,7 +12,7 @@ public class RpcPartEntityDefinitionBuilder {
 
 	private static RpcFieldDefinitionBuilder fieldDefinitionBuilder = null;
 
-	RpcPartEntityDefinitionBuilder(RpcFieldDefinitionBuilder fieldDefinitionBuilder) {
+	public RpcPartEntityDefinitionBuilder(RpcFieldDefinitionBuilder fieldDefinitionBuilder) {
 		RpcPartEntityDefinitionBuilder.fieldDefinitionBuilder = fieldDefinitionBuilder;
 
 	}
@@ -28,10 +28,10 @@ public class RpcPartEntityDefinitionBuilder {
 		for (ParameterStructure partField : partFieldList) {
 			if (partField.isSimple()) {
 				rpcFieldsMap.put(partField.getFieldName(),
-						fieldDefinitionBuilder.getRpcFieldDefinition(partField.getFieldName(), partField.getVariableDeclartion()));
+						fieldDefinitionBuilder.getRpcFieldDefinition(partField.getFieldName(), partField.getVariableDeclaration()));
 			} else {
 				rpcPartInnerParts.put(partField.getFieldName(),
-						getRpcPartDefinition(partField.getFieldName(), partField.getSubFieldsList()));
+						getRpcPartDefinition(partField.getFieldName(), partField.getSubFields()));
 			}
 		}
 		return rpcPartEntityDef;

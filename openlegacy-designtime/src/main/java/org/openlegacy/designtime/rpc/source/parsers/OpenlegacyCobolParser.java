@@ -1,13 +1,13 @@
 package org.openlegacy.designtime.rpc.source.parsers;
 
 import org.antlr.runtime.tree.CommonTree;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.designtime.rpc.source.CodeParser;
 import org.openlegacy.exceptions.OpenLegacyProviderException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
-import org.openlegacy.support.DefaultRegistryLoader;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,13 +32,12 @@ public class OpenlegacyCobolParser implements CodeParser {
 	private static final String rootProgramQueryTemplate = "//paragraph//cobolWord[text()='%s']";
 	private static final String usedParamterQuery = "//usingPhrase//cobolWord//text()";
 	private static final String useCopyBookQuery = "//linkageSection//copyStatement";
-	private static final String CopyBookReplceQuery = "//linkageSection//copyReplacementInstruction";
+	private static final String copyBookReplceQuery = "//linkageSection//copyReplacementInstruction";
 	private static final String parameterDefinitionQuery = "//dataDescriptionEntry_format1";
-	private final static Log logger = LogFactory.getLog(DefaultRegistryLoader.class);
+	private final static Log logger = LogFactory.getLog(OpenlegacyCobolParser.class);
 
-	private static RpcFieldDefinitionBuilder rpcFieldDefinitionBuilder = new RpcFieldDefinitionBuilder(
-			new CobolFieldFormaterFactory());
-	private static RpcPartEntityDefinitionBuilder rpcPartEntityDefinitionBuilder = new RpcPartEntityDefinitionBuilder(
+	private RpcFieldDefinitionBuilder rpcFieldDefinitionBuilder = new RpcFieldDefinitionBuilder(new CobolFieldFormatterFactory());
+	private RpcPartEntityDefinitionBuilder rpcPartEntityDefinitionBuilder = new RpcPartEntityDefinitionBuilder(
 			rpcFieldDefinitionBuilder);
 
 	private SourceFormat format = SourceFormat.FIXED;
@@ -48,7 +47,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 	private CobolParser cobolParser = null;
 	private ParseResults parseResults = null;
 
-	OpenlegacyCobolParser() {
+	public OpenlegacyCobolParser() {
 		cobolParser = new CobolParser();
 		cobolParser.setFormat(format);
 		cobolParser.setBuildTrees(true);
@@ -82,12 +81,12 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 	private void setCopyBookPath() {
 		boolean needToFind = true;
-		String sysTempDir = System.getProperty("java.io.tmpdir");
+		String sysTempDir = FileUtils.getTempDirectoryPath();
 		File tempDir;
-		String randDirName = null;
+		String randomDirName = null;
 		while (needToFind) {
-			randDirName = sysTempDir + "CopyBookFiles_" + ((Double)Math.random()).toString();
-			tempDir = new File(randDirName);
+			randomDirName = sysTempDir + "CopyBookFiles_" + ((Double)Math.random()).toString();
+			tempDir = new File(randomDirName);
 			if (!tempDir.exists()) {
 				needToFind = false;
 				tempDir.mkdir();
@@ -96,7 +95,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 				}
 			}
 		}
-		copyBookPath = randDirName + "\\";
+		copyBookPath = randomDirName + File.separator;
 		List<File> koppaSerachPath = new ArrayList<File>();
 		koppaSerachPath.add(new File(copyBookPath));
 		cobolParser.setCopybookPath(koppaSerachPath);
@@ -156,7 +155,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 			cobolParser.setPreprocessing(true);
 			result = true;
 			@SuppressWarnings("unchecked")
-			List<CommonTree> replacingNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, CopyBookReplceQuery);
+			List<CommonTree> replacingNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, copyBookReplceQuery);
 			if (!replacingNodes.isEmpty()) {
 				for (CommonTree toReplace : replacingNodes) {
 					String fileName = toReplace.getParent().getParent().getChild(0).getText();
@@ -189,7 +188,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 		} catch (Exception e) {
 			logger.debug("Failed to parse file");
-			throw (new OpenLegacyProviderException("Koopa input is invalid"));
+			throw (new OpenLegacyProviderException("Koopa input is invalid", e));
 		}
 
 		if (!parseResults.isValidInput()) {
@@ -222,7 +221,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 			for (int parameterIdx = 0; parameterIdx < convertedParamtersNodes.size(); parameterIdx++) {
 				KoopaParameterStructure cobolParmeter = (KoopaParameterStructure)convertedParamtersNodes.get(parameterIdx);
 				if (!cobolParmeter.isSimple()) {
-					cobolParmeter.CollectSubFields(convertedParamtersNodes, parameterIdx);
+					cobolParmeter.collectSubFields(convertedParamtersNodes, parameterIdx);
 
 				}
 			}
@@ -241,13 +240,13 @@ public class OpenlegacyCobolParser implements CodeParser {
 					entityDefinition.getFieldsDefinitions().put(
 							cobolParmeter.getFieldName(),
 							rpcFieldDefinitionBuilder.getRpcFieldDefinition(cobolParmeter.getFieldName(),
-									cobolParmeter.getVariableDeclartion()));
+									cobolParmeter.getVariableDeclaration()));
 				} else {
 
 					entityDefinition.getPartsDefinitions().put(
 							cobolParmeter.getFieldName(),
 							rpcPartEntityDefinitionBuilder.getRpcPartDefinition(cobolParmeter.getFieldName(),
-									cobolParmeter.getSubFieldsList()));
+									cobolParmeter.getSubFields()));
 				}
 				logger.debug(cobolParmeter.toString());
 			}
