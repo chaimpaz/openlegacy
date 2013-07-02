@@ -10,6 +10,8 @@ public interface ParameterStructure {
 
 	public String getFieldName();
 
+	public int getOccurs();
+
 	public List<ParameterStructure> getSubFields();
 
 	public boolean isSimple();

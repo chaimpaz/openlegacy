@@ -5,10 +5,13 @@ import org.antlr.runtime.tree.CommonTree;
 import java.util.ArrayList;
 import java.util.List;
 
+import koopa.trees.antlr.jaxen.Jaxen;
+
 public class KoopaParameterStructure implements ParameterStructure {
 
 	private int fieldLevel;
 	private String fieldName;
+	private int occurs = 1;
 
 	private String variableDeclartion;
 
@@ -48,15 +51,30 @@ public class KoopaParameterStructure implements ParameterStructure {
 		return variableDeclartion;
 	}
 
+	@SuppressWarnings("unchecked")
 	public KoopaParameterStructure(CommonTree parameterNode) {
-		// TODO What are the numbers
-		fieldLevel = Integer.parseInt(parameterNode.getChild(0).getChild(0).getText());
-		fieldName = parameterNode.getChild(1).getChild(0).getChild(0).getText();
-		if (parameterNode.getChildCount() == 4) {
-			variableDeclartion = genarteFlatPic((CommonTree)parameterNode.getChild(2).getChild(1));
+		// TODO What are the number
 
+		parameterNode.setParent(null);
+
+		CommonTree tempNode = (CommonTree)Jaxen.evaluate(parameterNode, "//levelNumber").get(0);
+		fieldLevel = Integer.parseInt(tempNode.getChild(0).getText());
+		tempNode = (CommonTree)Jaxen.evaluate(parameterNode, "//dataName//cobolWord").get(0);
+		fieldName = tempNode.getChild(0).getText();
+
+		List<CommonTree> tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, "//occurs//integer");
+		if (tempNodeList.isEmpty()) {
+			occurs = 1;
 		} else {
+			occurs = Integer.parseInt(tempNodeList.get(0).getChild(0).getText());
+		}
+
+		tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, "//picture//pictureString");
+		if (tempNodeList.isEmpty()) {
 			subFieldsList = new ArrayList<ParameterStructure>();
+		} else {
+			variableDeclartion = genarteFlatPic(tempNodeList.get(0));
+
 		}
 	}
 
@@ -94,6 +112,10 @@ public class KoopaParameterStructure implements ParameterStructure {
 	 */
 	public String getFieldName() {
 		return fieldName;
+	}
+
+	public int getOccurs() {
+		return occurs;
 	}
 
 	/*
