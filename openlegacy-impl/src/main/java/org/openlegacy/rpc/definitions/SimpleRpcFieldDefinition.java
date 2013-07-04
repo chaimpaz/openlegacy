@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.rpc.definitions;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.openlegacy.FieldType;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.definitions.support.AbstractFieldDefinition;
@@ -17,22 +18,23 @@ import org.openlegacy.definitions.support.AbstractFieldDefinition;
 public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDefinition> implements RpcFieldDefinition {
 
 	private static final long serialVersionUID = 1L;
-	private double length;
+	private Integer length;
 	private Direction direction;
 	private String originalName;
 	private int keyIndex;
 	private int order;
 	private String defaultValue;
+	private Integer decimalPlaces;
 
 	public SimpleRpcFieldDefinition(String name, Class<? extends FieldType> type) {
 		super(name, type);
 	}
 
-	public double getLength() {
+	public Integer getLength() {
 		return length;
 	}
 
-	public void setLength(double length) {
+	public void setLength(Integer length) {
 		this.length = length;
 	}
 
@@ -75,4 +77,18 @@ public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDe
 	public void setDefaultValue(String defaultValue) {
 		this.defaultValue = defaultValue;
 	}
+
+	public Integer getDecimalPlaces() {
+		return decimalPlaces;
+	}
+
+	public void setDecimalPlaces(Integer decimalPlaces) {
+		this.decimalPlaces = decimalPlaces;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
+
 }

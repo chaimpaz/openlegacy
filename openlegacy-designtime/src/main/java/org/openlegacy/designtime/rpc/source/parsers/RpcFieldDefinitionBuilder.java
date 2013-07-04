@@ -20,7 +20,7 @@ public class RpcFieldDefinitionBuilder {
 		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(javaFieldName, General.class);
 		rpcFieldDefinition.setOriginalName(fieldName);
 
-		rpcFieldDefinition.setLength(fieldFormater.getLength());
+		rpcFieldDefinition.setLength((int)fieldFormater.getLength());
 		rpcFieldDefinition.setJavaType(fieldFormater.getJavaType());
 		rpcFieldDefinition.setFieldTypeDefinition(fieldFormater.getType());
 		return rpcFieldDefinition;

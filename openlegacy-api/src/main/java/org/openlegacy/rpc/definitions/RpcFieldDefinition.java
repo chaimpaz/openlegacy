@@ -19,12 +19,9 @@ public interface RpcFieldDefinition extends FieldDefinition, OrderedField {
 
 	Direction getDirection();
 
-	/**
-	 * Allows defining floating point length. e.g: 3.2 (2 numbers after the digit)
-	 * 
-	 * @return
-	 */
-	double getLength();
+	Integer getLength();
+
+	Integer getDecimalPlaces();
 
 	int getOrder();
 

@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
@@ -35,7 +37,9 @@ public class SimpleRpcStructureField implements RpcStructureField {
 	@XmlAttribute
 	private String name = null;
 
-	@XmlElement(name = "child", type = SimpleRpcStructureField.class)
+	@XmlElementWrapper
+	@XmlElements({ @XmlElement(name = "field", type = SimpleRpcFlatField.class),
+			@XmlElement(name = "structure", type = SimpleRpcStructureField.class) })
 	private List<RpcField> children = new ArrayList<RpcField>();
 
 	@XmlTransient
@@ -43,6 +47,8 @@ public class SimpleRpcStructureField implements RpcStructureField {
 
 	@XmlAttribute
 	private Direction direction;
+
+	private Integer length;
 
 	public String getName() {
 		return name;
@@ -84,5 +90,19 @@ public class SimpleRpcStructureField implements RpcStructureField {
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
+	}
+
+	public Integer getLength() {
+		if (length != null) {
+			return length;
+		} else {
+			length = 0;
+		}
+
+		for (RpcField rpcField : getChildren()) {
+			length += rpcField.getLength();
+		}
+		return length;
+
 	}
 }

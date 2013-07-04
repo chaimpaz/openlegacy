@@ -39,6 +39,7 @@ public class RpcPartsBinder implements RpcEntityBinder {
 						rpcPartDefinition.getPartName());
 				rpcStructureField.getChildren().add(rpcFlatField);
 			}
+			sendAction.getFields().add(rpcStructureField);
 
 		}
 	}

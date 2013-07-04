@@ -28,6 +28,13 @@ public interface RpcField extends Serializable, Cloneable {
 	String getName();
 
 	/**
+	 * The length of the field. Double as it Can contain
+	 * 
+	 * @return the length of the field
+	 */
+	Integer getLength();
+
+	/**
 	 * Get access to the underlying implementation
 	 * 
 	 * @return the underlying implementation

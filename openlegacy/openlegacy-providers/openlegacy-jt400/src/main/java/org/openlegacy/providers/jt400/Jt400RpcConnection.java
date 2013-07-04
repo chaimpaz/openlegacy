@@ -11,6 +11,7 @@
 package org.openlegacy.providers.jt400;
 
 import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.AS400ByteArray;
 import com.ibm.as400.access.AS400DataType;
 import com.ibm.as400.access.AS400Message;
 import com.ibm.as400.access.AS400Text;
@@ -27,6 +28,7 @@ import org.openlegacy.rpc.RpcInvocationException;
 import org.openlegacy.rpc.RpcInvokeAction;
 import org.openlegacy.rpc.RpcResult;
 import org.openlegacy.rpc.RpcSnapshot;
+import org.openlegacy.rpc.RpcStructureField;
 import org.openlegacy.rpc.support.SimpleRpcResult;
 
 import java.util.ArrayList;
@@ -70,20 +72,8 @@ public class Jt400RpcConnection implements RpcConnection {
 			List<RpcField> fields = rpcInvokeAction.getFields();
 			List<ProgramParameter> programParameters = new ArrayList<ProgramParameter>();
 
-			for (RpcField rpcField : fields) {
-				if (rpcField instanceof RpcFlatField) {
-					RpcFlatField rpcFlatField = (RpcFlatField)rpcField;
-					AS400DataType as400Field = initAs400DataType(rpcFlatField, Direction.INPUT);
-					if (as400Field == null) {
-						programParameters.add(new ProgramParameter(rpcFlatField.getLength().intValue()));
-					} else {
-						programParameters.add(new ProgramParameter(as400Field.toBytes(rpcFlatField.getValue())));
-					}
-				} else {
+			buildParameters(fields, programParameters);
 
-				}
-
-			}
 			program.setProgram(programName, programParameters.toArray(new ProgramParameter[programParameters.size()]));
 			// Run the program.
 			if (program.run() != true) {
@@ -125,17 +115,35 @@ public class Jt400RpcConnection implements RpcConnection {
 		}
 	}
 
+	private void buildParameters(List<RpcField> fields, List<ProgramParameter> programParameters) {
+		for (RpcField rpcField : fields) {
+			if (rpcField instanceof RpcFlatField) {
+				RpcFlatField rpcFlatField = (RpcFlatField)rpcField;
+				AS400DataType as400Field = initAs400DataType(rpcFlatField, Direction.INPUT);
+				if (as400Field == null) {
+					programParameters.add(new ProgramParameter(rpcFlatField.getLength()));
+				} else {
+					programParameters.add(new ProgramParameter(as400Field.toBytes(rpcFlatField.getValue())));
+				}
+			} else if (rpcField instanceof RpcStructureField) {
+				RpcStructureField rpcStructureField = (RpcStructureField)rpcField;
+				programParameters.add(new ProgramParameter(ProgramParameter.PASS_BY_REFERENCE, rpcStructureField.getLength()));
+				buildParameters(rpcStructureField.getChildren(), programParameters);
+			}
+		}
+	}
+
 	private AS400DataType initAs400DataType(RpcFlatField rpcField, Direction direction) {
 		AS400DataType as400Field = null;
 		if (rpcField.getType() == String.class) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
 				as400Field = new AS400Text(rpcField.getLength().intValue(), as400Session);
 			}
+		} else if (rpcField.getType() == Byte.class) {
+			as400Field = new AS400ByteArray(1);
 		} else if (Number.class.isAssignableFrom(rpcField.getType())) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {
-				// find the numbers after the digits. e.g: 1.23 -> 23
-				int floatingPart = Integer.valueOf(String.valueOf(rpcField.getLength()).split("\\.")[1]);
-				as400Field = new AS400ZonedDecimal(rpcField.getLength().intValue(), floatingPart);
+				as400Field = new AS400ZonedDecimal(rpcField.getLength().intValue(), rpcField.getDecimalPlaces());
 			}
 		}
 		return as400Field;

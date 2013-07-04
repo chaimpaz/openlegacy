@@ -68,6 +68,7 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 					field.getName())));
 		}
 		rpcFieldDefinition.setLength(fieldAnnotation.length());
+		rpcFieldDefinition.setDecimalPlaces(fieldAnnotation.decimalPlaces());
 		rpcFieldDefinition.setDirection(fieldAnnotation.direction());
 		rpcFieldDefinition.setOriginalName(fieldAnnotation.originalName());
 		rpcFieldDefinition.setKey(fieldAnnotation.key());

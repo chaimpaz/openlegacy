@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.openlegacy.rpc;
 
-
 /**
  * Defines an rpc field to send
  * 
@@ -39,12 +38,7 @@ public interface RpcFlatField extends RpcField {
 	 */
 	void setValue(Object value);
 
-	/**
-	 * The length of the field. Double as it Can contain
-	 * 
-	 * @return the length of the field
-	 */
-	Double getLength();
+	Integer getDecimalPlaces();
 
 	/**
 	 * Is the field editable on the host screen (protected)

@@ -29,18 +29,18 @@ public class Jt400RpcConnectionTest {
 
 		SimpleRpcFlatField rpcField = new SimpleRpcFlatField();
 		rpcField.setValue("roi");
-		rpcField.setLength(20.0);
+		rpcField.setLength(20);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
 		rpcField = new SimpleRpcFlatField();
 		rpcField.setValue("mor");
-		rpcField.setLength(20.0);
+		rpcField.setLength(20);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
 		rpcField = new SimpleRpcFlatField();
-		rpcField.setLength(30.0);
+		rpcField.setLength(30);
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
@@ -58,24 +58,24 @@ public class Jt400RpcConnectionTest {
 
 		SimpleRpcFlatField rpcField = new SimpleRpcFlatField();
 		rpcField.setValue("roi");
-		rpcField.setLength(20.0);
+		rpcField.setLength(20);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
 		rpcField = new SimpleRpcFlatField();
 		rpcField.setValue("mor");
-		rpcField.setLength(20.0);
+		rpcField.setLength(20);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
 		rpcField = new SimpleRpcFlatField();
 		rpcField.setValue(37);
-		rpcField.setLength(3.0);
+		rpcField.setLength(3);
 		rpcField.setDirection(Direction.INPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 
 		rpcField = new SimpleRpcFlatField();
-		rpcField.setLength(100.0);
+		rpcField.setLength(100);
 		rpcField.setDirection(Direction.OUTPUT);
 		rpcInvokeAction.getFields().add(rpcField);
 

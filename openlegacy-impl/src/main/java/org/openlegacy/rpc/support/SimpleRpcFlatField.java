@@ -37,7 +37,10 @@ public class SimpleRpcFlatField implements RpcFlatField {
 	private String persistedValue;
 
 	@XmlAttribute
-	private Double length;
+	private Integer length;
+
+	@XmlAttribute
+	private Integer decimalPlaces = null;
 
 	/**
 	 * NOTE! - All Boolean fields should have default value set. XML serializer checks if the default value change, and reset it
@@ -69,7 +72,7 @@ public class SimpleRpcFlatField implements RpcFlatField {
 	private Direction direction;
 
 	@XmlAttribute
-	private String name = null;
+	private String name = "";
 
 	@XmlTransient
 	private int order;
@@ -120,16 +123,24 @@ public class SimpleRpcFlatField implements RpcFlatField {
 		setValue(value, true);
 	}
 
-	public Double getLength() {
+	public Integer getLength() {
 		return length;
 	}
 
-	public void setLength(Double length) {
+	public void setLength(int length) {
 		this.length = length;
 	}
 
 	public void resetLength() {
 		length = null;
+	}
+
+	public Integer getDecimalPlaces() {
+		return decimalPlaces;
+	}
+
+	public void setDecimalPlaces(Integer decimalPlaces) {
+		this.decimalPlaces = decimalPlaces;
 	}
 
 	public boolean isEditable() {
@@ -152,6 +163,9 @@ public class SimpleRpcFlatField implements RpcFlatField {
 
 		if (type != String.class) {
 			return type;
+		}
+		if (value instanceof Byte) {
+			return Byte.class;
 		}
 		if (value != null) {
 			return value.getClass();
