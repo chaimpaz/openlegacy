@@ -27,7 +27,7 @@ public class SimpleRpcResult implements RpcResult, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "field", type = SimpleRpcField.class)
+	@XmlElement(name = "field", type = SimpleRpcFlatField.class)
 	private List<RpcField> rpcFields;
 
 	public List<RpcField> getRpcFields() {

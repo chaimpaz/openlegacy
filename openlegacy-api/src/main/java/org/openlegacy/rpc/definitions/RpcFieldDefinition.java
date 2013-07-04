@@ -26,4 +26,7 @@ public interface RpcFieldDefinition extends FieldDefinition, OrderedField {
 	 */
 	double getLength();
 
+	int getOrder();
+
+	String getDefaultValue();
 }

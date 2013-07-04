@@ -131,7 +131,7 @@ public class ListFieldsBinder implements ScreenEntityBinder {
 						position.getColumn()));
 
 				field.setValue(fieldFormatter.format(fieldValue.get(i)));
-				sendAction.getModifiedFields().add(field);
+				sendAction.getFields().add(field);
 
 				if (i < fieldTypeDefinition.getCount() - 1) {
 					position = SnapshotUtils.moveBy(position, (gaps[i * skip]), snapshot.getSize());

@@ -74,6 +74,7 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 		rpcFieldDefinition.setSampleValue(fieldAnnotation.sampleValue());
 		rpcFieldDefinition.setJavaType(field.getType());
 		rpcFieldDefinition.setEditable(fieldAnnotation.editable());
+		rpcFieldDefinition.setDefaultValue(fieldAnnotation.defaultValue());
 
 		rpcFieldDefinition.setHelpText(fieldAnnotation.helpText());
 

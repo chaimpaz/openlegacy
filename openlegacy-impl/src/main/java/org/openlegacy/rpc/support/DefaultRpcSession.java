@@ -24,6 +24,7 @@ import org.openlegacy.rpc.RpcActions;
 import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcEntity;
 import org.openlegacy.rpc.RpcEntityBinder;
+import org.openlegacy.rpc.RpcField;
 import org.openlegacy.rpc.RpcInvokeAction;
 import org.openlegacy.rpc.RpcResult;
 import org.openlegacy.rpc.RpcSession;
@@ -37,6 +38,8 @@ import org.springframework.util.Assert;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -151,6 +154,12 @@ public class DefaultRpcSession extends AbstractSession implements RpcSession {
 		for (RpcEntityBinder rpcEntityBinder : rpcEntityBinders) {
 			rpcEntityBinder.populateAction(rpcAction, rpcEntity);
 		}
+		Collections.sort(rpcAction.getFields(), new Comparator<RpcField>() {
+
+			public int compare(RpcField field1, RpcField field2) {
+				return field1.getOrder() - field2.getOrder();
+			}
+		});
 	}
 
 	private void populateEntity(RpcEntity rpcEntity, RpcEntityDefinition rpcDefinition, RpcResult rpcResult) {

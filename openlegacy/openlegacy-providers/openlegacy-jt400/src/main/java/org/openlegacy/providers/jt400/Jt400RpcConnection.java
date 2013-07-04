@@ -22,6 +22,7 @@ import org.openlegacy.FieldFormatter;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.rpc.RpcConnection;
 import org.openlegacy.rpc.RpcField;
+import org.openlegacy.rpc.RpcFlatField;
 import org.openlegacy.rpc.RpcInvocationException;
 import org.openlegacy.rpc.RpcInvokeAction;
 import org.openlegacy.rpc.RpcResult;
@@ -66,15 +67,20 @@ public class Jt400RpcConnection implements RpcConnection {
 			// Initialize the name of the program to run.
 			String programName = rpcInvokeAction.getRpcPath();
 
-			List<RpcField> fields = rpcInvokeAction.getRpcFields();
+			List<RpcField> fields = rpcInvokeAction.getFields();
 			List<ProgramParameter> programParameters = new ArrayList<ProgramParameter>();
 
 			for (RpcField rpcField : fields) {
-				AS400DataType as400Field = initAs400DataType(rpcField, Direction.INPUT);
-				if (as400Field == null) {
-					programParameters.add(new ProgramParameter(rpcField.getLength().intValue()));
+				if (rpcField instanceof RpcFlatField) {
+					RpcFlatField rpcFlatField = (RpcFlatField)rpcField;
+					AS400DataType as400Field = initAs400DataType(rpcFlatField, Direction.INPUT);
+					if (as400Field == null) {
+						programParameters.add(new ProgramParameter(rpcFlatField.getLength().intValue()));
+					} else {
+						programParameters.add(new ProgramParameter(as400Field.toBytes(rpcFlatField.getValue())));
+					}
 				} else {
-					programParameters.add(new ProgramParameter(as400Field.toBytes(rpcField.getValue())));
+
 				}
 
 			}
@@ -96,14 +102,18 @@ public class Jt400RpcConnection implements RpcConnection {
 				rpcResult.setRpcFields(fields);
 				int count = 0;
 				for (RpcField field : fields) {
-					if (field.getDirection() != Direction.INPUT) {
-						AS400DataType as400DataType = initAs400DataType(field, Direction.OUTPUT);
-						Object value = as400DataType.toObject(programParameters.get(count).getOutputData());
-						if (value instanceof String) {
-							value = fieldFormatter.format((String)value);
+					if (field instanceof RpcFlatField) {
+						RpcFlatField rpcFlatField = (RpcFlatField)field;
+						if (field.getDirection() != Direction.INPUT) {
+							AS400DataType as400DataType = initAs400DataType(rpcFlatField, Direction.OUTPUT);
+							Object value = as400DataType.toObject(programParameters.get(count).getOutputData());
+							if (value instanceof String) {
+								value = fieldFormatter.format((String)value);
+							}
+							rpcFlatField.setValue(value);
 						}
-						field.setValue(value);
 					}
+
 					count++;
 				}
 
@@ -115,7 +125,7 @@ public class Jt400RpcConnection implements RpcConnection {
 		}
 	}
 
-	private AS400DataType initAs400DataType(RpcField rpcField, Direction direction) {
+	private AS400DataType initAs400DataType(RpcFlatField rpcField, Direction direction) {
 		AS400DataType as400Field = null;
 		if (rpcField.getType() == String.class) {
 			if (rpcField.getDirection() == Direction.INPUT_OUTPUT || rpcField.getDirection() == direction) {

@@ -352,7 +352,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 	}
 
 	protected void formatSendAction(TerminalSendAction sendAction) {
-		List<TerminalField> fields = sendAction.getModifiedFields();
+		List<TerminalField> fields = sendAction.getFields();
 		for (TerminalField terminalField : fields) {
 			if (openLegacyProperties.isUppercaseInput() || terminalField.isUppercase()) {
 				terminalField.setValue(terminalField.getValue().toUpperCase());
@@ -360,7 +360,7 @@ public class DefaultTerminalSession extends AbstractSession implements TerminalS
 		}
 
 		// sort the modified fields by position
-		Collections.sort(sendAction.getModifiedFields(), TerminalPositionContainerComparator.instance());
+		Collections.sort(sendAction.getFields(), TerminalPositionContainerComparator.instance());
 
 	}
 

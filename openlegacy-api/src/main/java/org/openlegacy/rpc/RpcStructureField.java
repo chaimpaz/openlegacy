@@ -10,38 +10,13 @@
  *******************************************************************************/
 package org.openlegacy.rpc;
 
-import org.openlegacy.annotations.rpc.Direction;
-
-import java.io.Serializable;
+import java.util.List;
 
 /**
  * Defines an rpc field to send
  * 
  */
-public interface RpcField extends Serializable, Cloneable {
+public interface RpcStructureField extends RpcField {
 
-	/**
-	 * The name of the field
-	 * 
-	 * @return name of the field
-	 */
-	String getName();
-
-	/**
-	 * Get access to the underlying implementation
-	 * 
-	 * @return the underlying implementation
-	 */
-	Object getDelegate();
-
-	/**
-	 * Clones the field
-	 * 
-	 * @return a cloned copy of the field
-	 */
-	RpcField clone();
-
-	Direction getDirection();
-
-	int getOrder();
+	List<RpcField> getChildren();
 }

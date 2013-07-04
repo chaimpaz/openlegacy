@@ -29,7 +29,7 @@ public class SimpleRpcInvokeAction implements RpcInvokeAction, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@XmlElement(name = "field", type = SimpleRpcField.class)
+	@XmlElement(name = "field", type = SimpleRpcFlatField.class)
 	private List<RpcField> rpcFields = new ArrayList<RpcField>();
 
 	@XmlAttribute
@@ -46,7 +46,7 @@ public class SimpleRpcInvokeAction implements RpcInvokeAction, Serializable {
 		this.rpcPath = rpcName;
 	}
 
-	public List<RpcField> getRpcFields() {
+	public List<RpcField> getFields() {
 		return rpcFields;
 	}
 

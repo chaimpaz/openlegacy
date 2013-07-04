@@ -125,7 +125,7 @@ public class BooleanFieldsBinder implements ScreenEntityBinder, Serializable {
 					booleanField.setValue(fieldTypeDefinition.getFalseValue());
 				}
 			}
-			sendAction.getModifiedFields().add(booleanField);
+			sendAction.getFields().add(booleanField);
 		}
 	}
 

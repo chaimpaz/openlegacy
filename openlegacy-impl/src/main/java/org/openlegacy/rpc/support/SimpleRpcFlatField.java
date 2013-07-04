@@ -10,24 +10,23 @@
  *******************************************************************************/
 package org.openlegacy.rpc.support;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.exceptions.OpenLegacyRuntimeException;
 import org.openlegacy.rpc.RpcField;
+import org.openlegacy.rpc.RpcFlatField;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SimpleRpcField implements RpcField {
+public class SimpleRpcFlatField implements RpcFlatField {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,8 +71,8 @@ public class SimpleRpcField implements RpcField {
 	@XmlAttribute
 	private String name = null;
 
-	@XmlElement(name = "child", type = SimpleRpcField.class)
-	private List<RpcField> children = new ArrayList<RpcField>();
+	@XmlTransient
+	private int order;
 
 	public Object getValue() {
 		if (value == null) {
@@ -208,6 +207,10 @@ public class SimpleRpcField implements RpcField {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Direction getDirection() {
 		return direction;
 	}
@@ -216,7 +219,16 @@ public class SimpleRpcField implements RpcField {
 		this.direction = direction;
 	}
 
-	public List<RpcField> getChildren() {
-		return children;
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }
