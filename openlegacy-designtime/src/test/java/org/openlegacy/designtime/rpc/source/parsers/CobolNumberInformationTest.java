@@ -7,7 +7,7 @@ public class CobolNumberFormatterTest {
 
 	@Test
 	public void testInt() {
-		CobolNumberFormatter intTemplat = new CobolNumberFormatter("999");
+		CobolNumberInformation intTemplat = new CobolNumberInformation("999");
 		Assert.assertEquals(0, intTemplat.getScale());
 		Assert.assertEquals(3, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(0, intTemplat.getDigitAfterDot());
@@ -16,7 +16,7 @@ public class CobolNumberFormatterTest {
 
 	@Test
 	public void testFloat() {
-		CobolNumberFormatter intTemplat = new CobolNumberFormatter("S99V999");
+		CobolNumberInformation intTemplat = new CobolNumberInformation("S99V999");
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
 		Assert.assertEquals(true, intTemplat.isSigned());
@@ -24,7 +24,7 @@ public class CobolNumberFormatterTest {
 
 	@Test
 	public void testScale() {
-		CobolNumberFormatter intTemplat = new CobolNumberFormatter("PP99V999");
+		CobolNumberInformation intTemplat = new CobolNumberInformation("PP99V999");
 		Assert.assertEquals(2, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
@@ -32,7 +32,7 @@ public class CobolNumberFormatterTest {
 
 	@Test
 	public void testScale2() {
-		CobolNumberFormatter intTemplat = new CobolNumberFormatter("99V999PP");
+		CobolNumberInformation intTemplat = new CobolNumberInformation("99V999PP");
 		Assert.assertEquals(-2, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());
@@ -40,7 +40,7 @@ public class CobolNumberFormatterTest {
 
 	@Test
 	public void testEexp() {
-		CobolNumberFormatter intTemplat = new CobolNumberFormatter("99V999E9");
+		CobolNumberInformation intTemplat = new CobolNumberInformation("99V999E9");
 		Assert.assertEquals(0, intTemplat.getScale());
 		Assert.assertEquals(2, intTemplat.getDigitBeforeDot());
 		Assert.assertEquals(3, intTemplat.getDigitAfterDot());

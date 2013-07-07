@@ -2,18 +2,26 @@ package org.openlegacy.designtime.rpc.source.parsers;
 
 import java.util.List;
 
-public interface ParameterStructure {
+/*
+ * ParameterStructure interface is a uniform  objects that hold information about the data structure of parameters
+ *
+ *  VariableDeclaration - hold the original deceleration of this field
+ *  Level 01 for simple objects, for structures it holds the level of this field from the root
+ *  SubFields - list of the parameters list
+ */
 
-	public String getVariableDeclaration();
+interface ParameterStructure {
 
-	public int getLevel();
+	String getVariableDeclaration();
 
-	public String getFieldName();
+	int getLevel();
 
-	public int getOccurs();
+	String getFieldName();
 
-	public List<ParameterStructure> getSubFields();
+	int getOccurs();
 
-	public boolean isSimple();
+	List<ParameterStructure> getSubFields();
+
+	boolean isSimple();
 
 }

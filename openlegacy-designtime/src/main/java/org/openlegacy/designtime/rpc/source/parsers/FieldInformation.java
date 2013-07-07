@@ -2,11 +2,11 @@ package org.openlegacy.designtime.rpc.source.parsers;
 
 import org.openlegacy.definitions.FieldTypeDefinition;
 
-public interface FieldFormatter {
+public interface FieldInformation {
 
-	public double getLength();
+	double getLength();
 
-	public Class<?> getJavaType();
+	Class<?> getJavaType();
 
 	FieldTypeDefinition getType();
 }

@@ -1,9 +1,14 @@
 package org.openlegacy.designtime.rpc.source.parsers;
 
+/**
+ * Fetch FieldInformation from Cobol numeric variable declaration.
+ * 
+ */
+
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 
-public class CobolNumberFormatter implements FieldFormatter {
+public class CobolNumberInformation implements FieldInformation {
 
 	private static final char DIGIT_SYMBOL = '9';
 	private static final char DOT_SYMBOL = 'V';
@@ -17,36 +22,36 @@ public class CobolNumberFormatter implements FieldFormatter {
 	private int digitAfterDot = 0;
 	private int exponentDigits = 0;
 
-	CobolNumberFormatter(String flatPic) {
+	CobolNumberInformation(String flatPicture) {
 		int idx = 0;
-		int lastCharIdx = flatPic.length() - 1;
-		if (flatPic.charAt(0) == SIGHN_SYMBOL) {
+		int lastCharIdx = flatPicture.length() - 1;
+		if (flatPicture.charAt(0) == SIGHN_SYMBOL) {
 			signed = true;
 			idx++;
 		}
-		for (; flatPic.charAt(idx) == SCAL_SYMBOL; idx++) {
+		for (; flatPicture.charAt(idx) == SCAL_SYMBOL; idx++) {
 			scale++;
 		}
 
-		for (; idx <= lastCharIdx && flatPic.charAt(idx) == DIGIT_SYMBOL; idx++) {
+		for (; idx <= lastCharIdx && flatPicture.charAt(idx) == DIGIT_SYMBOL; idx++) {
 			digitBeforeDot++;
 		}
 
-		if (idx < lastCharIdx && flatPic.charAt(idx) == DOT_SYMBOL) {
+		if (idx < lastCharIdx && flatPicture.charAt(idx) == DOT_SYMBOL) {
 			idx++;
-			for (; idx <= lastCharIdx && flatPic.charAt(idx) == DIGIT_SYMBOL; idx++) {
+			for (; idx <= lastCharIdx && flatPicture.charAt(idx) == DIGIT_SYMBOL; idx++) {
 				digitAfterDot++;
 			}
 		}
 
-		if (idx < lastCharIdx && flatPic.charAt(idx) == EXP_SYMBOL) {
+		if (idx < lastCharIdx && flatPicture.charAt(idx) == EXP_SYMBOL) {
 			idx++;
-			for (; idx <= lastCharIdx && flatPic.charAt(idx) == DIGIT_SYMBOL; idx++) {
+			for (; idx <= lastCharIdx && flatPicture.charAt(idx) == DIGIT_SYMBOL; idx++) {
 				exponentDigits++;
 			}
 		}
 		if (idx < lastCharIdx) {
-			for (; idx <= lastCharIdx && flatPic.charAt(idx) == SCAL_SYMBOL; idx++) {
+			for (; idx <= lastCharIdx && flatPicture.charAt(idx) == SCAL_SYMBOL; idx++) {
 				scale--;
 			}
 		}
@@ -73,21 +78,11 @@ public class CobolNumberFormatter implements FieldFormatter {
 		return exponentDigits;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openlegacy.designtime.rpc.source.parsers.CobolFormatDefinition#getLength()
-	 */
 	public double getLength() {
 
 		return (digitBeforeDot + ((double)digitAfterDot) / 10);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.openlegacy.designtime.rpc.source.parsers.CobolFormatDefinition#getJavaType()
-	 */
 	public Class<?> getJavaType() {
 		if (digitAfterDot > 0) {
 			return Double.class;

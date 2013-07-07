@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+		
+	<bean id="OpenlegacyCobolParser"
+		class="org.openlegacy.designtime.rpc.source.parsers.OpenlegacyCobolParser">
+		<property name="mainProcedureName" value="BEGIN"/>
+		<property name="delTempFiles" value="true"/>
+		<property name="cobolParser">
+			<bean class="koopa.parsers.cobol.CobolParser">
+				<property name="buildTrees"   value="true"/>
+				<property name="preprocessing"   value="true"/>
+				<property name="format" value="FREE"/>
+			</bean>
+		</property>
+		<property name="rpcEntityDefinitionBuilder">
+			<bean class="org.openlegacy.designtime.rpc.source.parsers.RpcEntityDefinitionBuilderImp">
+				<property name="fieldInformationFactory" >
+					<bean class="org.openlegacy.designtime.rpc.source.parsers.CobolFieldInformationFactory"/>
+				</property>
+			</bean>
+		</property>
+		
+	</bean>
+	
+	
+	
+</beans>

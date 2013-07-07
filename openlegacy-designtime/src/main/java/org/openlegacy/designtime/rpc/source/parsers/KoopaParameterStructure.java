@@ -1,5 +1,11 @@
 package org.openlegacy.designtime.rpc.source.parsers;
 
+/**
+ * 
+ * Extracts information from koopa CommonTree nodes of type dataDescriptionEntry_format1 into generic ParameterStructure.
+ * 
+ */
+
 import org.antlr.runtime.tree.CommonTree;
 
 import java.util.ArrayList;
@@ -9,15 +15,17 @@ import koopa.trees.antlr.jaxen.Jaxen;
 
 public class KoopaParameterStructure implements ParameterStructure {
 
+	private static final String PICTURE_QUERY = "//picture//pictureString";
+	private static final String OCCURS_QUERY = "//occurs//integer";
+	private static final String COBOL_WORD_QUERY = "//dataName//cobolWord";
+	private static final String LEVEL_NUMBER_QUERY = "//levelNumber";
+	private static final char OPEN_BRACKET_SMBOL = '(';
+
 	private int fieldLevel;
 	private String fieldName;
-	private int occurs = 1;
-
+	private int occurs;
 	private String variableDeclartion;
-
-	private List<ParameterStructure> subFieldsList = null;
-
-	private static final char OPEN_BRACKET_SMBOL = '(';
+	private List<ParameterStructure> subFieldsList;
 
 	private static String genarteFlatPic(CommonTree picNodes) {
 
@@ -53,23 +61,22 @@ public class KoopaParameterStructure implements ParameterStructure {
 
 	@SuppressWarnings("unchecked")
 	public KoopaParameterStructure(CommonTree parameterNode) {
-		// TODO What are the number
 
 		parameterNode.setParent(null);
 
-		CommonTree tempNode = (CommonTree)Jaxen.evaluate(parameterNode, "//levelNumber").get(0);
+		CommonTree tempNode = (CommonTree)Jaxen.evaluate(parameterNode, LEVEL_NUMBER_QUERY).get(0);
 		fieldLevel = Integer.parseInt(tempNode.getChild(0).getText());
-		tempNode = (CommonTree)Jaxen.evaluate(parameterNode, "//dataName//cobolWord").get(0);
+		tempNode = (CommonTree)Jaxen.evaluate(parameterNode, COBOL_WORD_QUERY).get(0);
 		fieldName = tempNode.getChild(0).getText();
 
-		List<CommonTree> tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, "//occurs//integer");
+		List<CommonTree> tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, OCCURS_QUERY);
 		if (tempNodeList.isEmpty()) {
 			occurs = 1;
 		} else {
 			occurs = Integer.parseInt(tempNodeList.get(0).getChild(0).getText());
 		}
 
-		tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, "//picture//pictureString");
+		tempNodeList = (List<CommonTree>)Jaxen.evaluate(parameterNode, PICTURE_QUERY);
 		if (tempNodeList.isEmpty()) {
 			subFieldsList = new ArrayList<ParameterStructure>();
 		} else {
@@ -126,25 +133,6 @@ public class KoopaParameterStructure implements ParameterStructure {
 	public List<ParameterStructure> getSubFields() {
 		return subFieldsList;
 	}
-
-	// @Override
-	// public String toString() {
-	// String result = "";
-	//
-	// if (isSimple()) {
-	// FieldFormater foramtDef = fieldFormatFactory.getObject(variableDeclartion);
-	//
-	// return "private " + foramtDef.getJavaType().getSimpleName() + " " + fieldName + ";\n";
-	//
-	// } else {
-	// result = "public class " + fieldName + "{\n";
-	// for (KoopaParmeterStructure subField : subFieldsList) {
-	// result += subField.toString();
-	// }
-	// result += "};";
-	// }
-	// return result;
-	// }
 
 	/*
 	 * (non-Javadoc)

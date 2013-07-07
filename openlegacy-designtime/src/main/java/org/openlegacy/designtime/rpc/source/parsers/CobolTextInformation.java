@@ -1,14 +1,19 @@
 package org.openlegacy.designtime.rpc.source.parsers;
 
+/**
+ * Fetch FieldInformation from Cobol text variable declaration.
+ * 
+ */
+
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 
-public class CobolTextFormatter implements FieldFormatter {
+public class CobolTextInformation implements FieldInformation {
 
 	private double length;
 
-	CobolTextFormatter(String flatPic) {
-		length = flatPic.length();
+	CobolTextInformation(String flatPicture) {
+		length = flatPicture.length();
 	}
 
 	public double getLength() {

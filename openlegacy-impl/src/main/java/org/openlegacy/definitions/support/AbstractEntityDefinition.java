@@ -25,7 +25,6 @@ import org.openlegacy.terminal.ScreenEntityType;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,7 @@ public abstract class AbstractEntityDefinition<F extends FieldDefinition> implem
 
 	private List<EntityDefinition<?>> childEntitiesDefinitions = new ArrayList<EntityDefinition<?>>();
 
-	private Map<String, PartEntityDefinition<F>> partDefinitions = new HashMap<String, PartEntityDefinition<F>>();
+	private Map<String, PartEntityDefinition<F>> partDefinitions = new LinkedHashMap<String, PartEntityDefinition<F>>();
 
 	public AbstractEntityDefinition() {
 		// for serialization purposes

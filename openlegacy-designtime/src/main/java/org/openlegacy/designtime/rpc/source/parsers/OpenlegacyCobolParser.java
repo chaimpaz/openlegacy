@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.openlegacy.designtime.rpc.source.CodeParser;
 import org.openlegacy.exceptions.OpenLegacyProviderException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
-import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -22,36 +21,35 @@ import java.util.Map;
 
 import koopa.parsers.ParseResults;
 import koopa.parsers.cobol.CobolParser;
-import koopa.tokenizers.cobol.SourceFormat;
 import koopa.tokens.Token;
 import koopa.trees.antlr.jaxen.Jaxen;
 import koopa.util.Tuple;
 
+/*
+ * A warper of koopa COBOL parser, It fetch COBOL program interface from antlr tree and generate RpcEntityDefinition.
+ * 
+ */
+
 public class OpenlegacyCobolParser implements CodeParser {
 
-	private static final String rootProgramQueryTemplate = "//paragraph//cobolWord[text()='%s']";
-	private static final String usedParamterQuery = "//usingPhrase//cobolWord//text()";
-	private static final String useCopyBookQuery = "//linkageSection//copyStatement";
-	private static final String copyBookReplceQuery = "//linkageSection//copyReplacementInstruction";
-	private static final String parameterDefinitionQuery = "//dataDescriptionEntry_format1";
+	private final static String ROOT_PROGRAM_QUERY_TEMPLATE = "//paragraph//cobolWord[text()='%s']";
+	private final static String USE_PARAMETER_QUERY = "//usingPhrase//cobolWord//text()";
+	private final static String USE_COPYBOOK_QUERY = "//linkageSection//copyStatement";
+	private final static String COPYBOOK_REPLACE_QUERY = "//linkageSection//copyReplacementInstruction";
+	private final static String PARAMETER_DEFINITION_QUERY = "//dataDescriptionEntry_format1";
 	private final static Log logger = LogFactory.getLog(OpenlegacyCobolParser.class);
 
-	private RpcFieldDefinitionBuilder rpcFieldDefinitionBuilder = new RpcFieldDefinitionBuilder(new CobolFieldFormatterFactory());
-	private RpcPartEntityDefinitionBuilder rpcPartEntityDefinitionBuilder = new RpcPartEntityDefinitionBuilder(
-			rpcFieldDefinitionBuilder);
+	private String mainProcedureName;
 
-	private SourceFormat format = SourceFormat.FIXED;
-	private String copyBookPath = null;
-	private String mainProcedureName = "BEGIN";
-	private boolean delTempFiles = true;
-	private CobolParser cobolParser = null;
-	private ParseResults parseResults = null;
+	private String copyBookPath;
 
-	public OpenlegacyCobolParser() {
-		cobolParser = new CobolParser();
-		cobolParser.setFormat(format);
-		cobolParser.setBuildTrees(true);
-	}
+	private boolean delTempFiles;
+
+	private CobolParser cobolParser;
+
+	private RpcEntityDefinitionBuilder rpcEntityDefinitionBuilder;
+
+	private ParseResults parseResults;
 
 	public int getErrorsCount() {
 		return parseResults.getErrorCount();
@@ -151,13 +149,14 @@ public class OpenlegacyCobolParser implements CodeParser {
 	private boolean preProcess(CommonTree rootNode) throws IOException {
 
 		boolean result = false;
-		if (Jaxen.evaluate(rootNode, useCopyBookQuery) != null) {
-			cobolParser.setPreprocessing(true);
-			result = true;
+		if (!Jaxen.evaluate(rootNode, USE_COPYBOOK_QUERY).isEmpty()) {
+
 			@SuppressWarnings("unchecked")
-			List<CommonTree> replacingNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, copyBookReplceQuery);
+			List<CommonTree> replacingNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, COPYBOOK_REPLACE_QUERY);
 			if (!replacingNodes.isEmpty()) {
+				result = true;
 				for (CommonTree toReplace : replacingNodes) {
+
 					String fileName = toReplace.getParent().getParent().getChild(0).getText();
 					String oldString = toReplace.getChild(0).getChild(0).getText();
 					String newString = toReplace.getChild(0).getChild(0).getText();
@@ -172,8 +171,8 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 	public RpcEntityDefinition parse(String source, String rpcEntityName) {
 
-		RpcEntityDefinition entityDefinition = new SimpleRpcEntityDefinition(rpcEntityName);
 		String tempFileName = "";
+		RpcEntityDefinition entityDefinition = null;
 		try {
 			tempFileName = writeToTempFile(source);
 			;
@@ -195,24 +194,25 @@ public class OpenlegacyCobolParser implements CodeParser {
 			throw (new OpenLegacyProviderException("Koopa input is invalid"));
 		}
 
-		String rootProgramQueryString = String.format(rootProgramQueryTemplate, mainProcedureName);
+		String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
 		CommonTree rootNode = parseResults.getTree();
 
 		List<String> procedureParamtersNames = new ArrayList<String>();
 		List<ParameterStructure> convertedParamtersNodes = new ArrayList<ParameterStructure>();
 		try {
+
 			@SuppressWarnings("unchecked")
 			List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
 			CommonTree programRoot = (CommonTree)programRootNode.get(0).getParent().getParent().getParent().getParent();
 
 			@SuppressWarnings("unchecked")
-			List<CommonTree> procedureParamtersNodes = (List<CommonTree>)Jaxen.evaluate(programRoot, usedParamterQuery);
+			List<CommonTree> procedureParamtersNodes = (List<CommonTree>)Jaxen.evaluate(programRoot, USE_PARAMETER_QUERY);
 
 			for (CommonTree procedureParamtersNode : procedureParamtersNodes) {
 				procedureParamtersNames.add(procedureParamtersNode.getText());
 			}
 			@SuppressWarnings("unchecked")
-			List<CommonTree> jaxsonParamtersNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, parameterDefinitionQuery);
+			List<CommonTree> jaxsonParamtersNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, PARAMETER_DEFINITION_QUERY);
 			for (int parameterIdx = 0; parameterIdx < jaxsonParamtersNodes.size(); parameterIdx++) {
 
 				convertedParamtersNodes.add(new KoopaParameterStructure(jaxsonParamtersNodes.get(parameterIdx)));
@@ -222,55 +222,41 @@ public class OpenlegacyCobolParser implements CodeParser {
 				KoopaParameterStructure cobolParmeter = (KoopaParameterStructure)convertedParamtersNodes.get(parameterIdx);
 				if (!cobolParmeter.isSimple()) {
 					cobolParmeter.collectSubFields(convertedParamtersNodes, parameterIdx);
-
 				}
-			}
+				if (!procedureParamtersNames.contains(cobolParmeter.getFieldName())) {
+					convertedParamtersNodes.remove(parameterIdx);
+					parameterIdx++;
+				}
 
+			}
+			entityDefinition = rpcEntityDefinitionBuilder.build(rpcEntityName, convertedParamtersNodes);
 			// } catch (XPathExpressionException e) {
 		} catch (Exception e) {
 			logger.debug("failed at query stage");
 			throw new OpenLegacyProviderException("Koopa input is invalid");
 		}
 
-		for (int parameterIdx = 0; parameterIdx < convertedParamtersNodes.size(); parameterIdx++) {
-			ParameterStructure cobolParmeter = convertedParamtersNodes.get(parameterIdx);
-			if (procedureParamtersNames.contains(cobolParmeter.getFieldName())) {
-
-				if (cobolParmeter.isSimple()) {
-					entityDefinition.getFieldsDefinitions().put(
-							cobolParmeter.getFieldName(),
-							rpcFieldDefinitionBuilder.getRpcFieldDefinition(cobolParmeter.getFieldName(),
-									cobolParmeter.getVariableDeclaration()));
-				} else {
-
-					entityDefinition.getPartsDefinitions().put(
-							cobolParmeter.getFieldName(),
-							rpcPartEntityDefinitionBuilder.getRpcPartDefinition(cobolParmeter.getFieldName(),
-									cobolParmeter.getSubFields()));
-				}
-				logger.debug(cobolParmeter.toString());
-			}
-		}
-
 		return entityDefinition;
-	}
-
-	public SourceFormat getFormat() {
-		return format;
-	}
-
-	public void setFormat(SourceFormat format) {
-		this.format = format;
-		cobolParser.setFormat(format);
-
-	}
-
-	public boolean isDelTempFiles() {
-		return delTempFiles;
 	}
 
 	public void setDelTempFiles(boolean delTempFiles) {
 		this.delTempFiles = delTempFiles;
+	}
+
+	public CobolParser getCobolParser() {
+		return cobolParser;
+	}
+
+	public void setCobolParser(CobolParser cobolParser) {
+		this.cobolParser = cobolParser;
+	}
+
+	public RpcEntityDefinitionBuilder getRpcEntityDefinitionBuilder() {
+		return rpcEntityDefinitionBuilder;
+	}
+
+	public void setRpcEntityDefinitionBuilder(RpcEntityDefinitionBuilder rpcEntityDefinitionBuilder) {
+		this.rpcEntityDefinitionBuilder = rpcEntityDefinitionBuilder;
 	}
 
 }

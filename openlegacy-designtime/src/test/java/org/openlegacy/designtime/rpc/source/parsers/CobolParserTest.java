@@ -4,12 +4,17 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.PartEntityDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,19 +23,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import koopa.tokenizers.cobol.SourceFormat;
+import javax.inject.Inject;
 
+@ContextConfiguration("CobolParserTest-context.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
 public class CobolParserTest {
+
+	@Inject
+	OpenlegacyCobolParser openlegacyCobolParser;
 
 	@Test
 	public void testCobolParserSimpleNumber() throws IOException, DesigntimeException {
-		OpenlegacyCobolParser cobolParser = new OpenlegacyCobolParser();
-		cobolParser.setFormat(SourceFormat.FREE);
 
 		String sourceFile = "simpleNumber.cbl";
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
-		RpcEntityDefinition rpcEntityDefinition = cobolParser.parse(source, entityName);
+		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
 		Assert.assertNotNull(rpcEntityDefinition);
 		Assert.assertEquals(1, rpcEntityDefinition.getFieldsDefinitions().size());
 		Map<String, RpcFieldDefinition> fieldDefinitionMap = rpcEntityDefinition.getFieldsDefinitions();
@@ -45,13 +53,11 @@ public class CobolParserTest {
 
 	@Test
 	public void testCobolParser() throws IOException, DesigntimeException {
-		OpenlegacyCobolParser cobolParser = new OpenlegacyCobolParser();
-		cobolParser.setFormat(SourceFormat.FREE);
 
 		String sourceFile = "as400.cbl";
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
-		String entityName = sourceFile.substring(0, sourceFile.indexOf(".") > 0 ? sourceFile.indexOf(".") : sourceFile.length());
-		RpcEntityDefinition rpcEntityDefinition = cobolParser.parse(source, entityName);
+		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
+		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
 		Assert.assertNotNull(rpcEntityDefinition);
 		Assert.assertEquals(0, rpcEntityDefinition.getFieldsDefinitions().size());
 		Assert.assertEquals(1, rpcEntityDefinition.getPartsDefinitions().size());
@@ -66,6 +72,16 @@ public class CobolParserTest {
 		Assert.assertEquals(SimpleNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
 		Assert.assertEquals(99.0, ((SimpleNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), 0.01);
 
+	}
+
+	@Test
+	public void testArrayCobolParser() throws IOException {
+
+		String sourceFile = "array.cbl";
+		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
+		String source = IOUtils.toString(getClass().getResource(sourceFile));
+
+		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
 	}
 
 	@Test
@@ -108,5 +124,11 @@ public class CobolParserTest {
 	// cobolParser.parse(source, entityName);
 
 	// }
+	// @Test
+	public void dg() {
+		ApplicationContext context = new ClassPathXmlApplicationContext("CobolParserTest-context.xml");
+		OpenlegacyCobolParser cbp = (OpenlegacyCobolParser)context.getBean("OpenlegacyCobolParser");
+		cbp.toString();
+	}
 
 }
