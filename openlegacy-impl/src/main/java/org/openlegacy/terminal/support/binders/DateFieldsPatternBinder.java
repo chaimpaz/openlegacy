@@ -141,7 +141,7 @@ public class DateFieldsPatternBinder implements ScreenEntityBinder, Serializable
 
 				if (!dateStr.equals(dateField.getValue())) {
 					dateField.setValue(dateStr);
-					sendAction.getModifiedFields().add(dateField);
+					sendAction.getFields().add(dateField);
 				}
 			}
 

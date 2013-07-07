@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.rpc.definitions;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.openlegacy.definitions.AbstractPartEntityDefinition;
 
 import java.io.Serializable;
@@ -38,4 +39,8 @@ public class SimpleRpcPartEntityDefinition extends AbstractPartEntityDefinition<
 		return innerPartsDefinitions;
 	}
 
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
+	}
 }

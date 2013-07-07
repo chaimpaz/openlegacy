@@ -8,22 +8,15 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.rpc.definitions;
+package org.openlegacy.rpc;
 
-import org.openlegacy.annotations.rpc.Direction;
-import org.openlegacy.definitions.FieldDefinition;
+import java.util.List;
 
-public interface RpcFieldDefinition extends FieldDefinition, OrderedField {
+/**
+ * Defines an rpc field to send
+ * 
+ */
+public interface RpcStructureField extends RpcField {
 
-	String getOriginalName();
-
-	Direction getDirection();
-
-	Integer getLength();
-
-	Integer getDecimalPlaces();
-
-	int getOrder();
-
-	String getDefaultValue();
+	List<RpcField> getChildren();
 }

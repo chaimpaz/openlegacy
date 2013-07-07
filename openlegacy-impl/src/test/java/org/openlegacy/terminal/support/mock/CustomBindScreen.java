@@ -45,8 +45,8 @@ public class CustomBindScreen implements org.openlegacy.terminal.ScreenEntity {
 			fieldA.setValue(fielAandB.substring(0, 2));
 			TerminalField fieldB = snapshot.getField(4, 15);
 			fieldB.setValue(fielAandB.substring(2));
-			sendAction.getModifiedFields().add(fieldA);
-			sendAction.getModifiedFields().add(fieldB);
+			sendAction.getFields().add(fieldA);
+			sendAction.getFields().add(fieldB);
 		}
 	}
 }

@@ -10,13 +10,13 @@ import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 
 public class CobolTextInformation implements FieldInformation {
 
-	private double length;
+	private int length;
 
 	CobolTextInformation(String flatPicture) {
 		length = flatPicture.length();
 	}
 
-	public double getLength() {
+	public int getLength() {
 
 		return length;
 	}

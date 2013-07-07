@@ -4,7 +4,7 @@ import org.openlegacy.definitions.FieldTypeDefinition;
 
 public interface FieldInformation {
 
-	double getLength();
+	int getLength();
 
 	Class<?> getJavaType();
 

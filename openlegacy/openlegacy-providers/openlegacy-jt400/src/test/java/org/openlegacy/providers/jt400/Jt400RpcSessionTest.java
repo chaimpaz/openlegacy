@@ -43,5 +43,6 @@ public class Jt400RpcSessionTest {
 
 		qsyrusri = rpcSession.doAction(RpcActions.READ(), qsyrusri);
 
+		Assert.assertEquals("RMR20924", qsyrusri.getProfileName());
 	}
 }

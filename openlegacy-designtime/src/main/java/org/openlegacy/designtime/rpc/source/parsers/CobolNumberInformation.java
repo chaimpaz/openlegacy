@@ -78,9 +78,9 @@ public class CobolNumberInformation implements FieldInformation {
 		return exponentDigits;
 	}
 
-	public double getLength() {
+	public int getLength() {
 
-		return (digitBeforeDot + ((double)digitAfterDot) / 10);
+		return digitBeforeDot;
 	}
 
 	public Class<?> getJavaType() {

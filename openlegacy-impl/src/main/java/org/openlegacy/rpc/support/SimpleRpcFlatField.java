@@ -10,24 +10,23 @@
  *******************************************************************************/
 package org.openlegacy.rpc.support;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.exceptions.OpenLegacyRuntimeException;
 import org.openlegacy.rpc.RpcField;
+import org.openlegacy.rpc.RpcFlatField;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlType
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SimpleRpcField implements RpcField {
+public class SimpleRpcFlatField implements RpcFlatField {
 
 	private static final long serialVersionUID = 1L;
 
@@ -38,7 +37,10 @@ public class SimpleRpcField implements RpcField {
 	private String persistedValue;
 
 	@XmlAttribute
-	private Double length;
+	private Integer length;
+
+	@XmlAttribute
+	private Integer decimalPlaces = null;
 
 	/**
 	 * NOTE! - All Boolean fields should have default value set. XML serializer checks if the default value change, and reset it
@@ -70,10 +72,10 @@ public class SimpleRpcField implements RpcField {
 	private Direction direction;
 
 	@XmlAttribute
-	private String name = null;
+	private String name = "";
 
-	@XmlElement(name = "child", type = SimpleRpcField.class)
-	private List<RpcField> children = new ArrayList<RpcField>();
+	@XmlTransient
+	private int order;
 
 	public Object getValue() {
 		if (value == null) {
@@ -121,16 +123,24 @@ public class SimpleRpcField implements RpcField {
 		setValue(value, true);
 	}
 
-	public Double getLength() {
+	public Integer getLength() {
 		return length;
 	}
 
-	public void setLength(Double length) {
+	public void setLength(int length) {
 		this.length = length;
 	}
 
 	public void resetLength() {
 		length = null;
+	}
+
+	public Integer getDecimalPlaces() {
+		return decimalPlaces;
+	}
+
+	public void setDecimalPlaces(Integer decimalPlaces) {
+		this.decimalPlaces = decimalPlaces;
 	}
 
 	public boolean isEditable() {
@@ -153,6 +163,9 @@ public class SimpleRpcField implements RpcField {
 
 		if (type != String.class) {
 			return type;
+		}
+		if (value instanceof Byte) {
+			return Byte.class;
 		}
 		if (value != null) {
 			return value.getClass();
@@ -208,6 +221,10 @@ public class SimpleRpcField implements RpcField {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Direction getDirection() {
 		return direction;
 	}
@@ -216,7 +233,16 @@ public class SimpleRpcField implements RpcField {
 		this.direction = direction;
 	}
 
-	public List<RpcField> getChildren() {
-		return children;
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 }

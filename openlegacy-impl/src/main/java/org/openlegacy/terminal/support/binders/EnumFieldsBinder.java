@@ -125,7 +125,7 @@ public class EnumFieldsBinder implements ScreenEntityBinder, Serializable {
 					enumField.setValue((String)ReflectionUtil.invoke(enumValue, "getValue"));
 				}
 			}
-			sendAction.getModifiedFields().add(enumField);
+			sendAction.getFields().add(enumField);
 		}
 	}
 

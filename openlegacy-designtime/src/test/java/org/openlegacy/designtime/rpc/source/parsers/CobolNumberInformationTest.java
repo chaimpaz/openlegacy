@@ -3,7 +3,7 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CobolNumberFormatterTest {
+public class CobolNumberInformationTest {
 
 	@Test
 	public void testInt() {

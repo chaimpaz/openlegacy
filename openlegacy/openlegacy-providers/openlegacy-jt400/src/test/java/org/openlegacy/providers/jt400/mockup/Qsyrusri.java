@@ -13,7 +13,7 @@ import java.util.Date;
 @RpcActions(actions = { @Action(action = org.openlegacy.rpc.RpcActions.READ.class, path = "/QSYS.lib/QSYRUSRI.pgm") })
 public class Qsyrusri implements org.openlegacy.rpc.RpcEntity {
 
-	private UserInformation userInformation;
+	private UserInformation userInformation = new UserInformation();
 
 	@RpcField(length = 4)
 	private int recieverLength;
