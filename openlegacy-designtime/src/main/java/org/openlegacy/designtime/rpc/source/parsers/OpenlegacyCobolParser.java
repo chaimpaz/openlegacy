@@ -25,7 +25,7 @@ import koopa.tokens.Token;
 import koopa.trees.antlr.jaxen.Jaxen;
 import koopa.util.Tuple;
 
-/*
+/**
  * A warper of koopa COBOL parser, It fetch COBOL program interface from antlr tree and generate RpcEntityDefinition.
  * 
  */

@@ -7,7 +7,8 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.PartEntityDefinition;
-import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleExtendedNumericFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
@@ -21,6 +22,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -32,50 +35,85 @@ public class CobolParserTest {
 	@Inject
 	OpenlegacyCobolParser openlegacyCobolParser;
 
-	@Test
-	public void testCobolParserSimpleNumber() throws IOException, DesigntimeException {
+	double precise = 0.001;
 
-		String sourceFile = "simpleNumber.cbl";
+	@Test
+	public void testCobolParserSimpleField() throws IOException, DesigntimeException {
+
+		String sourceFile = "simpleField.cbl";
+		SimpleExtendedNumericFieldTypeDefinition simpleExtendedNumericFieldTypeDefinition;
+		RpcFieldDefinition fieldDefinition;
+		FieldTypeDefinition fieldTypeDefinition;
+
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
+
 		Assert.assertNotNull(rpcEntityDefinition);
-		Assert.assertEquals(1, rpcEntityDefinition.getFieldsDefinitions().size());
-		Map<String, RpcFieldDefinition> fieldDefinitionMap = rpcEntityDefinition.getFieldsDefinitions();
-		RpcFieldDefinition firstField = fieldDefinitionMap.get("PARAM1");
-		Assert.assertTrue(Math.abs(firstField.getLength() - 2) < 0.001);
-		Assert.assertEquals(Integer.class, firstField.getJavaType());
-		FieldTypeDefinition fieldTypeDefinition = firstField.getFieldTypeDefinition();
-		Assert.assertEquals(SimpleNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
-		Assert.assertEquals(99.0, ((SimpleNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), 0.01);
+		Assert.assertEquals(3, rpcEntityDefinition.getFieldsDefinitions().size());
+		Map<String, RpcFieldDefinition> fieldDefinitions = rpcEntityDefinition.getFieldsDefinitions();
+
+		// Fetch Integer
+		fieldDefinition = fieldDefinitions.get("PARAM1");
+		Assert.assertEquals(new Integer(2), fieldDefinition.getLength());
+		Assert.assertEquals(Integer.class, fieldDefinition.getJavaType());
+		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
+		Assert.assertEquals(SimpleExtendedNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
+		simpleExtendedNumericFieldTypeDefinition = (SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition;
+		Assert.assertEquals(99.0, ((SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), precise);
+		Assert.assertEquals(0, simpleExtendedNumericFieldTypeDefinition.getDecimalPlaces());
+
+		// Fetch Decimal
+		fieldDefinition = fieldDefinitions.get("PARAM2");
+		Assert.assertEquals(new Integer(1), fieldDefinition.getLength());
+		Assert.assertEquals(Double.class, fieldDefinition.getJavaType());
+		Assert.assertEquals(SimpleExtendedNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
+		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
+		simpleExtendedNumericFieldTypeDefinition = (SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition;
+		Assert.assertEquals(9.9, simpleExtendedNumericFieldTypeDefinition.getMaximumValue(), precise);
+		Assert.assertEquals(1, simpleExtendedNumericFieldTypeDefinition.getDecimalPlaces());
+
+		// String
+		fieldDefinition = fieldDefinitions.get("PARAM3");
+		Assert.assertEquals(new Integer(4), fieldDefinition.getLength());
+		Assert.assertEquals(String.class, fieldDefinition.getJavaType());
+		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
+		Assert.assertEquals(SimpleTextFieldTypeDefinition.class, fieldTypeDefinition.getClass());
 
 	}
 
 	@Test
-	public void testCobolParser() throws IOException, DesigntimeException {
+	public void testCobolParserSimpleStructure() throws IOException, DesigntimeException {
 
 		String sourceFile = "as400.cbl";
+		List<String> childs = new ArrayList<String>();
+		childs.add("CHILD1");
+		childs.add("CHILD2");
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
 		Assert.assertNotNull(rpcEntityDefinition);
 		Assert.assertEquals(0, rpcEntityDefinition.getFieldsDefinitions().size());
 		Assert.assertEquals(1, rpcEntityDefinition.getPartsDefinitions().size());
-		Map<String, PartEntityDefinition<RpcFieldDefinition>> partEntityDefinitionMap = rpcEntityDefinition.getPartsDefinitions();
-		PartEntityDefinition<RpcFieldDefinition> child = partEntityDefinitionMap.get("PARAM1");
-		Map<String, RpcFieldDefinition> childFieldsMap = child.getFieldsDefinitions();
-		Assert.assertEquals(2, childFieldsMap.size());
-		RpcFieldDefinition child1 = childFieldsMap.get("CHILD1");
-		Assert.assertTrue(Math.abs(child1.getLength() - 2) < 0.001);
-		Assert.assertEquals(Integer.class, child1.getJavaType());
-		FieldTypeDefinition fieldTypeDefinition = child1.getFieldTypeDefinition();
-		Assert.assertEquals(SimpleNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
-		Assert.assertEquals(99.0, ((SimpleNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), 0.01);
+		Map<String, PartEntityDefinition<RpcFieldDefinition>> partEntityDefinition = rpcEntityDefinition.getPartsDefinitions();
+		PartEntityDefinition<RpcFieldDefinition> child = partEntityDefinition.get("PARAM1");
 
+		Map<String, RpcFieldDefinition> childFields = child.getFieldsDefinitions();
+		Assert.assertEquals(2, childFields.size());
+
+		// CHILDS
+		for (String childName : childs) {
+			RpcFieldDefinition childField = childFields.get(childName);
+			Assert.assertEquals(new Integer(2), childField.getLength());
+			Assert.assertEquals(Integer.class, childField.getJavaType());
+			FieldTypeDefinition fieldTypeDefinition = childField.getFieldTypeDefinition();
+			Assert.assertEquals(SimpleExtendedNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
+			Assert.assertEquals(99.0, ((SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), precise);
+		}
 	}
 
 	@Test
-	public void testArrayCobolParser() throws IOException {
+	public void testCobolParserSimpleFieldArray() throws IOException {
 
 		String sourceFile = "array.cbl";
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
