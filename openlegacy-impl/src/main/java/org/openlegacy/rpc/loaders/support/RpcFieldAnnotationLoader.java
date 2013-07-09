@@ -14,7 +14,7 @@ import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.annotations.rpc.RpcField;
 import org.openlegacy.annotations.screen.AnnotationConstants;
 import org.openlegacy.definitions.support.SimpleDateFieldTypeDefinition;
-import org.openlegacy.definitions.support.SimpleListFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleScreenListFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimplePasswordFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
@@ -108,7 +108,7 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 		} else if (rpcFieldDefinition.isPassword()) {
 			rpcFieldDefinition.setFieldTypeDefinition(new SimplePasswordFieldTypeDefinition());
 		} else if (java.util.List.class == field.getType()) {
-			rpcFieldDefinition.setFieldTypeDefinition(new SimpleListFieldTypeDefinition());
+			rpcFieldDefinition.setFieldTypeDefinition(new SimpleScreenListFieldTypeDefinition());
 		} else {
 			rpcFieldDefinition.setFieldTypeDefinition(new SimpleTextFieldTypeDefinition());
 		}

@@ -12,8 +12,7 @@ import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -118,8 +117,23 @@ public class CobolParserTest {
 		String sourceFile = "array.cbl";
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
-
+		FieldTypeDefinition fieldTypeDefinition;
 		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
+		Assert.assertNotNull(rpcEntityDefinition);
+
+		Map<String, RpcFieldDefinition> fieldDefinitions = rpcEntityDefinition.getFieldsDefinitions();
+		Assert.assertEquals(1, fieldDefinitions.size());
+		RpcFieldDefinition fieldDefinition = fieldDefinitions.get("FIELD");
+		Assert.assertNotNull(fieldDefinition);
+		Assert.assertEquals(new Integer(10), fieldDefinition.getLength());
+		Assert.assertEquals(List.class, fieldDefinition.getJavaType());
+		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
+		Assert.assertEquals(SimpleRpcListFieldTypeDefinition.class, fieldTypeDefinition.getClass());
+		SimpleRpcListFieldTypeDefinition simpleRpcListFieldTypeDefinition = (SimpleRpcListFieldTypeDefinition)fieldTypeDefinition;
+		Assert.assertEquals(5, simpleRpcListFieldTypeDefinition.getCount());
+		Assert.assertEquals(SimpleTextFieldTypeDefinition.class,
+				simpleRpcListFieldTypeDefinition.getItemFieldTypeDefinition().getClass());
+		Assert.assertEquals(String.class, simpleRpcListFieldTypeDefinition.getItemJavaType());
 	}
 
 	@Test
@@ -163,10 +177,5 @@ public class CobolParserTest {
 
 	// }
 	// @Test
-	public void dg() {
-		ApplicationContext context = new ClassPathXmlApplicationContext("CobolParserTest-context.xml");
-		OpenlegacyCobolParser cbp = (OpenlegacyCobolParser)context.getBean("OpenlegacyCobolParser");
-		cbp.toString();
-	}
 
 }

@@ -23,7 +23,7 @@ package org.openlegacy.terminal.loaders.support;
 
 import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.annotations.screen.ScreenListField;
-import org.openlegacy.definitions.support.SimpleListFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleScreenListFieldTypeDefinition;
 import org.openlegacy.exceptions.RegistryException;
 import org.openlegacy.loaders.support.AbstractFieldAnnotationLoader;
 import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
@@ -93,7 +93,7 @@ public class ScreenListFieldAnnotationLoader extends AbstractFieldAnnotationLoad
 			Assert.isTrue(gap > 1,
 					MessageFormat.format("each element in gaps  @ScreenListField must be greater than 1", fieldName));
 		}
-		fieldDefinition.setFieldTypeDefinition(new SimpleListFieldTypeDefinition(fieldAnnotation.fieldLength(),
+		fieldDefinition.setFieldTypeDefinition(new SimpleScreenListFieldTypeDefinition(fieldAnnotation.fieldLength(),
 				fieldAnnotation.count(), fieldAnnotation.gaps()));
 	}
 }

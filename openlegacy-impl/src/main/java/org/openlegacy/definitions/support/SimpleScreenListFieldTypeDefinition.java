@@ -10,39 +10,27 @@
  *******************************************************************************/
 package org.openlegacy.definitions.support;
 
-import org.openlegacy.definitions.ListFieldTypeDefinition;
+/**
+ * The simple Screen list field definitions.
+ */
 
-public class SimpleListFieldTypeDefinition implements ListFieldTypeDefinition {
+import org.openlegacy.definitions.ScreenListFieldTypeDefinition;
 
-	private int fieldLength;
-	private int count;
+public class SimpleScreenListFieldTypeDefinition extends AbstractListFieldTypeDefinition implements ScreenListFieldTypeDefinition {
+
 	private int[] gaps;
 
-	public SimpleListFieldTypeDefinition() {
-		this.fieldLength = 0;
-		this.count = 1;
+	public SimpleScreenListFieldTypeDefinition() {
+		super();
 		this.gaps = null;
 	}
 
-	public SimpleListFieldTypeDefinition(int fieldLength, int count, int[] gaps) {
-		this.fieldLength = fieldLength;
-		this.count = count;
+	public SimpleScreenListFieldTypeDefinition(int fieldLength, int count, int[] gaps) {
+		super(fieldLength, count);
 		this.gaps = gaps;
-	}
-
-	public int getFieldLength() {
-		return fieldLength;
-	}
-
-	public int getCount() {
-		return count;
 	}
 
 	public int[] getGaps() {
 		return gaps;
-	}
-
-	public String getTypeName() {
-		return "list";
 	}
 }
