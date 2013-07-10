@@ -2,6 +2,7 @@ package org.openlegacy.designtime.rpc.source.parsers;
 
 import org.antlr.runtime.tree.CommonTree;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.designtime.rpc.source.CodeParser;
@@ -11,9 +12,12 @@ import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 	private final static String USE_COPYBOOK_QUERY = "//linkageSection//copyStatement";
 	private final static String COPYBOOK_REPLACE_QUERY = "//linkageSection//copyReplacementInstruction";
 	private final static String PARAMETER_DEFINITION_QUERY = "//dataDescriptionEntry_format1";
+	private final static String PARAMETER_USED_QUERY = "//procedureDivision//identifier_format2//cobolWord//text()";
 	private final static Log logger = LogFactory.getLog(OpenlegacyCobolParser.class);
 
 	private String mainProcedureName;
@@ -75,6 +80,10 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 	public void setMainProcedureName(String mainProcedureName) {
 		this.mainProcedureName = mainProcedureName;
+	}
+
+	public String getCopyBookPath() {
+		return copyBookPath;
 	}
 
 	private void setCopyBookPath() {
@@ -116,19 +125,16 @@ public class OpenlegacyCobolParser implements CodeParser {
 		writer.close();
 	}
 
-	public void preProcess(Map<String, BufferedReader> streamMap) throws IOException {
+	public void preProcess(Map<String, InputStream> streamMap) throws IOException {
 		setCopyBookPath();
 		for (String copyBookName : streamMap.keySet()) {
 			File copyBookFile = new File(copyBookPath + copyBookName);
+			OutputStream copyBookStream = new FileOutputStream(copyBookFile);
 			if (delTempFiles) {
 				copyBookFile.deleteOnExit();
 			}
-			PrintWriter out = new PrintWriter(new FileWriter(copyBookFile));
-			String tmpString;
-			while ((tmpString = streamMap.get(copyBookName).readLine()) != null) {
-				out.println(tmpString);
-			}
-			out.close();
+			IOUtils.copy(streamMap.get(copyBookName), copyBookStream);
+			copyBookStream.close();
 		}
 	}
 
@@ -194,23 +200,13 @@ public class OpenlegacyCobolParser implements CodeParser {
 			throw (new OpenLegacyProviderException("Koopa input is invalid"));
 		}
 
-		String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
 		CommonTree rootNode = parseResults.getTree();
 
-		List<String> procedureParamtersNames = new ArrayList<String>();
+		List<String> procedureParamtersNames;
 		List<ParameterStructure> convertedParamtersNodes = new ArrayList<ParameterStructure>();
 		try {
 
-			@SuppressWarnings("unchecked")
-			List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
-			CommonTree programRoot = (CommonTree)programRootNode.get(0).getParent().getParent().getParent().getParent();
-
-			@SuppressWarnings("unchecked")
-			List<CommonTree> procedureParamtersNodes = (List<CommonTree>)Jaxen.evaluate(programRoot, USE_PARAMETER_QUERY);
-
-			for (CommonTree procedureParamtersNode : procedureParamtersNodes) {
-				procedureParamtersNames.add(procedureParamtersNode.getText());
-			}
+			procedureParamtersNames = getParameterNames();
 			@SuppressWarnings("unchecked")
 			List<CommonTree> jaxsonParamtersNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, PARAMETER_DEFINITION_QUERY);
 			for (int parameterIdx = 0; parameterIdx < jaxsonParamtersNodes.size(); parameterIdx++) {
@@ -237,6 +233,37 @@ public class OpenlegacyCobolParser implements CodeParser {
 		}
 
 		return entityDefinition;
+	}
+
+	private List<String> getParameterNames() {
+
+		CommonTree rootNode = parseResults.getTree();
+		List<String> paramtersNames = new ArrayList<String>();
+		String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
+
+		@SuppressWarnings("unchecked")
+		List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
+		// Assume there is only one main
+		CommonTree programRoot = (CommonTree)programRootNode.get(0).getParent().getParent().getParent().getParent();
+		programRoot.setParent(null);
+
+		@SuppressWarnings("unchecked")
+		List<CommonTree> procedureParamtersNodes = (List<CommonTree>)Jaxen.evaluate(programRoot, USE_PARAMETER_QUERY);
+
+		for (CommonTree procedureParamtersNode : procedureParamtersNodes) {
+			paramtersNames.add(procedureParamtersNode.getText());
+		}
+
+		if (paramtersNames.isEmpty()) {
+			@SuppressWarnings("unchecked")
+			List<CommonTree> usedParameters = (List<CommonTree>)Jaxen.evaluate(programRoot, PARAMETER_USED_QUERY);
+			for (CommonTree node : usedParameters) {
+				logger.debug(node.toStringTree());
+			}
+
+		}
+
+		return paramtersNames;
 	}
 
 	public void setDelTempFiles(boolean delTempFiles) {

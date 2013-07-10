@@ -13,6 +13,7 @@ import org.openlegacy.rpc.definitions.RpcFieldDefinition;
 import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcFieldDefinition;
+import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcPartEntityDefinition;
 import org.openlegacy.utils.StringUtil;
 
@@ -46,26 +47,46 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 
 		rpcFieldDefinition.setJavaType(fieldInformation.getJavaType());
 		rpcFieldDefinition.setFieldTypeDefinition(fieldInformation.getType());
+
+		return rpcFieldDefinition;
+	}
+
+	@SuppressWarnings("static-method")
+	private RpcFieldDefinition buildRpcArrayPartDefinition(String name, int occurs, RpcPartEntityDefinition itemDefinition) {
+		String javaFieldName = StringUtil.toJavaFieldName(name);
+		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(javaFieldName, General.class);
+		rpcFieldDefinition.setJavaType(List.class);
+
+		rpcFieldDefinition.setFieldTypeDefinition(new SimpleRpcListFieldTypeDefinition<RpcPartEntityDefinition>(0, occurs,
+				itemDefinition, null));
+
 		return rpcFieldDefinition;
 	}
 
 	RpcPartEntityDefinition buildRpcPartDefinition(String name, List<ParameterStructure> partFieldList) {
 
-		SimpleRpcPartEntityDefinition rpcPartEntityDef = new SimpleRpcPartEntityDefinition(null);
-		rpcPartEntityDef.setPartName(StringUtil.toClassName(name));
-		rpcPartEntityDef.setDisplayName(StringUtil.toDisplayName(name));
-		rpcPartEntityDef.setOriginalName(name);
-		Map<String, RpcFieldDefinition> rpcFieldsMap = rpcPartEntityDef.getFieldsDefinitions();
-		Map<String, RpcPartEntityDefinition> rpcPartInnerParts = rpcPartEntityDef.getInnerPartsDefinitions();
+		SimpleRpcPartEntityDefinition rpcPartEntityDefinition = new SimpleRpcPartEntityDefinition(null);
+		rpcPartEntityDefinition.setPartName(StringUtil.toClassName(name));
+		rpcPartEntityDefinition.setDisplayName(StringUtil.toDisplayName(name));
+		rpcPartEntityDefinition.setOriginalName(name);
+		Map<String, RpcFieldDefinition> rpcFieldsMap = rpcPartEntityDefinition.getFieldsDefinitions();
+		Map<String, RpcPartEntityDefinition> rpcPartInnerParts = rpcPartEntityDefinition.getInnerPartsDefinitions();
 		for (ParameterStructure partField : partFieldList) {
+			String partFieldName = partField.getFieldName();
 			if (partField.isSimple()) {
-				rpcFieldsMap.put(partField.getFieldName(), buildRpcFieldDefinition(partField));
+				rpcFieldsMap.put(partFieldName, buildRpcFieldDefinition(partField));
 			} else {
-				rpcPartInnerParts.put(partField.getFieldName(),
-						buildRpcPartDefinition(partField.getFieldName(), partField.getSubFields()));
+				RpcPartEntityDefinition subPartEntityDefinition = buildRpcPartDefinition(partFieldName, partField.getSubFields());
+				if (partField.getOccurs() == 1) {
+
+					rpcPartInnerParts.put(partFieldName, subPartEntityDefinition);
+				} else {
+					rpcFieldsMap.put(partFieldName,
+							buildRpcArrayPartDefinition(partFieldName, partField.getOccurs(), subPartEntityDefinition));
+				}
 			}
 		}
-		return rpcPartEntityDef;
+		return rpcPartEntityDefinition;
 	}
 
 	/*
@@ -83,14 +104,19 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 				entityDefinition.getFieldsDefinitions().put(interfaceParmeter.getFieldName(),
 						buildRpcFieldDefinition(interfaceParmeter));
 			} else {
-
-				entityDefinition.getPartsDefinitions().put(interfaceParmeter.getFieldName(),
-						buildRpcPartDefinition(interfaceParmeter.getFieldName(), interfaceParmeter.getSubFields()));
+				String fieldName = interfaceParmeter.getFieldName();
+				RpcPartEntityDefinition rpcPartEntityDefinition = buildRpcPartDefinition(fieldName,
+						interfaceParmeter.getSubFields());
+				if (interfaceParmeter.getOccurs() == 1) {
+					entityDefinition.getPartsDefinitions().put(fieldName, rpcPartEntityDefinition);
+				} else {
+					entityDefinition.getFieldsDefinitions().put(fieldName,
+							buildRpcArrayPartDefinition(fieldName, interfaceParmeter.getOccurs(), rpcPartEntityDefinition));
+				}
 			}
 			logger.debug(interfaceParmeter.toString());
 		}
 
 		return entityDefinition;
 	}
-
 }

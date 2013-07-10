@@ -32,8 +32,8 @@ public class CobolListInformation implements FieldInformation {
 
 	public FieldTypeDefinition getType() {
 
-		return new SimpleRpcListFieldTypeDefinition(fieldInformation.getLength(), occurs, fieldInformation.getType(),
-				fieldInformation.getJavaType());
+		return new SimpleRpcListFieldTypeDefinition<FieldTypeDefinition>(fieldInformation.getLength(), occurs,
+				fieldInformation.getType(), fieldInformation.getJavaType());
 	}
 
 }

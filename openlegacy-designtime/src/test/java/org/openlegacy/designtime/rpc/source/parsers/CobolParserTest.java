@@ -12,7 +12,9 @@ import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
+import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
+import org.openlegacy.rpc.definitions.SimpleRpcPartEntityDefinition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,7 +23,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -112,28 +116,71 @@ public class CobolParserTest {
 	}
 
 	@Test
-	public void testCobolParserSimpleFieldArray() throws IOException {
+	public void testCobolParserArrays() throws IOException {
 
 		String sourceFile = "array.cbl";
 		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		FieldTypeDefinition fieldTypeDefinition;
 		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
-		Assert.assertNotNull(rpcEntityDefinition);
+		RpcFieldDefinition fieldDefinition;
+		RpcFieldDefinition childField;
 
+		Assert.assertNotNull(rpcEntityDefinition);
 		Map<String, RpcFieldDefinition> fieldDefinitions = rpcEntityDefinition.getFieldsDefinitions();
-		Assert.assertEquals(1, fieldDefinitions.size());
-		RpcFieldDefinition fieldDefinition = fieldDefinitions.get("FIELD");
+		Assert.assertEquals(2, fieldDefinitions.size());
+
+		// Simple
+		fieldDefinition = fieldDefinitions.get("FIELD");
 		Assert.assertNotNull(fieldDefinition);
 		Assert.assertEquals(new Integer(10), fieldDefinition.getLength());
 		Assert.assertEquals(List.class, fieldDefinition.getJavaType());
 		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
 		Assert.assertEquals(SimpleRpcListFieldTypeDefinition.class, fieldTypeDefinition.getClass());
-		SimpleRpcListFieldTypeDefinition simpleRpcListFieldTypeDefinition = (SimpleRpcListFieldTypeDefinition)fieldTypeDefinition;
+		@SuppressWarnings("unchecked")
+		SimpleRpcListFieldTypeDefinition<FieldTypeDefinition> simpleRpcListFieldTypeDefinition = (SimpleRpcListFieldTypeDefinition<FieldTypeDefinition>)fieldTypeDefinition;
 		Assert.assertEquals(5, simpleRpcListFieldTypeDefinition.getCount());
 		Assert.assertEquals(SimpleTextFieldTypeDefinition.class,
-				simpleRpcListFieldTypeDefinition.getItemFieldTypeDefinition().getClass());
+				simpleRpcListFieldTypeDefinition.getItemTypeDefinition().getClass());
 		Assert.assertEquals(String.class, simpleRpcListFieldTypeDefinition.getItemJavaType());
+
+		// Array of part
+		fieldDefinition = fieldDefinitions.get("PART");
+		Assert.assertNotNull(fieldDefinition);
+		Assert.assertEquals(List.class, fieldDefinition.getJavaType());
+		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
+		@SuppressWarnings("unchecked")
+		SimpleRpcListFieldTypeDefinition<RpcPartEntityDefinition> arrayRpcListFieldTypeDefinition = (SimpleRpcListFieldTypeDefinition<RpcPartEntityDefinition>)fieldTypeDefinition;
+		Assert.assertEquals(3, arrayRpcListFieldTypeDefinition.getCount());
+		Assert.assertEquals(SimpleRpcPartEntityDefinition.class,
+				arrayRpcListFieldTypeDefinition.getItemTypeDefinition().getClass());
+		RpcPartEntityDefinition rpcPartEntityDefinition = arrayRpcListFieldTypeDefinition.getItemTypeDefinition();
+		Assert.assertEquals("PART", rpcPartEntityDefinition.getPartName());
+		Map<String, RpcFieldDefinition> partFieldDefinitions = rpcPartEntityDefinition.getFieldsDefinitions();
+		Assert.assertEquals(2, partFieldDefinitions.size());
+
+		// First Child
+		childField = partFieldDefinitions.get("CHILD1");
+		Assert.assertNotNull(childField);
+		Assert.assertEquals(String.class, childField.getJavaType());
+		Assert.assertEquals(new Integer(10), childField.getLength());
+
+		// second Child
+		childField = partFieldDefinitions.get("CHILD2");
+		Assert.assertNotNull(childField);
+		Assert.assertEquals(List.class, childField.getJavaType());
+		fieldTypeDefinition = childField.getFieldTypeDefinition();
+
+		Assert.assertEquals(new Integer(2), childField.getLength());
+
+		@SuppressWarnings("unchecked")
+		SimpleRpcListFieldTypeDefinition<FieldTypeDefinition> internalListDefention = (SimpleRpcListFieldTypeDefinition<FieldTypeDefinition>)fieldTypeDefinition;
+		Assert.assertEquals(6, internalListDefention.getCount());
+		Assert.assertEquals(2, internalListDefention.getFieldLength());
+		Assert.assertEquals(SimpleExtendedNumericFieldTypeDefinition.class,
+				internalListDefention.getItemTypeDefinition().getClass());
+		Assert.assertEquals(Integer.class, internalListDefention.getItemJavaType());
+
 	}
 
 	@Test
@@ -159,23 +206,19 @@ public class CobolParserTest {
 		Assert.assertTrue(expexted.equals(actual));
 	}
 
-	// public void testPreProcess() throws IOException {
-	// Map<String, BufferedReader> streamMap = new HashMap<String, BufferedReader>();
-	// streamMap.put("sampcpy1.cpy",
-	// new BufferedReader(new FileReader(new File("C:\\openlegacy\\cobol_examples\\sampcpy1.cpy"))));
-	// streamMap.put("sampcpy2.cpy",
-	// new BufferedReader(new FileReader(new File("C:\\openlegacy\\cobol_examples\\sampcpy2.cpy"))));
-	// OpenlegacyCobolParser cobolParser = new OpenlegacyCobolParser();
-	// cobolParser.setDelTempFiles(false);
-	// cobolParser.preProcess(streamMap);
-	//
-	// String sourceFile = "sameprog.cbl";
-	// String source = IOUtils.toString(getClass().getResource(sourceFile));
-	// String entityName = sourceFile.substring(0, sourceFile.indexOf(".") > 0 ? sourceFile.indexOf(".") :
-	// sourceFile.length());
-	// cobolParser.parse(source, entityName);
+	@Test
+	public void testPreProcessJustCopy() throws IOException {
 
-	// }
-	// @Test
+		Map<String, InputStream> streamMap = new HashMap<String, InputStream>();
 
+		streamMap.put("sampcpy1.cpy", getClass().getResourceAsStream("sampcpy1.cpy"));
+		streamMap.put("sampcpy2.cpy", getClass().getResourceAsStream("sampcpy2.cpy"));
+
+		openlegacyCobolParser.preProcess(streamMap);
+		String copyBookPath = openlegacyCobolParser.getCopyBookPath();
+		File copyBookDir = new File(copyBookPath);
+		String fileList[] = copyBookDir.list();
+		Assert.assertArrayEquals(fileList, streamMap.keySet().toArray());
+
+	}
 }
