@@ -65,6 +65,7 @@ public class CobolParserTest {
 		simpleExtendedNumericFieldTypeDefinition = (SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition;
 		Assert.assertEquals(99.0, ((SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), precise);
 		Assert.assertEquals(0, simpleExtendedNumericFieldTypeDefinition.getDecimalPlaces());
+		Assert.assertEquals(0, fieldDefinition.getOrder());
 
 		// Fetch Decimal
 		fieldDefinition = fieldDefinitions.get("PARAM2");
@@ -75,6 +76,7 @@ public class CobolParserTest {
 		simpleExtendedNumericFieldTypeDefinition = (SimpleExtendedNumericFieldTypeDefinition)fieldTypeDefinition;
 		Assert.assertEquals(9.9, simpleExtendedNumericFieldTypeDefinition.getMaximumValue(), precise);
 		Assert.assertEquals(1, simpleExtendedNumericFieldTypeDefinition.getDecimalPlaces());
+		Assert.assertEquals(1, fieldDefinition.getOrder());
 
 		// String
 		fieldDefinition = fieldDefinitions.get("PARAM3");
@@ -82,7 +84,7 @@ public class CobolParserTest {
 		Assert.assertEquals(String.class, fieldDefinition.getJavaType());
 		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
 		Assert.assertEquals(SimpleTextFieldTypeDefinition.class, fieldTypeDefinition.getClass());
-
+		Assert.assertEquals(2, fieldDefinition.getOrder());
 	}
 
 	@Test
@@ -147,6 +149,7 @@ public class CobolParserTest {
 		// Array of part
 		fieldDefinition = fieldDefinitions.get("PART");
 		Assert.assertNotNull(fieldDefinition);
+		Assert.assertEquals(1, fieldDefinition.getOrder());
 		Assert.assertEquals(List.class, fieldDefinition.getJavaType());
 		fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
 		@SuppressWarnings("unchecked")
@@ -164,12 +167,14 @@ public class CobolParserTest {
 		Assert.assertNotNull(childField);
 		Assert.assertEquals(String.class, childField.getJavaType());
 		Assert.assertEquals(new Integer(10), childField.getLength());
+		Assert.assertEquals(0, childField.getOrder());
 
 		// second Child
 		childField = partFieldDefinitions.get("CHILD2");
 		Assert.assertNotNull(childField);
 		Assert.assertEquals(List.class, childField.getJavaType());
 		fieldTypeDefinition = childField.getFieldTypeDefinition();
+		Assert.assertEquals(1, childField.getOrder());
 
 		Assert.assertEquals(new Integer(2), childField.getLength());
 

@@ -34,7 +34,7 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 		this.fieldInformationFactory = fieldInformationFactory;
 	}
 
-	private RpcFieldDefinition buildRpcFieldDefinition(ParameterStructure parameter) {
+	private RpcFieldDefinition buildRpcFieldDefinition(ParameterStructure parameter, int order) {
 
 		FieldInformation fieldInformation = fieldInformationFactory.getObject(parameter.getVariableDeclaration(),
 				parameter.getOccurs());
@@ -42,7 +42,7 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 		String javaFieldName = StringUtil.toJavaFieldName(parameter.getFieldName());
 		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(javaFieldName, General.class);
 		rpcFieldDefinition.setOriginalName(parameter.getFieldName());
-
+		rpcFieldDefinition.setOrder(order);
 		rpcFieldDefinition.setLength(fieldInformation.getLength());
 
 		rpcFieldDefinition.setJavaType(fieldInformation.getJavaType());
@@ -52,9 +52,11 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 	}
 
 	@SuppressWarnings("static-method")
-	private RpcFieldDefinition buildRpcArrayPartDefinition(String name, int occurs, RpcPartEntityDefinition itemDefinition) {
+	private RpcFieldDefinition buildRpcArrayPartDefinition(String name, int occurs, RpcPartEntityDefinition itemDefinition,
+			int order) {
 		String javaFieldName = StringUtil.toJavaFieldName(name);
 		SimpleRpcFieldDefinition rpcFieldDefinition = new SimpleRpcFieldDefinition(javaFieldName, General.class);
+		rpcFieldDefinition.setOrder(order);
 		rpcFieldDefinition.setJavaType(List.class);
 
 		rpcFieldDefinition.setFieldTypeDefinition(new SimpleRpcListFieldTypeDefinition<RpcPartEntityDefinition>(0, occurs,
@@ -63,26 +65,31 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 		return rpcFieldDefinition;
 	}
 
-	RpcPartEntityDefinition buildRpcPartDefinition(String name, List<ParameterStructure> partFieldList) {
+	RpcPartEntityDefinition buildRpcPartDefinition(String name, List<ParameterStructure> partFieldList, int order) {
 
 		SimpleRpcPartEntityDefinition rpcPartEntityDefinition = new SimpleRpcPartEntityDefinition(null);
 		rpcPartEntityDefinition.setPartName(StringUtil.toClassName(name));
 		rpcPartEntityDefinition.setDisplayName(StringUtil.toDisplayName(name));
 		rpcPartEntityDefinition.setOriginalName(name);
+		rpcPartEntityDefinition.setOrder(order);
 		Map<String, RpcFieldDefinition> rpcFieldsMap = rpcPartEntityDefinition.getFieldsDefinitions();
 		Map<String, RpcPartEntityDefinition> rpcPartInnerParts = rpcPartEntityDefinition.getInnerPartsDefinitions();
-		for (ParameterStructure partField : partFieldList) {
+		for (int internalOrder = 0; internalOrder < partFieldList.size(); internalOrder++) {
+			ParameterStructure partField = partFieldList.get(internalOrder);
 			String partFieldName = partField.getFieldName();
 			if (partField.isSimple()) {
-				rpcFieldsMap.put(partFieldName, buildRpcFieldDefinition(partField));
+				rpcFieldsMap.put(partFieldName, buildRpcFieldDefinition(partField, internalOrder));
 			} else {
-				RpcPartEntityDefinition subPartEntityDefinition = buildRpcPartDefinition(partFieldName, partField.getSubFields());
+				RpcPartEntityDefinition subPartEntityDefinition = buildRpcPartDefinition(partFieldName, partField.getSubFields(),
+						internalOrder);
 				if (partField.getOccurs() == 1) {
 
 					rpcPartInnerParts.put(partFieldName, subPartEntityDefinition);
 				} else {
-					rpcFieldsMap.put(partFieldName,
-							buildRpcArrayPartDefinition(partFieldName, partField.getOccurs(), subPartEntityDefinition));
+					rpcFieldsMap.put(
+							partFieldName,
+							buildRpcArrayPartDefinition(partFieldName, partField.getOccurs(), subPartEntityDefinition,
+									internalOrder));
 				}
 			}
 		}
@@ -97,21 +104,23 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 	public RpcEntityDefinition build(String entityName, List<ParameterStructure> paramtersNodes) {
 		RpcEntityDefinition entityDefinition = new SimpleRpcEntityDefinition(entityName);
 
-		for (int parameterIdx = 0; parameterIdx < paramtersNodes.size(); parameterIdx++) {
-			ParameterStructure interfaceParmeter = paramtersNodes.get(parameterIdx);
-
+		for (int parameterOrder = 0; parameterOrder < paramtersNodes.size(); parameterOrder++) {
+			ParameterStructure interfaceParmeter = paramtersNodes.get(parameterOrder);
+			String fieldName = interfaceParmeter.getFieldName();
 			if (interfaceParmeter.isSimple()) {
-				entityDefinition.getFieldsDefinitions().put(interfaceParmeter.getFieldName(),
-						buildRpcFieldDefinition(interfaceParmeter));
+
+				entityDefinition.getFieldsDefinitions().put(fieldName, buildRpcFieldDefinition(interfaceParmeter, parameterOrder));
 			} else {
-				String fieldName = interfaceParmeter.getFieldName();
+
 				RpcPartEntityDefinition rpcPartEntityDefinition = buildRpcPartDefinition(fieldName,
-						interfaceParmeter.getSubFields());
+						interfaceParmeter.getSubFields(), parameterOrder);
 				if (interfaceParmeter.getOccurs() == 1) {
 					entityDefinition.getPartsDefinitions().put(fieldName, rpcPartEntityDefinition);
 				} else {
-					entityDefinition.getFieldsDefinitions().put(fieldName,
-							buildRpcArrayPartDefinition(fieldName, interfaceParmeter.getOccurs(), rpcPartEntityDefinition));
+					entityDefinition.getFieldsDefinitions().put(
+							fieldName,
+							buildRpcArrayPartDefinition(fieldName, interfaceParmeter.getOccurs(), rpcPartEntityDefinition,
+									parameterOrder));
 				}
 			}
 			logger.debug(interfaceParmeter.toString());

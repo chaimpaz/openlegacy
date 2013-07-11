@@ -21,6 +21,7 @@ public class SimpleRpcPartEntityDefinition extends AbstractPartEntityDefinition<
 
 	private static final long serialVersionUID = 1L;
 	private String originalName;
+	private int order;
 	private final Map<String, RpcPartEntityDefinition> innerPartsDefinitions = new LinkedHashMap<String, RpcPartEntityDefinition>();
 
 	public SimpleRpcPartEntityDefinition(Class<?> partClass) {
@@ -33,6 +34,14 @@ public class SimpleRpcPartEntityDefinition extends AbstractPartEntityDefinition<
 
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	public Map<String, RpcPartEntityDefinition> getInnerPartsDefinitions() {
