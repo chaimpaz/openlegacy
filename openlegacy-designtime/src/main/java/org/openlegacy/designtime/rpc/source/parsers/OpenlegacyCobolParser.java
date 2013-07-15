@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,12 +37,14 @@ import koopa.util.Tuple;
 
 public class OpenlegacyCobolParser implements CodeParser {
 
+	private final static String PARAGRAPH_QUERY = "//paragraph";
+	private final static String PROCEDURE_QUERY = "//procedureDivision";
 	private final static String ROOT_PROGRAM_QUERY_TEMPLATE = "//paragraph//cobolWord[text()='%s']";
 	private final static String USE_PARAMETER_QUERY = "//usingPhrase//cobolWord//text()";
 	private final static String USE_COPYBOOK_QUERY = "//linkageSection//copyStatement";
 	private final static String COPYBOOK_REPLACE_QUERY = "//linkageSection//copyReplacementInstruction";
-	private final static String PARAMETER_DEFINITION_QUERY = "//dataDescriptionEntry_format1";
-	private final static String PARAMETER_USED_QUERY = "//procedureDivision//identifier_format2//cobolWord//text()";
+	private final static String PARAMETER_DEFINITION_QUERY = "//linkageSection//dataDescriptionEntry_format1";
+	private final static String PARAMETER_USED_QUERY = "//identifier_format2//cobolWord//text()";
 	private final static Log logger = LogFactory.getLog(OpenlegacyCobolParser.class);
 
 	private String mainProcedureName;
@@ -202,31 +205,41 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 		CommonTree rootNode = parseResults.getTree();
 
-		List<String> procedureParamtersNames;
-		List<ParameterStructure> convertedParamtersNodes = new ArrayList<ParameterStructure>();
+		List<String> usedParamtersNames;
+		List<ParameterStructure> allParamtersNodes = new ArrayList<ParameterStructure>();
+		List<ParameterStructure> interfaceParamtersNodes = new ArrayList<ParameterStructure>();
+		List<String> interfaceParamtersNames = new ArrayList<String>();
 		try {
 
-			procedureParamtersNames = getParameterNames();
+			usedParamtersNames = getParameterNames();
 			@SuppressWarnings("unchecked")
 			List<CommonTree> jaxsonParamtersNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, PARAMETER_DEFINITION_QUERY);
 			for (int parameterIdx = 0; parameterIdx < jaxsonParamtersNodes.size(); parameterIdx++) {
 
-				convertedParamtersNodes.add(new KoopaParameterStructure(jaxsonParamtersNodes.get(parameterIdx)));
+				allParamtersNodes.add(new KoopaParameterStructure(jaxsonParamtersNodes.get(parameterIdx)));
 			}
-
-			for (int parameterIdx = 0; parameterIdx < convertedParamtersNodes.size(); parameterIdx++) {
-				KoopaParameterStructure cobolParmeter = (KoopaParameterStructure)convertedParamtersNodes.get(parameterIdx);
+			Map<String, String> fieldToTopLevelName = new HashMap<String, String>();
+			for (int parameterIdx = 0; parameterIdx < allParamtersNodes.size(); parameterIdx++) {
+				KoopaParameterStructure cobolParmeter = (KoopaParameterStructure)allParamtersNodes.get(parameterIdx);
+				fieldToTopLevelName.put(cobolParmeter.getFieldName(), cobolParmeter.getFieldName());
 				if (!cobolParmeter.isSimple()) {
-					cobolParmeter.collectSubFields(convertedParamtersNodes, parameterIdx);
+					fieldToTopLevelName.putAll(cobolParmeter.collectSubFields(allParamtersNodes, parameterIdx + 1,
+							cobolParmeter.getFieldName()));
 				}
-				if (!procedureParamtersNames.contains(cobolParmeter.getFieldName())) {
-					convertedParamtersNodes.remove(parameterIdx);
-					parameterIdx++;
-				}
-
 			}
-			entityDefinition = rpcEntityDefinitionBuilder.build(rpcEntityName, convertedParamtersNodes);
+			for (String prameterName : usedParamtersNames) {
+				if (fieldToTopLevelName.containsKey(prameterName) && !interfaceParamtersNames.contains(prameterName)) {
+					interfaceParamtersNames.add(fieldToTopLevelName.get(prameterName));
+				}
+			}
+			for (ParameterStructure parameterNode : allParamtersNodes) {
+				if (interfaceParamtersNames.contains(parameterNode.getFieldName())) {
+					interfaceParamtersNodes.add(parameterNode);
+				}
+			}
+			entityDefinition = rpcEntityDefinitionBuilder.build(rpcEntityName, interfaceParamtersNodes);
 			// } catch (XPathExpressionException e) {
+
 		} catch (Exception e) {
 			logger.debug("failed at query stage");
 			throw new OpenLegacyProviderException("Koopa input is invalid");
@@ -239,12 +252,30 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 		CommonTree rootNode = parseResults.getTree();
 		List<String> paramtersNames = new ArrayList<String>();
-		String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
+		CommonTree programRoot = null;
 
 		@SuppressWarnings("unchecked")
-		List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
-		// Assume there is only one main
-		CommonTree programRoot = (CommonTree)programRootNode.get(0).getParent().getParent().getParent().getParent();
+		List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, PARAGRAPH_QUERY);
+
+		if (programRootNode.size() == 1) {
+			programRoot = (CommonTree)programRootNode.get(0).getParent();
+		} else if (programRootNode.size() > 1) {
+			String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
+
+			@SuppressWarnings("unchecked")
+			List<CommonTree> retryProgramRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
+			// Assume there is only one main
+			programRoot = (CommonTree)retryProgramRootNode.get(0).getParent().getParent().getParent().getParent();
+		} else {
+			@SuppressWarnings("unchecked")
+			List<CommonTree> retryProgramRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, PROCEDURE_QUERY);
+			programRoot = retryProgramRootNode.get(0);
+		}
+
+		if (programRoot == null) {
+			return paramtersNames;
+		}
+
 		programRoot.setParent(null);
 
 		@SuppressWarnings("unchecked")
@@ -257,10 +288,9 @@ public class OpenlegacyCobolParser implements CodeParser {
 		if (paramtersNames.isEmpty()) {
 			@SuppressWarnings("unchecked")
 			List<CommonTree> usedParameters = (List<CommonTree>)Jaxen.evaluate(programRoot, PARAMETER_USED_QUERY);
-			for (CommonTree node : usedParameters) {
-				logger.debug(node.toStringTree());
+			for (CommonTree parameter : usedParameters) {
+				paramtersNames.add(parameter.getText());
 			}
-
 		}
 
 		return paramtersNames;

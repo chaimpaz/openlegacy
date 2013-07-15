@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -226,4 +228,36 @@ public class CobolParserTest {
 		Assert.assertArrayEquals(fileList, streamMap.keySet().toArray());
 
 	}
+
+	@Test
+	public void testInterfaceParameters() throws IOException {
+		String sourceFile = "sampprog _expand.cbl";
+		Set<String> interfaceParameters = new HashSet<String>();
+		interfaceParameters.add("DFHCOMMAREA");
+		String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
+		String source = IOUtils.toString(getClass().getResource(sourceFile));
+		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parse(source, entityName);
+
+		// Test collecting parameters from program commands
+		Assert.assertTrue(rpcEntityDefinition.getFieldsDefinitions().isEmpty());
+		Map<String, PartEntityDefinition<RpcFieldDefinition>> partEntityDefinitions = rpcEntityDefinition.getPartsDefinitions();
+		Assert.assertEquals(1, partEntityDefinitions.size());
+		Assert.assertEquals(interfaceParameters, partEntityDefinitions.keySet());
+		RpcPartEntityDefinition rpcPartEntityDefinition = (RpcPartEntityDefinition)partEntityDefinitions.get("DFHCOMMAREA");
+
+		// Test tree
+		Map<String, RpcPartEntityDefinition> partsEntityInnerDefinitions = rpcPartEntityDefinition.getInnerPartsDefinitions();
+		RpcPartEntityDefinition partEntityInnerDefinitions = partsEntityInnerDefinitions.get("CM-VARS");
+
+		Map<String, RpcFieldDefinition> innerFields = partEntityInnerDefinitions.getFieldsDefinitions();
+		Assert.assertEquals(3, innerFields.size());
+		RpcFieldDefinition myvar = innerFields.get("CM-MYVAR");
+		Assert.assertEquals(String.class, myvar.getJavaType());
+
+		RpcFieldDefinition other = innerFields.get("CM-OTHER-VAR");
+		Assert.assertEquals(Integer.class, other.getJavaType());
+		RpcFieldDefinition another = innerFields.get("CM-ANOTHER-VAR");
+		Assert.assertEquals(String.class, another.getJavaType());
+	}
+
 }

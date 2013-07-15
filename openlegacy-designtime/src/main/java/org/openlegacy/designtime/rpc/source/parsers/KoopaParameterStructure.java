@@ -9,7 +9,9 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.antlr.runtime.tree.CommonTree;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import koopa.trees.antlr.jaxen.Jaxen;
 
@@ -85,22 +87,26 @@ public class KoopaParameterStructure implements ParameterStructure {
 		}
 	}
 
-	public void collectSubFields(List<ParameterStructure> paramtersNodes, int startIdx) {
-		int idx = startIdx + 1;
+	public Map<String, String> collectSubFields(List<ParameterStructure> paramtersNodes, int startIdx, String topLevelName) {
+		Map<String, String> fieldNameMap = new HashMap<String, String>();
+
+		int idx = startIdx;
 		int handleLevel = paramtersNodes.get(idx).getLevel();
 		while (idx < paramtersNodes.size()) {
 			KoopaParameterStructure cobolField = (KoopaParameterStructure)paramtersNodes.get(idx);
 			if (cobolField.getLevel() == handleLevel) {
+				fieldNameMap.put(cobolField.getFieldName(), topLevelName);
 				subFieldsList.add(cobolField);
 				paramtersNodes.remove(idx);
 				if (!cobolField.isSimple()) {
-					cobolField.collectSubFields(paramtersNodes, idx);
+					fieldNameMap.putAll(cobolField.collectSubFields(paramtersNodes, startIdx, topLevelName));
 				}
 			} else {
-				return;
+				return fieldNameMap;
 			}
 
 		}
+		return fieldNameMap;
 	}
 
 	/*
