@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openlegacy.terminal.mvc.web;
 
+import org.openlegacy.SessionPropertiesProvider;
 import org.openlegacy.modules.login.Login;
 import org.openlegacy.modules.login.Login.LoginEntity;
 import org.openlegacy.modules.login.LoginException;
@@ -49,6 +50,9 @@ public class LoginController {
 
 	@Inject
 	private TerminalSession terminalSession;
+
+	@Inject
+	private SessionPropertiesProvider sessionPropertiesProvider;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String home(Model uiModel) {
@@ -102,6 +106,8 @@ public class LoginController {
 		}
 
 		ScreenEntity screenEntity = terminalSession.getEntity();
+
+		uiModel.addAttribute("sessionProperties", sessionPropertiesProvider.getSessionProperties());
 
 		if (screenEntity != null) {
 			String resultEntityName = ProxyUtil.getOriginalClass(screenEntity.getClass()).getSimpleName();
