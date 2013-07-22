@@ -1,0 +1,14 @@
+Items
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Item Number</th>
+			<th>Item Description</th>
+		</tr>
+	</thead>
+	<tr data-ng-repeat="item in items">
+		<td><a href="#itemDetails/{{item.itemNumber}}">{{item.itemNumber}}</a></td>
+		<td>{{item.itemDescription}}</td>
+	</tr>
+</table>
