@@ -36,11 +36,13 @@
 	angular.module( 'olApp', [ 'controllers', 'services'] )
 
 	.config( [ '$routeProvider', function( $routeProvider) {
+		
 		$routeProvider = $routeProvider.when( '/login', {templateUrl: 'partials/login.html', controller: 'loginController'} );
 		$routeProvider = $routeProvider.when( '/items', {templateUrl: 'partials/items.html', controller: 'itemsController'} );
 
-		$routeProvider = $routeProvider.when( '/itemDetails/:item', {templateUrl: 'partials/itemDetails.html',controller: 'itemDetailsController'});
+		$routeProvider = $routeProvider.when( '/itemDetails/:itemNumber', {templateUrl: 'partials/itemDetails.html',controller: 'itemDetailsController'});
 		
 		$routeProvider = $routeProvider.otherwise( {redirectTo: ''} );
+		
 	} ] );
 } )();

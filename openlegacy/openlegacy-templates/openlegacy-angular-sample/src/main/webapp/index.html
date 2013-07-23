@@ -1,22 +1,210 @@
-<!DOCTYPE html>
-<html ng-app="olApp">
-	<head>
-		<meta charset="utf-8"/>
-		<title>OpenLegacy Angular demo</title>
-		<link rel="stylesheet" type="text/css" href="css/project.css" media="all"/>
-	</head>
-	<body>
-		<div class="header">
-			Hello {{loggedInUser}}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3c.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="olApp">
+<head>
+<link href="/openlegacy-mvc-sample/favicon.ico" rel="shortcut icon" />
+<title>OpenLegacy Toys</title>
+<link type="text/css" rel="stylesheet"
+	href="/openlegacy-mvc-sample/themes/emily/emily.css" />
+<link type="text/css" rel="stylesheet"
+	href="/openlegacy-mvc-sample/css/project.css" />
+<script type="text/javascript">
+	dojoConfig = {
+		async : true,
+		parseOnLoad : true,
+		baseUrl : '/openlegacy-mvc-sample/dj/dojo/',
+		isDebug : false,
+		locale : ''
+	};
+</script>
+<script src="/openlegacy-mvc-sample/dj/dojo.custom.build.js"
+	type="text/javascript"></script>
+<script language="JavaScript" type="text/javascript">
+	require([ "dijit/dijit", "dijit/TitlePane", "dijit/layout/ContentPane" ]);
+</script>
+<script src="/openlegacy-mvc-sample/openlegacy-js/openlegacy.mvc.js"
+	type="text/javascript"></script>
+<script src="/openlegacy-mvc-sample/js/project.js"
+	type="text/javascript"></script>
+<script src="/openlegacy-mvc-sample/js/Chart.min.js"
+	type="text/javascript"></script>
+</head>
+<body class="emily">
+	<div class="page_container" id="wrap">
+		<div id="wrap_in">
+			<div class="container">
+				<div class="header" data-ng-show="loggedInUser">
+					<h1 id="logo_header">
+						<a href="">OpenLegacy Toys</a>
+					</h1>
+					<div class="topmenu_wrap">
+						<div class="topmenu">
+							<ul>
+								<li class="welcomeUser">Welcome, {{loggedInUser}}!</li>
+								<li class="prefs"><a
+									href="javascript:changeTheme({cloud:'cloudm',night:'cloudm',red:'cloudm',emily:'emilym'});"><span
+										class="big_icon theme"></span>Theme</a></li>
+								<li class="mobile"><a title="Mobile version"
+									href="/openlegacy-mvc-sample/SignOn?site_preference=mobile"><span
+										class="big_icon mobile"></span>Mobile</a></li>
+								<li class="prefs"><a title="REST API"
+									href="http://demo.openlegacy.org/openlegacy-rest-new"><span
+										class="big_icon rest"></span>REST</a></li>
+								<li class="logout"><a href="/openlegacy-mvc-sample/logoff"><span
+										class="big_icon logout"></span>Logout</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="menu_content" data-ng-show="loggedInUser">
+					<div id="menu">
+						<script type="text/javascript" language="JavaScript">
+							require([ "dijit/layout/AccordionContainer",
+									"dijit/layout/ContentPane", "dijit/Dialog" ]);
+						</script>
+						<div id="accordion"
+							data-dojo-type="dijit.layout.AccordionContainer"
+							style="height: 100%">
+							<div id="InventoryMenu" class="element" title="Inventory Menu"
+								data-dojo-type="dijit.layout.ContentPane">
+								<div class="links">
+									<ul>
+										<li><a class="current"
+											href="/openlegacy-mvc-sample/Items">Items</a> <script>
+												require(
+														[ "dojo/ready" ],
+														function(ready) {
+															ready(function() {
+																require(
+																		[ "dijit/registry" ],
+																		function(
+																				registry) {
+																			registry
+																					.byId(
+																							'accordion')
+																					.selectChild(
+																							registry
+																									.byId('InventoryMenu'));
+																		});
+															});
+														});
+											</script><a href="/openlegacy-mvc-sample/Warehouses">Warehouses</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="element" title="Tools"
+								data-dojo-type="dijit.layout.ContentPane">
+								<div class="links">
+									<ul>
+										<li><a
+											href="javascript:showSessionViewer('/openlegacy-rest-sample');">View
+												Session</a></li>
+									</ul>
+								</div>
+							</div>
+							<div class="element" id="demoStuff" title="Demo stuff"
+								data-dojo-type="dijit.layout.ContentPane">
+								<div class="links">
+									<ul>
+										<li><a
+											href="javascript:showDialog('viewSourceDialog','/openlegacy-rest-sample/viewSource?file=/src/main/org/openlegacy/terminal/samples/model/Items.java')">View
+												Model</a></li>
+									</ul>
+									<div class="demo_session">
+										<a
+											title="Original terminal screen - this is how it looked before"
+											href="javascript:showSessionViewer('/openlegacy-rest-sample');"><img
+											height="170px" width="325px"
+											src="/openlegacy-rest-sample/sessionViewer/image" /></a>
+									</div>
+								</div>
+							</div>
+							<script>
+								require(
+										[ "dojo/ready" ],
+										function(ready) {
+											ready(function() {
+												require(
+														[ "dijit/registry" ],
+														function(registry) {
+															registry
+																	.byId(
+																			'accordion')
+																	.selectChild(
+																			registry
+																					.byId('demoStuff'));
+														});
+											});
+										});
+							</script>
+						</div>
+					</div>
+				</div>
+				<div class="main_content">
+					<div class="breadcrumbs" data-ng-show="loggedInUser">
+						<ul>
+							<li><a href="/openlegacy-mvc-sample/MainMenu">Main Menu</a></li>
+							<li><a href="/openlegacy-mvc-sample/InventoryMenu">Inventory
+									Menu</a></li>
+							<li>Items</li>
+						</ul>
+					</div>
+					<div class="actions" data-ng-show="loggedInUser">
+						<ul>
+							<li><a href="javascript:doPost('Items');"><span
+									class="actions_icon actions_submit"></span><img alt="Submit"
+									height="14" width="15"
+									src="/openlegacy-mvc-sample/icons/submit.png" /> Submit </a></li>
+						</ul>
+					</div>
+					<div class="main" id="container"
+						data-dojo-type="dijit.layout.ContentPane">
+						<div>
+							<div class="header">Hello {{loggedInUser}}</div>
+							<a href="#login">Login</a>
+							<div ng-view="true"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-		
+	</div>
+	<div id="footer">
+		<div id="footer_left">
+			<a title="OpenLegacy" class="logo" href="http://www.openlegacy.org"
+				target="_new">OpenLegacy</a>
+		</div>
+		<div id="footer_right">
+			Copyright © 2012 OpenLegacy. All rights reserved. <br />Powered by
+			OpenLegacy ® 1.2.0-SNAPSHOT <br /> Web | <a
+				href="/openlegacy-mvc-sample/?site_preference=mobile">Mobile</a>
+		</div>
+	</div>
+	<div>
+		<div
+			data-dojo-props="parseOnLoad: true, draggable:false, duration:600"
+			title="System Help"
+			style="margin-left: 39%; width: 270px; height: 500px; overflow: auto;"
+			data-dojo-type="dijit.Dialog" id="helpDialog"></div>
+		<div data-dojo-props="parseOnLoad: true, duration:600"
+			title="Session Viewer"
+			style="width: 855px; height: 470px; overflow: auto;"
+			data-dojo-type="dijit.Dialog" id="sessionViewerDialog"></div>
+		<div title="Map" style="overflow: auto;" data-dojo-type="dijit.Dialog"
+			id="mapDialog">
+			<div style="width: 500px; height: 500px" id="map_canvas"></div>
+		</div>
+		<div
+			data-dojo-props="parseOnLoad: true, draggable:false, duration:600"
+			style="width: 80%; height: 500px; overflow: auto;" title="Source"
+			data-dojo-type="dijit.Dialog" id="viewSourceDialog"></div>
+		<div data-dojo-props="parseOnLoad: true, draggable:true"
+			style="overflow: auto;" title="Lookup window"
+			data-dojo-type="dijit.Dialog" id="lookupDialog"></div>
+	</div>
 
-		<a href="#login">Login</a>
-		<div ng-view="true"></div>
-
-		<script src="lib/angular/angular.min.js" type="text/javascript"></script>
-		<script src="js/app.js" type="text/javascript"></script>
-		<script src="js/controllers.js" type="text/javascript"></script>
-		<script src="js/services.js" type="text/javascript"></script>
-	</body>
+	<script src="lib/angular/angular.min.js" type="text/javascript"></script>
+	<script src="js/app.js" type="text/javascript"></script>
+	<script src="js/controllers.js" type="text/javascript"></script>
+	<script src="js/services.js" type="text/javascript"></script>
+</body>
 </html>

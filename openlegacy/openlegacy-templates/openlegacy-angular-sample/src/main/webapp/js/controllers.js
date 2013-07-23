@@ -31,7 +31,7 @@ var BASE_URL = "http://localhost:8080/openlegacy-rest-sample/";
 		})
 	.controller('itemDetailsController',
 			function($scope, $location, $olHttp,$routeParams) {
-				$olHttp.get('itemDetails/' + $routeParams.item, 
+				$olHttp.get('itemDetails/' + $routeParams.itemNumber, 
 						function(data) {
 							$scope.model = data.screenModel.screenEntity;
 						}
