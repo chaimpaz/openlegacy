@@ -9,11 +9,19 @@
        01  WS-VARS.                                                     
            05 WS-FIRST-VAR          PIC S9(8) COMP VALUE ZERO.          
            05 WS-SECOND-VAR         PIC X(20) VALUE SPACE.              
-       COPY SAMPCPY1                                                    
-           REPLACING ==:XXX:==  BY  ==C00--==.                         
+	   01  C00-SAMPCPY1.                                              
+           05 C00-MYVAR                 PIC X(20) VALUE SPACES.         
+           05 C00-OTHER-VAR             PIC S9(8) COMP.                 
+            88 C00-VAR-SET-OK        VALUE 0.                        
+            88 C00-VAR-SET-NOTOK     VALUE 4.                        
+            88 C00-VAR-SET-OTHER     VALUE 8.   	 
        LINKAGE SECTION.                                                 
        01  DFHCOMMAREA.                                                 
-           COPY SAMPCPY2.                                               
+		 03 CM-VARS.                                       
+              05 CM-MYVAR                  PIC X(20).        
+              05 CM-OTHER-VAR              PIC S9(9).         
+              05 CM-ANOTHER-VAR            PIC X.        
+		
        PROCEDURE DIVISION.                                              
                                                                         
             MOVE 'COPY WITH REPLACE' TO C00-MYVAR                       

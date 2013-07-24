@@ -16,6 +16,6 @@ import java.io.IOException;
 
 public interface CodeParser {
 
-	RpcEntityDefinition parse(String source, String entityName) throws IOException;
+	RpcEntityDefinition parse(String source) throws IOException;
 
 }

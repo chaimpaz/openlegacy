@@ -6,7 +6,7 @@ package org.openlegacy.designtime.rpc.source.parsers;
  */
 
 import org.openlegacy.definitions.FieldTypeDefinition;
-import org.openlegacy.definitions.support.SimpleExtendedNumericFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleRpcNumericFieldTypeDefinition;
 
 public class CobolNumberInformation implements FieldInformation {
 
@@ -95,6 +95,6 @@ public class CobolNumberInformation implements FieldInformation {
 		if (digitAfterDot > 0) {
 			maxVal += (1 - Math.pow(10, scale - digitAfterDot));
 		}
-		return new SimpleExtendedNumericFieldTypeDefinition(-maxVal, maxVal, digitAfterDot);
+		return new SimpleRpcNumericFieldTypeDefinition(-maxVal, maxVal, digitAfterDot);
 	}
 }

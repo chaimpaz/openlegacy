@@ -3,15 +3,18 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-		
-	<bean id="OpenlegacyCobolParser"
+<!--
+   <import resource="/test-designtime-context.xml"/>
+   -->
+   
+   <bean id="OpenlegacyCobolParser"
 		class="org.openlegacy.designtime.rpc.source.parsers.OpenlegacyCobolParser" scope="prototype">
 		<property name="mainProcedureName" value="BEGIN"/>
 		<property name="delTempFiles" value="true"/>
 		<property name="cobolParser">
 			<bean class="koopa.parsers.cobol.CobolParser">
 				<property name="buildTrees"   value="true"/>
-				<property name="preprocessing"   value="false"/>
+				<property name="preprocessing"   value="true"/>
 				<property name="format" value="FREE"/>
 			</bean>
 		</property>
@@ -20,17 +23,16 @@
 				<property name="fieldInformationFactory" >
 					<bean class="org.openlegacy.designtime.rpc.source.parsers.CobolFieldInformationFactory"/>
 				</property>
-				<property name="entityDefinition" >
-					<bean class="org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition">
+				<property name="entityDefinition">
+					<bean class="org.openlegacy.designtime.rpc.model.support.SimpleRpcEntityDesigntimeDefinition" scope="prototype">
 					</bean>
 				</property>
 			</bean>
 		</property>
-		
 	</bean>
-	<bean id ="CobolParserUtils" class="org.openlegacy.designtime.rpc.source.parsers.CobolParserUtils">
+	
+	<bean id="RpcJavaGenerator" class="org.openlegacy.designtime.rpc.generators.RpcJavaGenerator"/>
+	
+	<bean id="GenerateUtil" class="org.openlegacy.designtime.generators.GenerateUtil"/>
 
-	</bean>
-	
-	
 </beans>

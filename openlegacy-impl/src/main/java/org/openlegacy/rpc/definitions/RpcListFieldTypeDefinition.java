@@ -5,12 +5,15 @@ package org.openlegacy.rpc.definitions;
  *  all objects are the same definition.
  */
 
+import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.ListFieldTypeDefinition;
 
-public interface RpcListFieldTypeDefinition<F> extends ListFieldTypeDefinition {
+public interface RpcListFieldTypeDefinition extends ListFieldTypeDefinition {
 
-	F getItemTypeDefinition();
+	FieldTypeDefinition getItemTypeDefinition();
 
 	Class<?> getItemJavaType();
+
+	String getItemJavaName();
 
 }

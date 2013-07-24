@@ -1,0 +1,33 @@
+package test.com;
+
+import java.util.List;
+
+import org.openlegacy.annotations.rpc.*;
+import org.openlegacy.FieldType.*;
+
+@RpcEntity(name="SampprogExpand")
+
+public class SampprogExpand {
+
+   private Dfhcommarea dfhcommarea;
+   @RpcPart(partName="Dfhcommarea", occur=1)
+   public class  Dfhcommarea {
+
+   private CmVars cmVars;
+   @RpcPart(partName="CmVars", occur=1)
+   public class  CmVars {
+
+   @RpcField(length =20, originalName="CM-MYVAR" ,fieldType=General.class)
+   private String cmMyvar;
+
+   @RpcNumericField(minimumValue=-999999999, maximumValue=999999999, decimalPlaces=0)
+
+   @RpcField(length =9, originalName="CM-OTHER-VAR" ,fieldType=General.class)
+   private Integer cmOtherVar;
+
+   @RpcField(length =1, originalName="CM-ANOTHER-VAR" ,fieldType=General.class)
+   private String cmAnotherVar;
+
+  }
+  }
+}

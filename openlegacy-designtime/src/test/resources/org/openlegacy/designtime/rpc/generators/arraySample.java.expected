@@ -1,0 +1,30 @@
+package test.com;
+
+import java.util.List;
+
+import org.openlegacy.annotations.rpc.*;
+import org.openlegacy.FieldType.*;
+
+@RpcEntity(name="ArraySample")
+
+public class ArraySample {
+
+   @RpcListField(count=5)
+   @RpcField(length =10, originalName="FIELD" ,fieldType=General.class)
+   private List<String> field;
+
+   private List<Part> part;
+   @RpcPart(partName="Part", occur=3)
+   public class  Part {
+
+   @RpcField(length =10, originalName="CHILD1" ,fieldType=General.class)
+   private String child1;
+
+   @RpcListField(count=6)
+   @RpcField(length =2, originalName="CHILD2" ,fieldType=General.class)
+   @RpcNumericItem(minimumValue=-99, maximumValue=99, decimalPlaces=0)
+
+   private List<Integer> child2;
+
+  }
+}
