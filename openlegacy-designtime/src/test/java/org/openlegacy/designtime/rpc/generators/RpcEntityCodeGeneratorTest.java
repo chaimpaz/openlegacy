@@ -39,7 +39,7 @@ public class RpcEntityCodeGeneratorTest {
 		testGenerate("as400sample.cbl", "as400sample.java.expected");
 	}
 
-	@Test
+	// @Test
 	public void testGenerateList() throws IOException, TemplateException, ParseException {
 
 		testGenerate("arraySample.cbl", "arraySample.java.expected");
@@ -49,6 +49,7 @@ public class RpcEntityCodeGeneratorTest {
 	public void testGenerteTree() throws IOException, TemplateException, ParseException {
 		testGenerate("sampprog_expand.cbl", "sampprog_expand.java.expected");
 	}
+
 
 	private void testGenerate(String sourceFile, String expectJava) throws IOException, TemplateException, ParseException {
 

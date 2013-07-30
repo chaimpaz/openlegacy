@@ -23,4 +23,16 @@ public class SimpleRpcNumericFieldTypeDefinition extends SimpleNumericFieldTypeD
 		return decimalPlaces;
 	}
 
+	@Override
+	public boolean equals(Object object) {
+		if (object instanceof SimpleRpcNumericFieldTypeDefinition) {
+			SimpleRpcNumericFieldTypeDefinition convertedObject = (SimpleRpcNumericFieldTypeDefinition)object;
+
+			if (super.equals(convertedObject) == true && convertedObject.decimalPlaces == decimalPlaces) {
+				return true;
+			}
+		}
+		return false;
+
+	}
 }

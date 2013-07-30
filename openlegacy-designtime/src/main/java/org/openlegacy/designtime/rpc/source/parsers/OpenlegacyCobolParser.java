@@ -48,8 +48,6 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 	private String copyBookPath;
 
-	private boolean delTempFiles;
-
 	private CobolParser cobolParser;
 
 	private RpcEntityDefinitionBuilder rpcEntityDefinitionBuilder;
@@ -89,9 +87,9 @@ public class OpenlegacyCobolParser implements CodeParser {
 	private String writeToTempFile(String source, String extension) throws IOException {
 
 		File tempFile = File.createTempFile("temp", extension);
-		if (delTempFiles == true) {
-			tempFile.deleteOnExit();
-		}
+
+		tempFile.deleteOnExit();
+
 		BufferedWriter out = new BufferedWriter(new FileWriter(tempFile));
 		out.write(source);
 		// Close the output stream
@@ -290,10 +288,6 @@ public class OpenlegacyCobolParser implements CodeParser {
 		}
 
 		return paramtersNames;
-	}
-
-	public void setDelTempFiles(boolean delTempFiles) {
-		this.delTempFiles = delTempFiles;
 	}
 
 	public CobolParser getCobolParser() {

@@ -14,9 +14,9 @@ import org.openlegacy.EntitiesRegistry;
 import org.openlegacy.annotations.rpc.RpcField;
 import org.openlegacy.annotations.screen.AnnotationConstants;
 import org.openlegacy.definitions.support.SimpleDateFieldTypeDefinition;
-import org.openlegacy.definitions.support.SimpleScreenListFieldTypeDefinition;
-import org.openlegacy.definitions.support.SimpleNumericFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimplePasswordFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleRpcNumericFieldTypeDefinition;
+import org.openlegacy.definitions.support.SimpleScreenListFieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleTextFieldTypeDefinition;
 import org.openlegacy.exceptions.RegistryException;
 import org.openlegacy.loaders.support.AbstractFieldAnnotationLoader;
@@ -68,7 +68,6 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 					field.getName())));
 		}
 		rpcFieldDefinition.setLength(fieldAnnotation.length());
-		rpcFieldDefinition.setDecimalPlaces(fieldAnnotation.decimalPlaces());
 		rpcFieldDefinition.setDirection(fieldAnnotation.direction());
 		rpcFieldDefinition.setOriginalName(fieldAnnotation.originalName());
 		rpcFieldDefinition.setKey(fieldAnnotation.key());
@@ -100,7 +99,7 @@ public class RpcFieldAnnotationLoader extends AbstractFieldAnnotationLoader {
 		// properties
 
 		if (Number.class.isAssignableFrom(field.getType())) {
-			rpcFieldDefinition.setFieldTypeDefinition(new SimpleNumericFieldTypeDefinition());
+			rpcFieldDefinition.setFieldTypeDefinition(new SimpleRpcNumericFieldTypeDefinition());
 		}
 		// set date type definition - may be overridden by ScreenDateFieldAnnotationLoader to fill in specific date properties
 		else if (Date.class.isAssignableFrom(field.getType())) {

@@ -8,6 +8,8 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.definitions.support.SimpleRpcNumericFieldTypeDefinition;
 
+import java.math.BigInteger;
+
 public class CobolNumberInformation implements FieldInformation {
 
 	private static final char DIGIT_SYMBOL = '9';
@@ -87,7 +89,11 @@ public class CobolNumberInformation implements FieldInformation {
 		if (digitAfterDot > 0) {
 			return Double.class;
 		}
-		return Integer.class;
+		if (digitBeforeDot <= 9) {
+			return Integer.class;
+		} else {
+			return BigInteger.class;
+		}
 	}
 
 	public FieldTypeDefinition getType() {

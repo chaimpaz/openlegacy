@@ -1,5 +1,6 @@
 package test.com;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.openlegacy.annotations.rpc.*;
@@ -10,14 +11,14 @@ import org.openlegacy.FieldType.*;
 public class SimpleField {
 
    @RpcNumericField(minimumValue=-99, maximumValue=99, decimalPlaces=0)
-   @RpcField(length =2, originalName="PARAM1" ,fieldType=General.class)
+   @RpcField(length =2, originalName="PARAM1")
    private Integer param1;
 
    @RpcNumericField(minimumValue=-9.9, maximumValue=9.9, decimalPlaces=1)
-   @RpcField(length =1, originalName="PARAM2" ,fieldType=General.class)
+   @RpcField(length =1, originalName="PARAM2")
    private Double param2;
 
-   @RpcField(length =4, originalName="PARAM3" ,fieldType=General.class)
+   @RpcField(length =4, originalName="PARAM3")
    private String param3;
 
 }

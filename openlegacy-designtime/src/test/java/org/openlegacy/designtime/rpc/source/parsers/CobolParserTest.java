@@ -42,12 +42,12 @@ public class CobolParserTest {
 		return openlegacyCobolParser.parse(source);
 	}
 
+	
 	@Test
 	public void testCobolParserSimpleField() throws IOException, DesigntimeException {
 
 		String sourceFile = "simpleField.cbl";
-		SimpleRpcNumericFieldTypeDefinition simpleRpcNumericFieldTypeDefinition;
-
+		
 		RpcEntityDefinition rpcEntityDefinition = getEntity(sourceFile);
 
 		Assert.assertNotNull(rpcEntityDefinition);
@@ -61,7 +61,7 @@ public class CobolParserTest {
 		Assert.assertEquals("PARAM1", fieldDefinition.getOriginalName());
 		FieldTypeDefinition fieldTypeDefinition = fieldDefinition.getFieldTypeDefinition();
 		Assert.assertEquals(SimpleRpcNumericFieldTypeDefinition.class, fieldTypeDefinition.getClass());
-		simpleRpcNumericFieldTypeDefinition = (SimpleRpcNumericFieldTypeDefinition)fieldTypeDefinition;
+		SimpleRpcNumericFieldTypeDefinition simpleRpcNumericFieldTypeDefinition = (SimpleRpcNumericFieldTypeDefinition)fieldTypeDefinition;
 		Assert.assertEquals(99.0, ((SimpleRpcNumericFieldTypeDefinition)fieldTypeDefinition).getMaximumValue(), precise);
 		Assert.assertEquals(0, simpleRpcNumericFieldTypeDefinition.getDecimalPlaces());
 		Assert.assertEquals(0, fieldDefinition.getOrder());
@@ -213,6 +213,12 @@ public class CobolParserTest {
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parseCopyBook(source);
 		Assert.assertNotNull(rpcEntityDefinition);
+		Assert.assertTrue(rpcEntityDefinition.getFieldsDefinitions().isEmpty());
+		Map<String, PartEntityDefinition<RpcFieldDefinition>> partsEntityDefinitions = rpcEntityDefinition.getPartsDefinitions();
+		Assert.assertEquals(1, partsEntityDefinitions.size());
+		
+		PartEntityDefinition<RpcFieldDefinition> partEntityDefinitions = partsEntityDefinitions.get("CmVars");
+		Assert.assertNotNull(partEntityDefinitions);
 	}
 
 	private static void testTree(RpcEntityDefinition rpcEntityDefinition) {

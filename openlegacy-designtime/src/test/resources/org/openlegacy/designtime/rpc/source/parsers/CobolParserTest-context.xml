@@ -7,7 +7,6 @@
 	<bean id="OpenlegacyCobolParser"
 		class="org.openlegacy.designtime.rpc.source.parsers.OpenlegacyCobolParser" scope="prototype">
 		<property name="mainProcedureName" value="BEGIN"/>
-		<property name="delTempFiles" value="true"/>
 		<property name="cobolParser">
 			<bean class="koopa.parsers.cobol.CobolParser">
 				<property name="buildTrees"   value="true"/>

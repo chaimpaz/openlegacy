@@ -14,12 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 public class CobolParserUtils {
-
-	@Inject
-	private static boolean delTempFiles;
 
 	public static String CreateTmpDir(String initial) {
 		boolean needToFind = true;
@@ -32,9 +27,8 @@ public class CobolParserUtils {
 			if (!tempDir.exists()) {
 				needToFind = false;
 				tempDir.mkdir();
-				if (delTempFiles == true) {
-					tempDir.deleteOnExit();
-				}
+				tempDir.deleteOnExit();
+
 			}
 		}
 		return randomDirName + File.separator;
@@ -61,9 +55,9 @@ public class CobolParserUtils {
 		for (String copyBookName : streamMap.keySet()) {
 			File copyBookFile = new File(path + copyBookName);
 			OutputStream copyBookStream = new FileOutputStream(copyBookFile);
-			if (delTempFiles) {
-				copyBookFile.deleteOnExit();
-			}
+
+			copyBookFile.deleteOnExit();
+
 			IOUtils.copy(streamMap.get(copyBookName), copyBookStream);
 			copyBookStream.close();
 		}

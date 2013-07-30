@@ -13,6 +13,8 @@ package org.openlegacy.rpc.definitions;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.openlegacy.FieldType;
 import org.openlegacy.annotations.rpc.Direction;
+import org.openlegacy.definitions.FieldTypeDefinition;
+import org.openlegacy.definitions.RpcNumericFieldTypeDefinition;
 import org.openlegacy.definitions.support.AbstractFieldDefinition;
 
 public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDefinition> implements RpcFieldDefinition {
@@ -24,7 +26,6 @@ public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDe
 	private int keyIndex;
 	private int order;
 	private String defaultValue;
-	private Integer decimalPlaces;
 
 	public SimpleRpcFieldDefinition(String name, Class<? extends FieldType> type) {
 		super(name, type);
@@ -78,17 +79,18 @@ public class SimpleRpcFieldDefinition extends AbstractFieldDefinition<RpcFieldDe
 		this.defaultValue = defaultValue;
 	}
 
-	public Integer getDecimalPlaces() {
-		return decimalPlaces;
-	}
-
-	public void setDecimalPlaces(Integer decimalPlaces) {
-		this.decimalPlaces = decimalPlaces;
-	}
-
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
 
+	public Integer getDecimalPlaces() {
+
+		Integer result = new Integer(0);
+		FieldTypeDefinition fieldTypeDefinition = getFieldTypeDefinition();
+		if (fieldTypeDefinition instanceof RpcNumericFieldTypeDefinition) {
+			result = ((RpcNumericFieldTypeDefinition)fieldTypeDefinition).getDecimalPlaces();
+		}
+		return result;
+	}
 }

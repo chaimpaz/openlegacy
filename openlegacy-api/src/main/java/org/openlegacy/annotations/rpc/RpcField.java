@@ -31,13 +31,6 @@ public @interface RpcField {
 
 	int length();
 
-	/**
-	 * Number of digit after the dot. e.g: 2.678 -> 3
-	 * 
-	 * @return number of digit after the dot
-	 */
-	int decimalPlaces() default 0;
-
 	Class<? extends FieldType> fieldType() default RpcFieldTypes.General.class;
 
 	String displayName() default AnnotationConstants.NULL;
