@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
@@ -29,30 +28,23 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.openlegacy.EntityDefinition;
 import org.openlegacy.designtime.EntityUserInteraction;
 import org.openlegacy.designtime.PreferencesConstants;
-import org.openlegacy.designtime.terminal.model.support.SimpleScreenEntityDesigntimeDefinition;
 import org.openlegacy.ide.eclipse.Messages;
 import org.openlegacy.ide.eclipse.util.JavaUtils;
 import org.openlegacy.ide.eclipse.util.PathsUtil;
-import org.openlegacy.terminal.TerminalSnapshot;
-import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
 
 import java.io.File;
 import java.text.MessageFormat;
 
-public class GenerateModelDialog extends AbstractGenerateCodeDialog implements EntityUserInteraction<ScreenEntityDefinition> {
+public abstract class AbstractGenerateModelDialog extends AbstractGenerateCodeDialog implements EntityUserInteraction<EntityDefinition<?>> {
 
-	private TerminalSnapshot[] terminalSnapshots;
-	private boolean emptyModel;
-
-	public GenerateModelDialog(Shell shell, IFile file, boolean emptyModel, TerminalSnapshot... terminalSnapshots) {
+	public AbstractGenerateModelDialog(Shell shell, IFile file) {
 		super(shell, file);
-		this.emptyModel = emptyModel;
-		this.terminalSnapshots = terminalSnapshots;
 	}
 
-	private final static Logger logger = Logger.getLogger(GenerateModelDialog.class);
+	private final static Logger logger = Logger.getLogger(AbstractGenerateModelDialog.class);
 
 	@Override
 	protected void executeGenerate() {
@@ -62,21 +54,11 @@ public class GenerateModelDialog extends AbstractGenerateCodeDialog implements E
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
 
-				final IFile trailPath = getFile();
-				int fileSize = (int)(new File(trailPath.getLocation().toOSString()).length() / 1000);
+				int fileSize = (int)(new File(getFile().getLocation().toOSString()).length() / 1000);
 				monitor.beginTask(Messages.getString("job_activating_analyzer"), fileSize);
 
 				monitor.worked(2);
-				if (emptyModel) {
-					SimpleScreenEntityDesigntimeDefinition entityDefinition = new SimpleScreenEntityDesigntimeDefinition();
-					entityDefinition.setEntityName("");
-					entityDefinition.setSnapshot(terminalSnapshots[0]);
-					EclipseDesignTimeExecuter.instance().generateEntityDefinition(trailPath, getSourceFolder(),
-							getPackageValue(), GenerateModelDialog.this, isUseAj(), entityDefinition);
-				} else {
-					EclipseDesignTimeExecuter.instance().generateModel(trailPath, getSourceFolder(), getPackageValue(),
-							GenerateModelDialog.this, isUseAj(), terminalSnapshots);
-				}
+				generate();
 
 				monitor.worked(fileSize - 4);
 				Display.getDefault().syncExec(new Runnable() {
@@ -85,7 +67,7 @@ public class GenerateModelDialog extends AbstractGenerateCodeDialog implements E
 						try {
 							monitor.worked(1);
 
-							trailPath.getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
+							getFile().getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
 							monitor.done();
 						} catch (CoreException e) {
 							logger.fatal(e);
@@ -95,9 +77,12 @@ public class GenerateModelDialog extends AbstractGenerateCodeDialog implements E
 
 				return Status.OK_STATUS;
 			}
+
 		};
 		job.schedule();
 	}
+
+	protected abstract void generate();
 
 	@Override
 	protected void loadPrefrences() {
@@ -136,38 +121,6 @@ public class GenerateModelDialog extends AbstractGenerateCodeDialog implements E
 		designtimeExecuter.savePreference(getProject(), PreferencesConstants.USE_AJ, isUseAj());
 	}
 
-	public boolean customizeEntity(final ScreenEntityDefinition screenEntityDefinition) {
-
-		final BooleanContainer generate = new BooleanContainer();
-		Display.getDefault().syncExec(new Runnable() {
-
-			public void run() {
-				CustomizeScreenEntityDialog customizeDialog = new CustomizeScreenEntityDialog(getShell(), screenEntityDefinition);
-				int result = customizeDialog.open();
-				if (result == Window.CANCEL) {
-					generate.setBooleanValue(false);
-				}
-			}
-		});
-		boolean result = generate.getBooleanValue();
-
-		return result;
-	}
-
-	private static class BooleanContainer {
-
-		boolean booleanValue = true;
-
-		public void setBooleanValue(boolean booleanValue) {
-			this.booleanValue = booleanValue;
-		}
-
-		public boolean getBooleanValue() {
-			return booleanValue;
-
-		}
-	}
-
 	public void open(final File file) {
 
 		Display.getDefault().asyncExec(new Runnable() {
@@ -188,8 +141,8 @@ public class GenerateModelDialog extends AbstractGenerateCodeDialog implements E
 					IFile javaFile = getProject().getFile(
 							getSourceFolder().getPath().toPortableString() + "/" + PathsUtil.packageToPath(getPackageValue())
 									+ "/" + file.getName());
-					IEditorDescriptor editorDescriptor = PlatformUI.getWorkbench().getEditorRegistry()
-							.getDefaultEditor(javaFile.getName());
+					IEditorDescriptor editorDescriptor = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(
+							javaFile.getName());
 
 					page.openEditor(new FileEditorInput(javaFile), editorDescriptor.getId());
 

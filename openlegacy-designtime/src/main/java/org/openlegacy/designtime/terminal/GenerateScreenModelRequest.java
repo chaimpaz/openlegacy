@@ -8,15 +8,17 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.designtime.mains;
+package org.openlegacy.designtime.terminal;
 
+import org.openlegacy.EntityDefinition;
 import org.openlegacy.designtime.EntityUserInteraction;
+import org.openlegacy.designtime.GenerateModelRequest;
+import org.openlegacy.designtime.mains.AbstractGenerateRequest;
 import org.openlegacy.terminal.TerminalSnapshot;
-import org.openlegacy.terminal.definitions.ScreenEntityDefinition;
 
 import java.io.File;
 
-public class GenerateModelRequest extends AbstractGenerateRequest {
+public class GenerateScreenModelRequest extends AbstractGenerateRequest implements GenerateModelRequest {
 
 	// generation is either to a trail file
 	private File trailFile;
@@ -27,7 +29,7 @@ public class GenerateModelRequest extends AbstractGenerateRequest {
 	private boolean generateSnapshotImage = false;
 	private boolean generateSnapshotText = false;
 
-	private EntityUserInteraction<ScreenEntityDefinition> entityUserInteraction;
+	private EntityUserInteraction<EntityDefinition<?>> entityUserInteraction;
 
 	public File getTrailFile() {
 		return trailFile;
@@ -45,11 +47,11 @@ public class GenerateModelRequest extends AbstractGenerateRequest {
 		return terminalSnapshots;
 	}
 
-	public EntityUserInteraction<ScreenEntityDefinition> getEntityUserInteraction() {
+	public EntityUserInteraction<EntityDefinition<?>> getEntityUserInteraction() {
 		return entityUserInteraction;
 	}
 
-	public void setEntityUserInteraction(EntityUserInteraction<ScreenEntityDefinition> entityUserInteraction) {
+	public void setEntityUserInteraction(EntityUserInteraction<EntityDefinition<?>> entityUserInteraction) {
 		this.entityUserInteraction = entityUserInteraction;
 	}
 

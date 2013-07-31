@@ -19,4 +19,9 @@ public class SimpleRpcEntityDesigntimeDefinition extends SimpleRpcEntityDefiniti
 		this.packageName = packageName;
 	}
 
+	public void setGenerateAspect(boolean generateAspectJ) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

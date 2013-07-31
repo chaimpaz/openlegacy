@@ -44,7 +44,7 @@
          </menu>
          <action
                label="%generate_model_menu_label"
-               class="org.openlegacy.ide.eclipse.actions.GenerateModelAction"
+               class="org.openlegacy.ide.eclipse.actions.screen.GenerateScreenModelAction"
                menubarPath="org.openlegacy.ide.eclipse.right_menu/generate"
                enablesFor="1"
                id="org.openlegacy.ide.eclipse.actions.generateModel">
@@ -84,6 +84,46 @@
                class="org.openlegacy.ide.eclipse.actions.GenerateControllerAction"
                menubarPath="org.openlegacy.ide.eclipse.right_menu/generate"
                id="org.openlegacy.ide.eclipse.actions.generateController">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.cbl" 
+            id="org.openlegacy.ide.eclipse.generate_cobol_contribution">
+         <menu
+               label="%openlegacy_menu_label"
+               path="additions"
+               id="org.openlegacy.ide.eclipse.right_menu">
+            <separator
+                  name="generate">
+            </separator>
+         </menu>
+         <action
+               label="%generate_model_menu_label"
+               class="org.openlegacy.ide.eclipse.actions.rpc.GenerateRpcModelAction"
+               menubarPath="org.openlegacy.ide.eclipse.right_menu/generate"
+               enablesFor="1"
+               id="org.openlegacy.ide.eclipse.actions.generateRpcModel">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            nameFilter="*.cpy" 
+            id="org.openlegacy.ide.eclipse.generate_copybook_contribution">
+         <menu
+               label="%openlegacy_menu_label"
+               path="additions"
+               id="org.openlegacy.ide.eclipse.right_menu">
+            <separator
+                  name="generate">
+            </separator>
+         </menu>
+         <action
+               label="%generate_model_menu_label"
+               class="org.openlegacy.ide.eclipse.actions.rpc.GenerateRpcModelAction"
+               menubarPath="org.openlegacy.ide.eclipse.right_menu/generate"
+               enablesFor="1"
+               id="org.openlegacy.ide.eclipse.actions.generateRpcModel">
          </action>
       </objectContribution>
    </extension>
