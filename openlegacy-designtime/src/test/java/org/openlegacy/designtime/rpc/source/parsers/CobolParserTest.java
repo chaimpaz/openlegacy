@@ -13,6 +13,7 @@ import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
 import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
+import org.openlegacy.utils.FileUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -27,6 +28,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import koopa.parsers.ParseResults;
+
 @ContextConfiguration("CobolParserTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CobolParserTest {
@@ -37,17 +40,17 @@ public class CobolParserTest {
 	private double precise = 0.001;
 
 	private RpcEntityDefinition getEntity(String sourceFile) throws IOException {
-		// String entityName = org.openlegacy.utils.FileUtils.fileWithoutAnyExtension(sourceFile);
+		String extension = FileUtils.fileExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
-		return openlegacyCobolParser.parse(source);
+		ParseResults parseResults = openlegacyCobolParser.parse(source, extension);
+		return openlegacyCobolParser.getEntity(parseResults, extension);
 	}
 
-	
 	@Test
 	public void testCobolParserSimpleField() throws IOException, DesigntimeException {
 
 		String sourceFile = "simpleField.cbl";
-		
+
 		RpcEntityDefinition rpcEntityDefinition = getEntity(sourceFile);
 
 		Assert.assertNotNull(rpcEntityDefinition);
@@ -197,28 +200,34 @@ public class CobolParserTest {
 	@Test
 	public void testTreeWithPreProcess() throws IOException {
 		String sourceFile = "sameprog.cbl";
+		String extension = FileUtils.fileExtension(sourceFile);
 		Map<String, InputStream> streamMap = new HashMap<String, InputStream>();
 
 		streamMap.put("sampcpy1.cpy", getClass().getResourceAsStream("sampcpy1.cpy"));
 		streamMap.put("sampcpy2.cpy", getClass().getResourceAsStream("sampcpy2.cpy"));
-
-		openlegacyCobolParser.preProcess(streamMap);
-		testTree(getEntity(sourceFile));
+		String source = IOUtils.toString(getClass().getResource(sourceFile));
+		ParseResults parseResults = openlegacyCobolParser.parse(source, streamMap);
+		testTree(openlegacyCobolParser.getEntity(parseResults, extension));
 	}
 
 	@Test
 	public void testCopyBookAsEntity() throws IOException {
-		String sourceFile = "sampcpy2.cpy";
+		RpcEntityDefinition rpcEntityDefinition = getEntity("sampcpy2.cpy");
 
-		String source = IOUtils.toString(getClass().getResource(sourceFile));
-		RpcEntityDefinition rpcEntityDefinition = openlegacyCobolParser.parseCopyBook(source);
 		Assert.assertNotNull(rpcEntityDefinition);
 		Assert.assertTrue(rpcEntityDefinition.getFieldsDefinitions().isEmpty());
 		Map<String, PartEntityDefinition<RpcFieldDefinition>> partsEntityDefinitions = rpcEntityDefinition.getPartsDefinitions();
 		Assert.assertEquals(1, partsEntityDefinitions.size());
-		
+
 		PartEntityDefinition<RpcFieldDefinition> partEntityDefinitions = partsEntityDefinitions.get("CmVars");
 		Assert.assertNotNull(partEntityDefinitions);
+	}
+
+	@Test
+	public void testCopyBookWithReplaceAsEntity() throws IOException {
+		RpcEntityDefinition rpcEntityDefinition = getEntity("sampcpy1.cpy");
+
+		Assert.assertNotNull(rpcEntityDefinition);
 	}
 
 	private static void testTree(RpcEntityDefinition rpcEntityDefinition) {

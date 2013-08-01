@@ -12,6 +12,8 @@ import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcFieldDefinition;
 import org.openlegacy.utils.StringUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,6 +21,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import koopa.parsers.ParseResults;
 
 public class RpgParser implements CodeParser {
 
@@ -161,5 +165,22 @@ public class RpgParser implements CodeParser {
 		}
 
 		return rpcDefinition;
+	}
+
+	public ParseResults parse(String source, String extension) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public RpcEntityDefinition getEntity(ParseResults parseResults,
+			String extension) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ParseResults parse(String source, Map<String, InputStream> streamMap)
+			throws IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

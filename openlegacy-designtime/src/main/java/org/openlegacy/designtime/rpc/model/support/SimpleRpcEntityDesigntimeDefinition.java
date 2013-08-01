@@ -5,6 +5,7 @@ import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 public class SimpleRpcEntityDesigntimeDefinition extends SimpleRpcEntityDefinition {
 
 	private String packageName;
+	private boolean onlyPart;
 
 	public SimpleRpcEntityDesigntimeDefinition() {
 		super();
@@ -22,6 +23,14 @@ public class SimpleRpcEntityDesigntimeDefinition extends SimpleRpcEntityDefiniti
 	public void setGenerateAspect(boolean generateAspectJ) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public boolean isOnlyPart() {
+		return onlyPart;
+	}
+
+	public void setOnlyPart(boolean onlyPart) {
+		this.onlyPart = onlyPart;
 	}
 
 }

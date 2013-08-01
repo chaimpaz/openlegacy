@@ -7,6 +7,7 @@ import java.util.List;
 import org.openlegacy.annotations.rpc.*;
 import org.openlegacy.FieldType.*;
 
+<#if onlyPart=false>
 @RpcEntity(name="${entityName}"<#if displayName?? >, displayName=${displayName}</#if><#if language?? >, language=${language}</#if>)
 public class ${entityName?cap_first} {
 
@@ -14,17 +15,24 @@ public class ${entityName?cap_first} {
    <@rpcField field=field />
 </#list>
 <#list partsDefinitions?values as part>
-<@rpcPart part=part/>
+<@rpcPartDeclar part=part/>
+<@rpcPartClass part=part/>
 </#list>
 }
-<#macro rpcPart part>
+<#else>
+<#list partsDefinitions?values as part>
+<@rpcPartClass part=part/>
+</#list>
+</#if>
+<#macro rpcPartDeclar part>
 <#if part.occur = 1 >
    private ${part.partName} ${part.partName?uncap_first};
 <#else>
-   @RpcListField(count=${part.occur})
+   @RpcPartList(count=${part.occur})
    private List<${part.partName}> ${part.partName?uncap_first};
 </#if>
-
+</#macro>
+<#macro rpcPartClass part>
    @RpcPart(partName="${part.partName}")
    public static class ${part.partName} {
 
@@ -32,7 +40,8 @@ public class ${entityName?cap_first} {
     <@rpcField field=partField />
   </#list>
   <#list part.innerPartsDefinitions?values as innerPart>
-    <@rpcPart part=innerPart />
+    <@rpcPartDeclar part=innerPart />
+    <@rpcPartClass part=innerPart />
   </#list>
   }
 </#macro>
@@ -40,7 +49,9 @@ public class ${entityName?cap_first} {
    <@fieldTypes field=field />
    @RpcField(length =${field.length}, originalName="${field.originalName}"<#if field.key>key = true, </#if><#if field.editable> ,editable= true</#if><#if field.type??><#if field.type.simpleName != "General"> ,fieldType=${field.type.simpleName}.class</#if></#if><#if field.displayName??> ,displayName = "${field.displayName}"</#if><#if field.sampleValue?? && field.sampleValue != "">, sampleValue = "${field.sampleValue}"</#if><#if field.helpText?? && field.helpText != "">, helpText = "${field.helpText}"</#if>)
 <#if field.fieldTypeDefinition.typeName = "list">
-<#if field.fieldTypeDefinition.itemTypeDefinition.typeName = "number" >@RpcNumericItem<@numberField field=field.fieldTypeDefinition.itemTypeDefinition type=field.javaTypeName/></#if>
+<#if field.fieldTypeDefinition.itemTypeDefinition.typeName = "number" >
+   @RpcNumericItem<@numberField field=field.fieldTypeDefinition.itemTypeDefinition type=field.javaTypeName/>
+</#if>
    private List<${field.fieldTypeDefinition.itemJavaName}> ${field.name?uncap_first};
 <#else>
    private ${field.javaTypeName} ${field.name?uncap_first};
@@ -64,6 +75,4 @@ public class ${entityName?cap_first} {
 </#macro>
 
 <#macro numberField field type>
-<#if type="BigInteger"><#assign suffix="L"><#else><#assign suffix=""></#if>
-(minimumValue=${field.minimumValue}${suffix}, maximumValue=${field.maximumValue}${suffix}, decimalPlaces=${field.decimalPlaces})
-</#macro>
+<#if type="BigInteger"><#assign suffix="L"><#else><#assign suffix=""></#if>(minimumValue=${field.minimumValue}${suffix}, maximumValue=${field.maximumValue}${suffix}, decimalPlaces=${field.decimalPlaces})</#macro>

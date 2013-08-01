@@ -7,14 +7,13 @@ import org.openlegacy.annotations.rpc.*;
 import org.openlegacy.FieldType.*;
 
 @RpcEntity(name="ArraySample")
-
 public class ArraySample {
 
    @RpcListField(count=5)
    @RpcField(length =10, originalName="FIELD")
    private List<String> field;
 
-   @RpcListField(count=3)
+   @RpcPartList(count=3)
    private List<Part> part;
 
    @RpcPart(partName="Part")

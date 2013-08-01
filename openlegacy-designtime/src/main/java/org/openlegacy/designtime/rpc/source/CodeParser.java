@@ -13,9 +13,17 @@ package org.openlegacy.designtime.rpc.source;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import koopa.parsers.ParseResults;
 
 public interface CodeParser {
 
-	RpcEntityDefinition parse(String source) throws IOException;
+	ParseResults parse(String source, String extension);
+
+	RpcEntityDefinition getEntity(ParseResults parseResults, String extension);
+
+	public ParseResults parse(String source, Map<String, InputStream> streamMap) throws IOException;
 
 }

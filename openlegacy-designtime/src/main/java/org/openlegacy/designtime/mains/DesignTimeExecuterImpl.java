@@ -80,6 +80,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import koopa.parsers.ParseResults;
+
 /**
  * OpenLegacy main design-time API entry point. Consolidate all design-time common UI actions
  * 
@@ -847,12 +849,10 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 		try {
 			File sourceFile = generateRpcModelRequest.getSourceFile();
 			fileContent = IOUtils.toString(new FileInputStream(sourceFile));
-			if (sourceFile.getName().endsWith("cpy")) {
-				// TODO remove - copybook check should be within the parse method
-				rpcEntityDefinition = ((OpenlegacyCobolParser)codeParser).parseCopyBook(fileContent);
-			} else {
-				rpcEntityDefinition = codeParser.parse(fileContent);
-			}
+			String fileExtension = FileUtils.fileExtension(sourceFile.getName());
+			ParseResults parseResults = codeParser.parse(fileContent,fileExtension);
+			rpcEntityDefinition = codeParser.getEntity(parseResults, fileExtension);
+		
 			String name = FileUtils.fileWithoutAnyExtension(sourceFile.getName());
 			((SimpleRpcEntityDesigntimeDefinition)rpcEntityDefinition).setEntityName(name);
 		} catch (IOException e) {
