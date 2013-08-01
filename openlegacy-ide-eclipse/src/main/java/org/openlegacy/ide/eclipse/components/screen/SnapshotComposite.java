@@ -8,7 +8,7 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.ide.eclipse.components;
+package org.openlegacy.ide.eclipse.components.screen;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DragDetectEvent;
@@ -37,8 +37,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.openlegacy.ide.eclipse.Messages;
-import org.openlegacy.ide.eclipse.preview.FieldRectangle;
-import org.openlegacy.ide.eclipse.preview.SelectedObject;
+import org.openlegacy.ide.eclipse.components.ImageComposite;
+import org.openlegacy.ide.eclipse.preview.screen.FieldRectangle;
+import org.openlegacy.ide.eclipse.preview.screen.SelectedObject;
 import org.openlegacy.terminal.RowPart;
 import org.openlegacy.terminal.TerminalField;
 import org.openlegacy.terminal.TerminalPosition;
@@ -54,7 +55,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SnapshotComposite extends Composite {
+public class SnapshotComposite extends ImageComposite {
 
 	private class RectangleDrawAction {
 
@@ -102,13 +103,13 @@ public class SnapshotComposite extends Composite {
 	private TerminalSnapshot terminalSnapshotCopy;
 
 	public SnapshotComposite(Composite parent) {
-		super(parent, SWT.NONE);
+		super(parent);
 		initialize();
 
 	}
 
 	public SnapshotComposite(Composite parent, TerminalSnapshot terminalSnapshot) {
-		super(parent, SWT.NONE);
+		super(parent);
 		this.terminalSnapshot = terminalSnapshot;
 		this.terminalSnapshotCopy = terminalSnapshot;
 		this.generateDefaultImage();
@@ -214,7 +215,7 @@ public class SnapshotComposite extends Composite {
 		if ((this.cursorLabel != null) && (this.selectedObject != null)) {
 			String prevText = (String)this.cursorLabel.getData(CURSOR_TEXT_ID);
 			this.cursorLabel.setText(MessageFormat.format("{0}    Selection -> {1}", prevText,//$NON-NLS-1$
-					this.selectedObject.getFieldRectangle().toCoordsString()));//$NON-NLS-1$
+					this.selectedObject.getFieldRectangle().toCoordsString()));
 			this.cursorLabel.pack(true);
 		}
 	}
@@ -649,8 +650,8 @@ public class SnapshotComposite extends Composite {
 		if (clearListBeforeAdd && !this.rectangleDrawActions.isEmpty()) {
 			this.rectangleDrawActions.clear();
 		}
-		this.rectangleDrawActions.add(new RectangleDrawAction(RectangleDrawType.DRAW, rectangle, null, getDisplay()
-				.getSystemColor(color)));
+		this.rectangleDrawActions.add(new RectangleDrawAction(RectangleDrawType.DRAW, rectangle, null,
+				getDisplay().getSystemColor(color)));
 		this.setSnapshot(null);
 	}
 
@@ -679,6 +680,7 @@ public class SnapshotComposite extends Composite {
 		this.canvas.redraw();
 	}
 
+	@Override
 	public void showEnlargedImage() {
 		if (this.defaultImage == null) {
 			return;

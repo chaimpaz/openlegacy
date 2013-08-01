@@ -8,7 +8,7 @@
  * Contributors:
  *     OpenLegacy Inc. - initial API and implementation
  *******************************************************************************/
-package org.openlegacy.ide.eclipse.preview;
+package org.openlegacy.ide.eclipse.preview.screen;
 
 import org.openlegacy.ide.eclipse.Messages;
 import org.openlegacy.terminal.TerminalPosition;

@@ -217,8 +217,15 @@
             name="Screen Preview"
             icon="icons/openlegacy.png"
             category="org.openlegacy.ide.eclipse.preview"
-            class="org.openlegacy.ide.eclipse.preview.ScreenPreview"
+            class="org.openlegacy.ide.eclipse.preview.screen.ScreenPreview"
             id="org.openlegacy.ide.eclipse.preview.ScreenPreview">
+      </view>
+      <view
+            name="RPC Preview"
+            icon="icons/openlegacy.png"
+            category="org.openlegacy.ide.eclipse.preview"
+            class="org.openlegacy.ide.eclipse.preview.rpc.RpcPreview"
+            id="org.openlegacy.ide.eclipse.preview.RpcPreview">
       </view>
    </extension>
    
@@ -241,6 +248,17 @@
       <menuContribution
             allPopups="false"
             locationURI="menu:org.openlegacy.ide.eclipse.preview.ScreenPreview">
+         <command
+               commandId="org.openlegacy.ide.eclipse.preview.ZoomIn"
+               icon="icons/zoom-in.png"
+               label="Zoom In"
+               style="push"
+               tooltip="Zoom In trail image">
+         </command>
+      </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="menu:org.openlegacy.ide.eclipse.preview.RpcPreview">
          <command
                commandId="org.openlegacy.ide.eclipse.preview.ZoomIn"
                icon="icons/zoom-in.png"

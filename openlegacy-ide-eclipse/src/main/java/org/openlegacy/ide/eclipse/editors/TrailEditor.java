@@ -52,7 +52,7 @@ import org.eclipse.wst.xml.core.internal.provisional.document.IDOMModel;
 import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.ide.eclipse.Messages;
 import org.openlegacy.ide.eclipse.actions.screen.GenerateScreenModelDialog;
-import org.openlegacy.ide.eclipse.components.SnapshotComposite;
+import org.openlegacy.ide.eclipse.components.screen.SnapshotComposite;
 import org.openlegacy.ide.eclipse.util.PathsUtil;
 import org.openlegacy.terminal.TerminalSnapshot;
 import org.openlegacy.terminal.TerminalSnapshot.SnapshotType;

@@ -519,6 +519,12 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 			File screenResourcesDir = new File(packageDir, entityName + "-resources");
 			screenResourcesDir.mkdir();
 
+			if (generateRpcModelRequest.isGenerateSource()) {
+				// generate src file with source content
+				FileInputStream fis = new FileInputStream(generateRpcModelRequest.getSourceFile());
+				IOUtils.copy(fis, new FileOutputStream(new File(screenResourcesDir, entityDefinition.getEntityName() + ".src")));
+			}
+
 			return true;
 
 		} catch (TemplateException e) {
