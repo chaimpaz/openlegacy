@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.designtime.rpc.source.CodeParser;
 import org.openlegacy.exceptions.OpenLegacyProviderException;
-import org.openlegacy.rpc.definitions.RpcEntityDefinition;
+import org.openlegacy.utils.FileUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,15 +13,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import koopa.parsers.ParseResults;
 import koopa.parsers.cobol.CobolParser;
-import koopa.tokens.Token;
 import koopa.trees.antlr.jaxen.Jaxen;
-import koopa.util.Tuple;
 
 /**
  * A warper of koopa COBOL parser, It fetch COBOL program interface from antlr tree and generate RpcEntityDefinition.
@@ -30,55 +27,19 @@ import koopa.util.Tuple;
 
 public class OpenlegacyCobolParser implements CodeParser {
 
-	private final static String PARAGRAPH_QUERY = "//paragraph";
-	private final static String PROCEDURE_QUERY = "//procedureDivision";
-	private final static String ROOT_PROGRAM_QUERY_TEMPLATE = "//paragraph//cobolWord[text()='%s']";
-	private final static String USE_PARAMETER_QUERY = "//usingPhrase//cobolWord//text()";
 	private final static String USE_COPYBOOK_QUERY = "//linkageSection//copyStatement";
 	private final static String COPY_ROOT_QUERY = "//copyStatement";
 	private final static String COPY_FILE_QUERY = "//textName//cobolWord//text()";
 	private final static String OPERAND_QUERY = "//copyOperandName//pseudoLiteral//text()";
 	private final static String COPYBOOK_REPLACE_QUERY = "//copyReplacementInstruction";
-	private final static String PARAMETER_DEFINITION_QUERY = "//linkageSection//dataDescriptionEntry_format1";
-	private final static String PARAMETER_COPYBOOK_DEFINITION_QUERY = "//dataDescriptionEntry_format1";
-	private final static String PARAMETER_USED_QUERY = "//identifier_format2//cobolWord//text()";
+
 	private final static String COPYBOOK_EXTENSION = ".cpy";
 	private final static String COBOL_EXTENSION = ".cbl";
 	private final static Log logger = LogFactory.getLog(OpenlegacyCobolParser.class);
 
-	private String mainProcedureName;
-
 	private String copyBookPath;
 
 	private CobolParser cobolParser;
-
-	private RpcEntityDefinitionBuilder rpcEntityDefinitionBuilder;
-
-	public int getErrorsCount(ParseResults parseResults) {
-		return parseResults.getErrorCount();
-	}
-
-	public String getError(ParseResults parseResults, int i) {
-		final Tuple<Token, String> error = parseResults.getError(i);
-		return (error.getFirst() + " " + error.getSecond());
-	}
-
-	public int getWarningCount(ParseResults parseResults) {
-		return parseResults.getWarningCount();
-	}
-
-	public String getWarning(ParseResults parseResults, int i) {
-		final Tuple<Token, String> warning = parseResults.getWarning(i);
-		return (warning.getFirst() + " " + warning.getSecond());
-	}
-
-	public String getMainProcedureName() {
-		return mainProcedureName;
-	}
-
-	public void setMainProcedureName(String mainProcedureName) {
-		this.mainProcedureName = mainProcedureName;
-	}
 
 	public String getCopyBookPath() {
 		return copyBookPath;
@@ -148,21 +109,18 @@ public class OpenlegacyCobolParser implements CodeParser {
 	 * 
 	 * @see org.openlegacy.designtime.rpc.source.parsers.codeParser#parse(java.lang.String, java.util.Map)
 	 */
-	public ParseResults parse(String source, Map<String, InputStream> streamMap) throws IOException {
+	public org.openlegacy.designtime.rpc.source.parsers.ParseResults parse(String source, Map<String, InputStream> streamMap)
+			throws IOException {
 		copyBookPath = CobolParserUtils.CreateTmpDir("CopyBookDir");
 		CobolParserUtils.copyStreamsToFile(copyBookPath, streamMap);
 		return parse(source, COBOL_EXTENSION);
 
 	}
 
-	public RpcEntityDefinition getEntity(ParseResults parseResults, String extension) {
-		List<ParameterStructure> parameters = orgenize(parseResults, extension);
-		return rpcEntityDefinitionBuilder.build(parameters);
-	}
-
-	public ParseResults parse(String source, String extension) {
+	public org.openlegacy.designtime.rpc.source.parsers.ParseResults parse(String source, String fileName) {
 
 		String tempFileName = "";
+		String extension = FileUtils.fileExtension(fileName);
 		boolean isCopyBook = extension.equals(COPYBOOK_EXTENSION);
 		if (isCopyBook) {
 			source = source.replaceAll(":.*:", "");
@@ -183,7 +141,7 @@ public class OpenlegacyCobolParser implements CodeParser {
 			if (!parseResults.isValidInput()) {
 				throw (new OpenLegacyProviderException("Koopa input is invalid"));
 			}
-			return parseResults;
+			return new CobolParseResults(parseResults, isCopyBook);
 
 		} catch (Exception e) {
 			logger.debug("Failed to parse file");
@@ -192,136 +150,12 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 	}
 
-	private List<ParameterStructure> orgenize(ParseResults parseResults, String extension) {
-		CommonTree rootNode = parseResults.getTree();
-		boolean isCopyBook = extension.equals(COPYBOOK_EXTENSION);
-
-		String queryString = PARAMETER_DEFINITION_QUERY;
-		if (isCopyBook) {
-			queryString = PARAMETER_COPYBOOK_DEFINITION_QUERY;
-		}
-
-		List<ParameterStructure> allParamtersNodes = new ArrayList<ParameterStructure>();
-
-		try {
-
-			@SuppressWarnings("unchecked")
-			List<CommonTree> jaxsonParamtersNodes = (List<CommonTree>)Jaxen.evaluate(rootNode, queryString);
-			Map<String, String> fieldToTopLevelName = arrangeInLevels(allParamtersNodes, jaxsonParamtersNodes);
-			if (isCopyBook) {
-				return allParamtersNodes;
-
-			} else {
-				return filterUsedParameter(parseResults, allParamtersNodes, fieldToTopLevelName);
-			}
-			// } catch (XPathExpressionException e) {
-
-		} catch (Exception e) {
-			logger.debug("failed at query stage");
-			throw new OpenLegacyProviderException("Koopa input is invalid");
-		}
-	}
-
-	private List<ParameterStructure> filterUsedParameter(ParseResults parseResults, List<ParameterStructure> allParamtersNodes,
-			Map<String, String> fieldToTopLevelName) {
-		List<String> usedParamtersNames = getParameterNames(parseResults);
-		List<ParameterStructure> interfaceParamtersNodes = new ArrayList<ParameterStructure>();
-		List<String> interfaceParamtersNames = new ArrayList<String>();
-
-		for (String prameterName : usedParamtersNames) {
-			if (fieldToTopLevelName.containsKey(prameterName) && !interfaceParamtersNames.contains(prameterName)) {
-				interfaceParamtersNames.add(fieldToTopLevelName.get(prameterName));
-			}
-		}
-		for (ParameterStructure parameterNode : allParamtersNodes) {
-			if (interfaceParamtersNames.contains(parameterNode.getFieldName())) {
-				interfaceParamtersNodes.add(parameterNode);
-			}
-		}
-		return interfaceParamtersNodes;
-	}
-
-	private static Map<String, String> arrangeInLevels(List<ParameterStructure> allParamtersNodes,
-			List<CommonTree> jaxsonParamtersNodes) {
-		for (int parameterIdx = 0; parameterIdx < jaxsonParamtersNodes.size(); parameterIdx++) {
-
-			allParamtersNodes.add(new KoopaParameterStructure(jaxsonParamtersNodes.get(parameterIdx)));
-		}
-
-		Map<String, String> fieldToTopLevelName = new HashMap<String, String>();
-		for (int parameterIdx = 0; parameterIdx < allParamtersNodes.size(); parameterIdx++) {
-			KoopaParameterStructure cobolParmeter = (KoopaParameterStructure)allParamtersNodes.get(parameterIdx);
-			fieldToTopLevelName.put(cobolParmeter.getFieldName(), cobolParmeter.getFieldName());
-			if (!cobolParmeter.isSimple()) {
-				fieldToTopLevelName.putAll(cobolParmeter.collectSubFields(allParamtersNodes, parameterIdx + 1,
-						cobolParmeter.getFieldName()));
-			}
-		}
-		return fieldToTopLevelName;
-	}
-
-	private List<String> getParameterNames(ParseResults parseResults) {
-
-		CommonTree rootNode = parseResults.getTree();
-		List<String> paramtersNames = new ArrayList<String>();
-		CommonTree programRoot = null;
-
-		@SuppressWarnings("unchecked")
-		List<CommonTree> programRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, PARAGRAPH_QUERY);
-
-		if (programRootNode.size() == 1) {
-			programRoot = (CommonTree)programRootNode.get(0).getParent();
-		} else if (programRootNode.size() > 1) {
-			String rootProgramQueryString = String.format(ROOT_PROGRAM_QUERY_TEMPLATE, mainProcedureName);
-
-			@SuppressWarnings("unchecked")
-			List<CommonTree> retryProgramRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, rootProgramQueryString);
-			// Assume there is only one main
-			programRoot = (CommonTree)retryProgramRootNode.get(0).getParent().getParent().getParent().getParent();
-		} else {
-			@SuppressWarnings("unchecked")
-			List<CommonTree> retryProgramRootNode = (List<CommonTree>)Jaxen.evaluate(rootNode, PROCEDURE_QUERY);
-			programRoot = retryProgramRootNode.get(0);
-		}
-
-		if (programRoot == null) {
-			return paramtersNames;
-		}
-
-		programRoot.setParent(null);
-
-		@SuppressWarnings("unchecked")
-		List<CommonTree> procedureParamtersNodes = (List<CommonTree>)Jaxen.evaluate(programRoot, USE_PARAMETER_QUERY);
-
-		for (CommonTree procedureParamtersNode : procedureParamtersNodes) {
-			paramtersNames.add(procedureParamtersNode.getText());
-		}
-
-		if (paramtersNames.isEmpty()) {
-			@SuppressWarnings("unchecked")
-			List<CommonTree> usedParameters = (List<CommonTree>)Jaxen.evaluate(programRoot, PARAMETER_USED_QUERY);
-			for (CommonTree parameter : usedParameters) {
-				paramtersNames.add(parameter.getText());
-			}
-		}
-
-		return paramtersNames;
-	}
-
 	public CobolParser getCobolParser() {
 		return cobolParser;
 	}
 
 	public void setCobolParser(CobolParser cobolParser) {
 		this.cobolParser = cobolParser;
-	}
-
-	public RpcEntityDefinitionBuilder getRpcEntityDefinitionBuilder() {
-		return rpcEntityDefinitionBuilder;
-	}
-
-	public void setRpcEntityDefinitionBuilder(RpcEntityDefinitionBuilder rpcEntityDefinitionBuilder) {
-		this.rpcEntityDefinitionBuilder = rpcEntityDefinitionBuilder;
 	}
 
 }

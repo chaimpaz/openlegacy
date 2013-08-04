@@ -29,7 +29,7 @@ import org.openlegacy.designtime.rpc.generators.RpcPojosAjGenerator;
 import org.openlegacy.designtime.rpc.generators.support.RpcAnnotationConstants;
 import org.openlegacy.designtime.rpc.model.support.SimpleRpcEntityDesigntimeDefinition;
 import org.openlegacy.designtime.rpc.source.CodeParser;
-import org.openlegacy.designtime.rpc.source.parsers.OpenlegacyCobolParser;
+import org.openlegacy.designtime.rpc.source.parsers.ParseResults;
 import org.openlegacy.designtime.terminal.GenerateScreenModelRequest;
 import org.openlegacy.designtime.terminal.analyzer.TerminalSnapshotsAnalyzer;
 import org.openlegacy.designtime.terminal.generators.ScreenEntityMvcGenerator;
@@ -79,8 +79,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import koopa.parsers.ParseResults;
 
 /**
  * OpenLegacy main design-time API entry point. Consolidate all design-time common UI actions
@@ -845,27 +843,27 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 		CodeParser codeParser = projectApplicationContext.getBean(CodeParser.class);
 
 		String fileContent;
-		RpcEntityDefinition rpcEntityDefinition = null;
+		RpcEntityDefinition rpcEntityDesigntimeDefinition = new SimpleRpcEntityDesigntimeDefinition();
 		try {
 			File sourceFile = generateRpcModelRequest.getSourceFile();
 			fileContent = IOUtils.toString(new FileInputStream(sourceFile));
-			String fileExtension = FileUtils.fileExtension(sourceFile.getName());
-			ParseResults parseResults = codeParser.parse(fileContent,fileExtension);
-			rpcEntityDefinition = codeParser.getEntity(parseResults, fileExtension);
-		
+			ParseResults parseResults = codeParser.parse(fileContent, sourceFile.getName());
+
+			parseResults.getEntityDefinition(rpcEntityDesigntimeDefinition);
+
 			String name = FileUtils.fileWithoutAnyExtension(sourceFile.getName());
-			((SimpleRpcEntityDesigntimeDefinition)rpcEntityDefinition).setEntityName(name);
+			((SimpleRpcEntityDesigntimeDefinition)rpcEntityDesigntimeDefinition).setEntityName(name);
 		} catch (IOException e) {
 			throw (new OpenLegacyRuntimeException(e));
 		}
-		((SimpleRpcEntityDesigntimeDefinition)rpcEntityDefinition).setGenerateAspect(generateRpcModelRequest.isGenerateAspectJ());
+		((SimpleRpcEntityDesigntimeDefinition)rpcEntityDesigntimeDefinition).setGenerateAspect(generateRpcModelRequest.isGenerateAspectJ());
 
-		boolean generated = generateRpcEntityDefinition(generateRpcModelRequest, rpcEntityDefinition);
+		boolean generated = generateRpcEntityDefinition(generateRpcModelRequest, rpcEntityDesigntimeDefinition);
 
 		if (generated) {
 			File packageDir = new File(generateRpcModelRequest.getSourceDirectory(),
 					generateRpcModelRequest.getPackageDirectory());
-			String entityName = rpcEntityDefinition.getEntityName();
+			String entityName = rpcEntityDesigntimeDefinition.getEntityName();
 			File targetJavaFile = new File(packageDir, MessageFormat.format("{0}.java", entityName));
 			entityUserInteraction.open(targetJavaFile);
 		}

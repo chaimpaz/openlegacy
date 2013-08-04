@@ -24,22 +24,8 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 
 	private FieldInformationFactory fieldInformationFactory;
 
-	private RpcEntityDefinition entityDefinition;
-
-	public FieldInformationFactory getFieldInformationFactory() {
-		return fieldInformationFactory;
-	}
-
-	public void setFieldInformationFactory(FieldInformationFactory fieldInformationFactory) {
+	public RpcEntityDefinitionBuilderImp(FieldInformationFactory fieldInformationFactory) {
 		this.fieldInformationFactory = fieldInformationFactory;
-	}
-
-	public RpcEntityDefinition getEntityDefinition() {
-		return entityDefinition;
-	}
-
-	public void setEntityDefinition(RpcEntityDefinition entityDefinition) {
-		this.entityDefinition = entityDefinition;
 	}
 
 	private RpcFieldDefinition buildRpcFieldDefinition(ParameterStructure parameter, int order) {
@@ -95,7 +81,7 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 	 * 
 	 * @see org.openlegacy.designtime.rpc.source.parsers.RpcEntityDefinitionBuilder#build(java.lang.String, java.util.List)
 	 */
-	public RpcEntityDefinition build(List<ParameterStructure> paramtersNodes) {
+	public void build(List<ParameterStructure> paramtersNodes, RpcEntityDefinition entityDefinition) {
 
 		for (int parameterOrder = 0; parameterOrder < paramtersNodes.size(); parameterOrder++) {
 			ParameterStructure interfaceParmeter = paramtersNodes.get(parameterOrder);
@@ -114,6 +100,5 @@ public class RpcEntityDefinitionBuilderImp implements RpcEntityDefinitionBuilder
 			logger.debug(interfaceParmeter.toString());
 		}
 
-		return entityDefinition;
 	}
 }

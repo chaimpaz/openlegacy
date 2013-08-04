@@ -12,8 +12,8 @@ import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
 import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
+import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
-import org.openlegacy.utils.FileUtils;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -28,8 +28,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import koopa.parsers.ParseResults;
-
 @ContextConfiguration("CobolParserTest-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class CobolParserTest {
@@ -40,10 +38,11 @@ public class CobolParserTest {
 	private double precise = 0.001;
 
 	private RpcEntityDefinition getEntity(String sourceFile) throws IOException {
-		String extension = FileUtils.fileExtension(sourceFile);
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
-		ParseResults parseResults = openlegacyCobolParser.parse(source, extension);
-		return openlegacyCobolParser.getEntity(parseResults, extension);
+		ParseResults parseResults = openlegacyCobolParser.parse(source, sourceFile);
+		SimpleRpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition();
+		parseResults.getEntityDefinition(rpcEntityDefinition);
+		return rpcEntityDefinition;
 	}
 
 	@Test
@@ -200,14 +199,15 @@ public class CobolParserTest {
 	@Test
 	public void testTreeWithPreProcess() throws IOException {
 		String sourceFile = "sameprog.cbl";
-		String extension = FileUtils.fileExtension(sourceFile);
 		Map<String, InputStream> streamMap = new HashMap<String, InputStream>();
 
 		streamMap.put("sampcpy1.cpy", getClass().getResourceAsStream("sampcpy1.cpy"));
 		streamMap.put("sampcpy2.cpy", getClass().getResourceAsStream("sampcpy2.cpy"));
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		ParseResults parseResults = openlegacyCobolParser.parse(source, streamMap);
-		testTree(openlegacyCobolParser.getEntity(parseResults, extension));
+		RpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition();
+		parseResults.getEntityDefinition(rpcEntityDefinition);
+		testTree(rpcEntityDefinition);
 	}
 
 	@Test

@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface RpcEntityDefinitionBuilder {
 
-	RpcEntityDefinition build(List<ParameterStructure> paramtersNodes);
+	void build(List<ParameterStructure> paramtersNodes, RpcEntityDefinition rpcEntityDefinition);
 
 }

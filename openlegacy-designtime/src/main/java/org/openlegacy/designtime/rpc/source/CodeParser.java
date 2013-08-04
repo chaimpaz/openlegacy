@@ -10,20 +10,16 @@
  *******************************************************************************/
 package org.openlegacy.designtime.rpc.source;
 
-import org.openlegacy.rpc.definitions.RpcEntityDefinition;
+import org.openlegacy.designtime.rpc.source.parsers.ParseResults;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import koopa.parsers.ParseResults;
-
 public interface CodeParser {
 
-	ParseResults parse(String source, String extension);
+	ParseResults parse(String source, String fileName);
 
-	RpcEntityDefinition getEntity(ParseResults parseResults, String extension);
-
-	public ParseResults parse(String source, Map<String, InputStream> streamMap) throws IOException;
+	ParseResults parse(String source, Map<String, InputStream> streamMap) throws IOException;
 
 }

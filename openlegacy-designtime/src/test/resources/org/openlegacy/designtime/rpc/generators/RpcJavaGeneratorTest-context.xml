@@ -9,23 +9,11 @@
    
    <bean id="OpenlegacyCobolParser"
 		class="org.openlegacy.designtime.rpc.source.parsers.OpenlegacyCobolParser" scope="prototype">
-		<property name="mainProcedureName" value="BEGIN"/>
 		<property name="cobolParser">
 			<bean class="koopa.parsers.cobol.CobolParser">
 				<property name="buildTrees"   value="true"/>
 				<property name="preprocessing"   value="true"/>
 				<property name="format" value="FREE"/>
-			</bean>
-		</property>
-		<property name="rpcEntityDefinitionBuilder">
-			<bean class="org.openlegacy.designtime.rpc.source.parsers.RpcEntityDefinitionBuilderImp" >
-				<property name="fieldInformationFactory" >
-					<bean class="org.openlegacy.designtime.rpc.source.parsers.CobolFieldInformationFactory"/>
-				</property>
-				<property name="entityDefinition">
-					<bean class="org.openlegacy.designtime.rpc.model.support.SimpleRpcEntityDesigntimeDefinition" scope="prototype">
-					</bean>
-				</property>
 			</bean>
 		</property>
 	</bean>

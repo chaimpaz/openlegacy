@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import koopa.parsers.ParseResults;
-
 public class RpgParser implements CodeParser {
 
 	String rpcEntityName = null;
@@ -167,20 +165,14 @@ public class RpgParser implements CodeParser {
 		return rpcDefinition;
 	}
 
-	public ParseResults parse(String source, String extension) {
+	public ParseResults parse(String source, String fileName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public RpcEntityDefinition getEntity(ParseResults parseResults,
-			String extension) {
+	public ParseResults parse(String source, Map<String, InputStream> streamMap) throws IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public ParseResults parse(String source, Map<String, InputStream> streamMap)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
