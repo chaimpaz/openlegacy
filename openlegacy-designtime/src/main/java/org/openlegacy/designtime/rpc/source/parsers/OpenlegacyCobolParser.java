@@ -4,7 +4,6 @@ import org.antlr.runtime.tree.CommonTree;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openlegacy.designtime.rpc.source.CodeParser;
-import org.openlegacy.exceptions.OpenLegacyProviderException;
 import org.openlegacy.utils.FileUtils;
 
 import java.io.BufferedWriter;
@@ -128,8 +127,8 @@ public class OpenlegacyCobolParser implements CodeParser {
 
 		try {
 			tempFileName = writeToTempFile(source, extension);
-			;
 		} catch (Exception e) {// Catch exception if any
+			logger.fatal(e);
 			return null;
 		}
 		try {
@@ -138,14 +137,15 @@ public class OpenlegacyCobolParser implements CodeParser {
 				parseResults = cobolParser.parse(new File(tempFileName));
 			}
 
+			CobolParseResults olParseResults = new CobolParseResults(parseResults, isCopyBook);
+
 			if (!parseResults.isValidInput()) {
-				throw (new OpenLegacyProviderException("Koopa input is invalid"));
+				throw (new OpenLegacyParseException("Koopa input is invalid", olParseResults));
 			}
-			return new CobolParseResults(parseResults, isCopyBook);
+			return olParseResults;
 
 		} catch (Exception e) {
-			logger.debug("Failed to parse file");
-			throw (new OpenLegacyProviderException("Koopa input is invalid", e));
+			throw (new OpenLegacyParseException("Koopa input is invalid", e));
 		}
 
 	}

@@ -12,7 +12,6 @@ import org.openlegacy.designtime.DesigntimeException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 import org.openlegacy.rpc.definitions.RpcFieldDefinition;
 import org.openlegacy.rpc.definitions.RpcPartEntityDefinition;
-import org.openlegacy.rpc.definitions.SimpleRpcEntityDefinition;
 import org.openlegacy.rpc.definitions.SimpleRpcListFieldTypeDefinition;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -40,8 +39,7 @@ public class CobolParserTest {
 	private RpcEntityDefinition getEntity(String sourceFile) throws IOException {
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		ParseResults parseResults = openlegacyCobolParser.parse(source, sourceFile);
-		SimpleRpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition();
-		parseResults.getEntityDefinition(rpcEntityDefinition);
+		RpcEntityDefinition rpcEntityDefinition = parseResults.getEntityDefinition();
 		return rpcEntityDefinition;
 	}
 
@@ -205,8 +203,7 @@ public class CobolParserTest {
 		streamMap.put("sampcpy2.cpy", getClass().getResourceAsStream("sampcpy2.cpy"));
 		String source = IOUtils.toString(getClass().getResource(sourceFile));
 		ParseResults parseResults = openlegacyCobolParser.parse(source, streamMap);
-		RpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDefinition();
-		parseResults.getEntityDefinition(rpcEntityDefinition);
+		RpcEntityDefinition rpcEntityDefinition = parseResults.getEntityDefinition();
 		testTree(rpcEntityDefinition);
 	}
 

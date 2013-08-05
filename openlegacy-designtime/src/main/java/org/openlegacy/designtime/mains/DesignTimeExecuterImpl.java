@@ -843,27 +843,27 @@ public class DesignTimeExecuterImpl implements DesignTimeExecuter {
 		CodeParser codeParser = projectApplicationContext.getBean(CodeParser.class);
 
 		String fileContent;
-		RpcEntityDefinition rpcEntityDesigntimeDefinition = new SimpleRpcEntityDesigntimeDefinition();
+		RpcEntityDefinition rpcEntityDefinition = null;
 		try {
 			File sourceFile = generateRpcModelRequest.getSourceFile();
 			fileContent = IOUtils.toString(new FileInputStream(sourceFile));
 			ParseResults parseResults = codeParser.parse(fileContent, sourceFile.getName());
 
-			parseResults.getEntityDefinition(rpcEntityDesigntimeDefinition);
+			rpcEntityDefinition = parseResults.getEntityDefinition();
 
 			String name = FileUtils.fileWithoutAnyExtension(sourceFile.getName());
-			((SimpleRpcEntityDesigntimeDefinition)rpcEntityDesigntimeDefinition).setEntityName(name);
+			((SimpleRpcEntityDesigntimeDefinition)rpcEntityDefinition).setEntityName(name);
 		} catch (IOException e) {
 			throw (new OpenLegacyRuntimeException(e));
 		}
-		((SimpleRpcEntityDesigntimeDefinition)rpcEntityDesigntimeDefinition).setGenerateAspect(generateRpcModelRequest.isGenerateAspectJ());
+		((SimpleRpcEntityDesigntimeDefinition)rpcEntityDefinition).setGenerateAspect(generateRpcModelRequest.isGenerateAspectJ());
 
-		boolean generated = generateRpcEntityDefinition(generateRpcModelRequest, rpcEntityDesigntimeDefinition);
+		boolean generated = generateRpcEntityDefinition(generateRpcModelRequest, rpcEntityDefinition);
 
 		if (generated) {
 			File packageDir = new File(generateRpcModelRequest.getSourceDirectory(),
 					generateRpcModelRequest.getPackageDirectory());
-			String entityName = rpcEntityDesigntimeDefinition.getEntityName();
+			String entityName = rpcEntityDefinition.getEntityName();
 			File targetJavaFile = new File(packageDir, MessageFormat.format("{0}.java", entityName));
 			entityUserInteraction.open(targetJavaFile);
 		}

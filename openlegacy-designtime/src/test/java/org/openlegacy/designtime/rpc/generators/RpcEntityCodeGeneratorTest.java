@@ -65,8 +65,7 @@ public class RpcEntityCodeGeneratorTest {
 
 		ParseResults parseResults = openlegacyCobolParser.parse(source, sourceFile);
 		String fileExtension = FileUtils.fileExtension(sourceFile);
-		SimpleRpcEntityDesigntimeDefinition rpcEntityDesigntimeDefinition = new SimpleRpcEntityDesigntimeDefinition();
-		parseResults.getEntityDefinition(rpcEntityDesigntimeDefinition);
+		SimpleRpcEntityDesigntimeDefinition rpcEntityDesigntimeDefinition = (SimpleRpcEntityDesigntimeDefinition)parseResults.getEntityDefinition();
 
 		rpcEntityDesigntimeDefinition.setPackageName("test.com");
 		rpcEntityDesigntimeDefinition.setEntityName(entityName);

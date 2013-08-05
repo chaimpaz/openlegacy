@@ -3,6 +3,7 @@ package org.openlegacy.designtime.rpc.source.parsers;
 import org.antlr.runtime.tree.CommonTree;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openlegacy.designtime.rpc.model.support.SimpleRpcEntityDesigntimeDefinition;
 import org.openlegacy.exceptions.OpenLegacyProviderException;
 import org.openlegacy.rpc.definitions.RpcEntityDefinition;
 
@@ -39,30 +40,14 @@ public class CobolParseResults implements org.openlegacy.designtime.rpc.source.p
 		this.isCopyBook = isCopyBook;
 	}
 
-	public int getErrorsCount() {
-		return parseResults.getErrorCount();
-	}
-
-	public String getError(int i) {
-		final Tuple<Token, String> error = parseResults.getError(i);
-		return (error.getFirst() + " " + error.getSecond());
-	}
-
-	public int getWarningCount() {
-		return parseResults.getWarningCount();
-	}
-
-	public String getWarning(int i) {
-		final Tuple<Token, String> warning = parseResults.getWarning(i);
-		return (warning.getFirst() + " " + warning.getSecond());
-	}
-
-	public void getEntityDefinition(RpcEntityDefinition rpcEntityDefinition) {
-		List<ParameterStructure> parameters = orgenize();
+	public RpcEntityDefinition getEntityDefinition() {
+		List<ParameterStructure> parameters = organize();
+		RpcEntityDefinition rpcEntityDefinition = new SimpleRpcEntityDesigntimeDefinition();
 		rpcEntityDefinitionBuilder.build(parameters, rpcEntityDefinition);
+		return rpcEntityDefinition;
 	}
 
-	private List<ParameterStructure> orgenize() {
+	private List<ParameterStructure> organize() {
 		CommonTree rootNode = parseResults.getTree();
 
 		String queryString = PARAMETER_DEFINITION_QUERY;
@@ -83,7 +68,6 @@ public class CobolParseResults implements org.openlegacy.designtime.rpc.source.p
 			} else {
 				return filterUsedParameter(parseResults, allParamtersNodes, fieldToTopLevelName);
 			}
-			// } catch (XPathExpressionException e) {
 
 		} catch (Exception e) {
 			logger.debug("failed at query stage");
@@ -176,6 +160,24 @@ public class CobolParseResults implements org.openlegacy.designtime.rpc.source.p
 		}
 
 		return paramtersNames;
+	}
+
+	public List<String> getErrors() {
+		List<String> errors = new ArrayList<String>();
+		for (int i = 0; i < parseResults.getErrorCount(); i++) {
+			Tuple<Token, String> error = parseResults.getError(i);
+			errors.add(error.getFirst() + " " + error.getSecond());
+		}
+		return errors;
+	}
+
+	public List<String> getWarnings() {
+		List<String> warnings = new ArrayList<String>();
+		for (int i = 0; i < parseResults.getWarningCount(); i++) {
+			Tuple<Token, String> warning = parseResults.getWarning(i);
+			warnings.add(warning.getFirst() + " " + warning.getSecond());
+		}
+		return warnings;
 	}
 
 }
