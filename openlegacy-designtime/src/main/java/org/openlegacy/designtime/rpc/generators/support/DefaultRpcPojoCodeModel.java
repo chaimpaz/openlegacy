@@ -14,6 +14,7 @@ import static org.openlegacy.designtime.utils.JavaParserUtil.findAnnotationAttri
 
 import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.annotations.rpc.Languages;
+import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.designtime.generators.AnnotationConstants;
 import org.openlegacy.designtime.generators.AnnotationsParserUtils;

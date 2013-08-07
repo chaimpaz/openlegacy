@@ -54,4 +54,9 @@ public class RpcAnnotationConstants {
 
 	// @Action
 	public static final String PATH = "path";
+
+	// @RpcEntity
+	public static final String NAME = "name";
+	public static final String DISPLAY_NAME = "displayName";
+	public static final String LANGUAGE = "language";
 }
