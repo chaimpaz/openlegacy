@@ -13,6 +13,7 @@ package org.openlegacy.designtime.rpc.generators.support;
 import static org.openlegacy.designtime.utils.JavaParserUtil.findAnnotationAttribute;
 
 import org.openlegacy.annotations.rpc.Direction;
+import org.openlegacy.annotations.rpc.Direction;
 import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.definitions.FieldTypeDefinition;
@@ -402,6 +403,10 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 								if (runtimeName != null) {
 									field.setRuntimeName(runtimeName.length() > 0 ? runtimeName : field.getName());
 								}
+							}
+							if (JavaParserUtil.isOneOfAnnotationsPresent(annotationExpr,
+									RpcAnnotationConstants.RPC_NUMERIC_ANNOTATION)) {
+								field.setFieldTypeDefinition(AnnotationsParserUtils.loadNumericField(annotationExpr));
 							}
 							if (JavaParserUtil.isOneOfAnnotationsPresent(annotationExpr,
 									RpcAnnotationConstants.RPC_NUMERIC_ANNOTATION)) {

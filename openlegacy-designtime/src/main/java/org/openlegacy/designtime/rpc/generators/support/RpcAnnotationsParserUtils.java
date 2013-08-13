@@ -53,6 +53,8 @@ public class RpcAnnotationsParserUtils {
 				: Direction.valueOf(directionValue.split("\\.")[1]));
 		field.setDefaultValue(StringUtil.isEmpty(defaultValue) ? "" : StringUtil.stripQuotes(defaultValue));
 
+		field.setLength(Integer.valueOf(StringUtil.stripQuotes(lengthValue)));
+
 		field.setLength(Integer.valueOf(lengthValue));
 
 		field.setSampleValue(StringUtil.isEmpty(sampleValue) ? "" : StringUtil.stripQuotes(sampleValue));

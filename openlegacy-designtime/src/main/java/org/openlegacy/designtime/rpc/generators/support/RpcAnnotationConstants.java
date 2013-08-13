@@ -30,8 +30,6 @@ public class RpcAnnotationConstants {
 	public static final String RPC_PART_LIST = RpcPartList.class.getSimpleName();
 
 	// @RpcEntity
-	public static final String NAME = "name";
-	public static final String DISPLAY_NAME = "displayName";
 	public static final String LANGUAGE = "language";
 
 	// @RpcNumericField
