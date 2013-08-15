@@ -70,4 +70,7 @@ public class RpcAnnotationConstants {
 	public static final String ORIGINAL_NAME = "originalName";
 	public static final String DIRECTION = "direction";
 	public static final String DEFAULT_VALUE = "defaultValue";
+
+	// @Action
+	public static final String PATH = "path";
 }

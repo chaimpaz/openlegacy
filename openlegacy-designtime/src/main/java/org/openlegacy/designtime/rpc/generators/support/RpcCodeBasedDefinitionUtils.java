@@ -175,12 +175,17 @@ public class RpcCodeBasedDefinitionUtils {
 		List<ActionDefinition> actionDefinitions = new ArrayList<ActionDefinition>();
 		for (Action action : actions) {
 			String actionName = StringUtil.toClassName(action.getActionName());
-			SimpleRpcActionDefinition actionDefinition = new SimpleRpcActionDefinition(actionName, action.getDisplayName());
-			actionDefinition.setProgramPath(action.getPath());
-			actionDefinition.setGlobal(action.isGlobal());
-			if (action.getAlias() != null) {
-				actionDefinition.setAlias(action.getAlias());
-			}
+			String displayName = !StringUtil.isEmpty(action.getDisplayName()) ? StringUtil.stripQuotes(action.getDisplayName())
+					: "";
+			String alias = !StringUtil.isEmpty(action.getAlias()) ? StringUtil.stripQuotes(action.getAlias()) : "";
+			String path = !StringUtil.isEmpty(action.getPath()) ? StringUtil.stripQuotes(action.getPath()) : "";
+			boolean global = action.isGlobal();
+
+			SimpleRpcActionDefinition actionDefinition = new SimpleRpcActionDefinition(actionName, displayName);
+			actionDefinition.setAlias(alias);
+			actionDefinition.setPath(path);
+			actionDefinition.setGlobal(global);
+
 			if (action.getTargetEntityName() != null) {
 				RpcEntityDefinition targetDefinition = getEntityDefinition(action.getTargetEntityName(), packageDir);
 				actionDefinition.setTargetEntityDefinition(targetDefinition);
