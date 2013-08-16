@@ -42,6 +42,7 @@ public class CodeBasedRpcPartDefinition extends AbstractCodeBasedPartDefinition<
 	}
 
 	public int getOccur() {
+
 		return occur;
 	}
 

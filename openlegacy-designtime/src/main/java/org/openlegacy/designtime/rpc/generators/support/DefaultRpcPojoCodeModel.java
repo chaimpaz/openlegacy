@@ -330,6 +330,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 	private List<Action> actions = new ArrayList<Action>();
 
 	private Languages language = Languages.UNDEFINED;
+	private int occur = 1;
 	private String runtimeName;
 
 	public DefaultRpcPojoCodeModel(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration type, String className,
@@ -475,6 +476,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 		String entityNameFromAnnotation = null;
 		String typeNameFromAnnotation = null;
 		String languageFromAnnotation = null;
+		String occurFromAnnotation = null;
 
 		if (annotationExpr instanceof NormalAnnotationExpr) {
 			NormalAnnotationExpr normalAnnotationExpr = (NormalAnnotationExpr)annotationExpr;
@@ -483,6 +485,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 			entityNameFromAnnotation = findAnnotationAttribute(AnnotationConstants.NAME, normalAnnotationExpr.getPairs());
 			typeNameFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.RPC_TYPE, normalAnnotationExpr.getPairs());
 			languageFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.LANGUAGE, normalAnnotationExpr.getPairs());
+			occurFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.OCCUR, normalAnnotationExpr.getPairs());
 		}
 		displayName = displayNameFromAnnotation != null ? StringUtil.stripQuotes(displayNameFromAnnotation)
 				: StringUtil.toDisplayName(getClassName());
@@ -493,6 +496,10 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 				: org.openlegacy.rpc.RpcEntityType.General.class.getSimpleName();
 		if (languageFromAnnotation != null) {
 			language = Languages.valueOf(languageFromAnnotation.split("\\.")[1]);
+		}
+
+		if (occurFromAnnotation != null) {
+			occur = Integer.valueOf(occurFromAnnotation).intValue();
 		}
 	}
 
@@ -562,6 +569,10 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 	 */
 	public Languages getLanguage() {
 		return language;
+	}
+
+	public int getOccur() {
+		return occur;
 	}
 
 	public String getRuntimeName() {
