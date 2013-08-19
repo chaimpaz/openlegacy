@@ -13,6 +13,7 @@ package org.openlegacy.designtime.generators;
 public class AnnotationConstants {
 
 	public static final String TRUE = "true";
+	public static final String FALSE = "false";
 	public static final String FIELD_SUFFIX = "Field";
 
 	public static final String EDITABLE = "editable";

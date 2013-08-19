@@ -64,8 +64,8 @@ public class RpcAnnotationsParserUtils {
 			field.setPassword(true);
 		}
 
-		if (AnnotationConstants.TRUE.equals(editableValue)) {
-			field.setEditable(true);
+		if (AnnotationConstants.FALSE.equalsIgnoreCase(editableValue)) {
+			field.setEditable(false);
 		}
 		String displayName = displayNameValue != null ? displayNameValue : StringUtil.toDisplayName(field.getName());
 		field.setDisplayName(displayName);
