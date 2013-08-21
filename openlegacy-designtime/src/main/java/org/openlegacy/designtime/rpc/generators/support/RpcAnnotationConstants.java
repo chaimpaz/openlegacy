@@ -28,30 +28,8 @@ public class RpcAnnotationConstants {
 	public static final String RPC_TYPE = "rpcType";
 	public static final String RPC_FIELD_ANNOTATION = RpcField.class.getSimpleName();
 	public static final String RPC_PART_LIST = RpcPartList.class.getSimpleName();
-
-	// @RpcEntity
-	public static final String LANGUAGE = "language";
-
-	// @RpcNumericField
-	public static final String MINIMUM_VALUE = "minimumValue";
-	public static final String MAXIMUM_VALUE = "maximumValue";
-	public static final String DECIMAL_PLACES = "decimalPlaces";
-
-	// @RpcPart
-	public static final String OCCUR = "occur";
-
-	// @RpcField
-	public static final String ORIGINAL_NAME = "originalName";
-	public static final String DIRECTION = "direction";
-	public static final String DEFAULT_VALUE = "defaultValue";
-	public static final String COUNT = "count";
-	public static final String RUNTIME_NAME = "runtimeName";
-
 	public static final String RPC_BOOLEAN_FIELD_ANNOTATION = RpcBooleanField.class.getSimpleName();
 	public static final String RPC_NUMERIC_ANNOTATION = RpcNumericField.class.getSimpleName();
-
-	// @Action
-	public static final String PATH = "path";
 
 	// @RpcEntity
 	public static final String NAME = "name";
@@ -64,12 +42,14 @@ public class RpcAnnotationConstants {
 	public static final String DECIMAL_PLACES = "decimalPlaces";
 
 	// @RpcPart
-	public static final String OCCUR = "occur";
+	// public static final String OCCUR = "occur";
 
 	// @RpcField
 	public static final String ORIGINAL_NAME = "originalName";
 	public static final String DIRECTION = "direction";
 	public static final String DEFAULT_VALUE = "defaultValue";
+	public static final String COUNT = "count";
+	public static final String RUNTIME_NAME = "runtimeName";
 
 	// @Action
 	public static final String PATH = "path";

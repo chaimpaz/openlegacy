@@ -31,7 +31,7 @@ public interface RpcPojoCodeModel extends PojoCodeModel {
 
 	Languages getLanguage();
 
-	int getOccur();
+	// int getOccur();
 
 	String getRuntimeName();
 }

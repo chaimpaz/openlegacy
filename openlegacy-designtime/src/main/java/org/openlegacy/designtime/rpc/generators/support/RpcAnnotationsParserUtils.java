@@ -43,14 +43,13 @@ public class RpcAnnotationsParserUtils {
 		String rightToLeftValue = getAnnotationValue(annotationExpr, AnnotationConstants.RIGHT_TO_LEFT);
 		String lengthValue = getAnnotationValue(annotationExpr, AnnotationConstants.LENGTH);
 		String runtimeName = getAnnotationValue(annotationExpr, RpcAnnotationConstants.RUNTIME_NAME);
-		String direction = getAnnotationValue(annotationExpr, RpcAnnotationConstants.DIRECTION);
 		String originalNameValue = getAnnotationValue(annotationExpr, RpcAnnotationConstants.ORIGINAL_NAME);
 		String directionValue = getAnnotationValue(annotationExpr, RpcAnnotationConstants.DIRECTION);
 		String defaultValue = getAnnotationValue(annotationExpr, RpcAnnotationConstants.DEFAULT_VALUE);
 
 		field.setOriginalName(StringUtil.isEmpty(originalNameValue) ? "" : StringUtil.stripQuotes(originalNameValue));
 		field.setDirection(StringUtil.isEmpty(directionValue) ? Direction.INPUT_OUTPUT
-				: Direction.valueOf(directionValue.split("\\.")[1]));
+				: Direction.valueOf(StringUtil.toEnumValue(directionValue)));
 		field.setDefaultValue(StringUtil.isEmpty(defaultValue) ? "" : StringUtil.stripQuotes(defaultValue));
 
 		field.setLength(Integer.valueOf(StringUtil.stripQuotes(lengthValue)));
@@ -85,9 +84,6 @@ public class RpcAnnotationsParserUtils {
 		}
 		if (runtimeName != null) {
 			field.setRuntimeName(StringUtil.stripQuotes(runtimeName));
-		}
-		if (direction != null) {
-			field.setDirection(Direction.valueOf(StringUtil.toEnumValue(direction)));
 		}
 	}
 

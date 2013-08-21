@@ -79,12 +79,6 @@ public class RpcCodeBasedDefinitionUtils {
 			fieldDefinition.setDirection(javaFieldModel.getDirection());
 
 			fieldDefinition.setOriginalName(javaFieldModel.getOriginalName());
-			fieldDefinition.setDirection(javaFieldModel.getDirection());
-			fieldDefinition.setDefaultValue(javaFieldModel.getDefaultValue());
-			fieldDefinition.setLength(javaFieldModel.getLength());
-
-			fieldDefinition.setOriginalName(javaFieldModel.getOriginalName());
-			fieldDefinition.setDirection(javaFieldModel.getDirection());
 			fieldDefinition.setDefaultValue(javaFieldModel.getDefaultValue());
 			fieldDefinition.setLength(javaFieldModel.getLength());
 
@@ -183,7 +177,7 @@ public class RpcCodeBasedDefinitionUtils {
 
 			SimpleRpcActionDefinition actionDefinition = new SimpleRpcActionDefinition(actionName, displayName);
 			actionDefinition.setAlias(alias);
-			actionDefinition.setPath(path);
+			actionDefinition.setProgramPath(path);
 			actionDefinition.setGlobal(global);
 
 			if (action.getTargetEntityName() != null) {

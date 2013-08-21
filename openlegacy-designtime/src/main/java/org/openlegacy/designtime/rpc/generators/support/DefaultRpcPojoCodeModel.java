@@ -13,8 +13,6 @@ package org.openlegacy.designtime.rpc.generators.support;
 import static org.openlegacy.designtime.utils.JavaParserUtil.findAnnotationAttribute;
 
 import org.openlegacy.annotations.rpc.Direction;
-import org.openlegacy.annotations.rpc.Direction;
-import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.annotations.rpc.Languages;
 import org.openlegacy.definitions.FieldTypeDefinition;
 import org.openlegacy.designtime.generators.AnnotationConstants;
@@ -330,7 +328,8 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 	private List<Action> actions = new ArrayList<Action>();
 
 	private Languages language = Languages.UNDEFINED;
-	private int occur = 1;
+
+	// private int occur = 1;
 	private String runtimeName;
 
 	public DefaultRpcPojoCodeModel(CompilationUnit compilationUnit, ClassOrInterfaceDeclaration type, String className,
@@ -409,10 +408,6 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 									RpcAnnotationConstants.RPC_NUMERIC_ANNOTATION)) {
 								field.setFieldTypeDefinition(AnnotationsParserUtils.loadNumericField(annotationExpr));
 							}
-							if (JavaParserUtil.isOneOfAnnotationsPresent(annotationExpr,
-									RpcAnnotationConstants.RPC_NUMERIC_ANNOTATION)) {
-								field.setFieldTypeDefinition(AnnotationsParserUtils.loadNumericField(annotationExpr));
-							}
 						}
 					}
 					fields.put(fieldName, field);
@@ -476,7 +471,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 		String entityNameFromAnnotation = null;
 		String typeNameFromAnnotation = null;
 		String languageFromAnnotation = null;
-		String occurFromAnnotation = null;
+		// String occurFromAnnotation = null;
 
 		if (annotationExpr instanceof NormalAnnotationExpr) {
 			NormalAnnotationExpr normalAnnotationExpr = (NormalAnnotationExpr)annotationExpr;
@@ -485,7 +480,7 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 			entityNameFromAnnotation = findAnnotationAttribute(AnnotationConstants.NAME, normalAnnotationExpr.getPairs());
 			typeNameFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.RPC_TYPE, normalAnnotationExpr.getPairs());
 			languageFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.LANGUAGE, normalAnnotationExpr.getPairs());
-			occurFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.OCCUR, normalAnnotationExpr.getPairs());
+			// occurFromAnnotation = findAnnotationAttribute(RpcAnnotationConstants.OCCUR, normalAnnotationExpr.getPairs());
 		}
 		displayName = displayNameFromAnnotation != null ? StringUtil.stripQuotes(displayNameFromAnnotation)
 				: StringUtil.toDisplayName(getClassName());
@@ -498,9 +493,9 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 			language = Languages.valueOf(languageFromAnnotation.split("\\.")[1]);
 		}
 
-		if (occurFromAnnotation != null) {
-			occur = Integer.valueOf(occurFromAnnotation).intValue();
-		}
+		// if (occurFromAnnotation != null) {
+		// occur = Integer.valueOf(occurFromAnnotation).intValue();
+		// }
 	}
 
 	/*
@@ -571,9 +566,9 @@ public class DefaultRpcPojoCodeModel implements RpcPojoCodeModel {
 		return language;
 	}
 
-	public int getOccur() {
-		return occur;
-	}
+	// public int getOccur() {
+	// return occur;
+	// }
 
 	public String getRuntimeName() {
 		return runtimeName;
