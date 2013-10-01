@@ -15,7 +15,10 @@ privileged @SuppressWarnings("unused") aspect SignOn_Aspect {
     private String SignOn.focusField;
     
 	
-    private TerminalField SignOn.messageField;
+    private TerminalField SignOn.systemField;
+
+	
+    private TerminalField SignOn.userField;
 
 	
     private TerminalField SignOn.passwordField;
@@ -24,23 +27,33 @@ privileged @SuppressWarnings("unused") aspect SignOn_Aspect {
     private TerminalField SignOn.programProcedureField;
 
 	
-    private TerminalField SignOn.systemField;
-
-	
-    private TerminalField SignOn.userField;
+    private TerminalField SignOn.messageField;
 
     
     public TerminalSnapshot SignOn.getTerminalSnapshot(){
 		return terminalSnapshot;
     }
 
-    public String SignOn.getMessage(){
-    	return this.message;
+    public String SignOn.getSystem(){
+    	return this.system;
     }
-    public TerminalField SignOn.getMessageField(){
-    	return this.messageField;
+    public TerminalField SignOn.getSystemField(){
+    	return this.systemField;
     }
     
+
+
+
+    public String SignOn.getUser(){
+    	return this.user;
+    }
+    public TerminalField SignOn.getUserField(){
+    	return this.userField;
+    }
+    
+    public void SignOn.setUser(String user){
+    	this.user = user;
+    }
 
 
 
@@ -70,26 +83,13 @@ privileged @SuppressWarnings("unused") aspect SignOn_Aspect {
 
 
 
-    public String SignOn.getSystem(){
-    	return this.system;
+    public String SignOn.getMessage(){
+    	return this.message;
     }
-    public TerminalField SignOn.getSystemField(){
-    	return this.systemField;
-    }
-    
-
-
-
-    public String SignOn.getUser(){
-    	return this.user;
-    }
-    public TerminalField SignOn.getUserField(){
-    	return this.userField;
+    public TerminalField SignOn.getMessageField(){
+    	return this.messageField;
     }
     
-    public void SignOn.setUser(String user){
-    	this.user = user;
-    }
 
 
 

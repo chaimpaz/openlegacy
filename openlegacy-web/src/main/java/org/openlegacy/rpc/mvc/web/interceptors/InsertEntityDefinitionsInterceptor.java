@@ -38,9 +38,10 @@ public class InsertEntityDefinitionsInterceptor extends AbstractRpcInterceptor {
 	@Override
 	protected void insertModelData(ModelAndView modelAndView, HttpServletRequest request, HttpServletResponse response) {
 		String modelName = StringUtils.uncapitalize(modelAndView.getViewName());
-		RpcEntity entity = (RpcEntity)modelAndView.getModel().get(modelName);
-
-		mvcUtils.insertModelObjects(modelAndView, entity, entitiesRegistry);
+		Object model = modelAndView.getModel().get(modelName);
+		if (model != null && model instanceof RpcEntity) {
+			mvcUtils.insertModelObjects(modelAndView, model, entitiesRegistry);
+		}
 
 		if (entitiesRegistry.isDirty()) {
 			// set the registry back to clean - for design-time purposes only!

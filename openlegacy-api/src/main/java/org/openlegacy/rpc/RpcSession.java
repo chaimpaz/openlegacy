@@ -15,5 +15,7 @@ import org.openlegacy.rpc.actions.RpcAction;
 
 public interface RpcSession extends Session {
 
+	void login(String user, String password);
+
 	<R extends RpcEntity> R doAction(RpcAction action, R rpcEntity);
 }

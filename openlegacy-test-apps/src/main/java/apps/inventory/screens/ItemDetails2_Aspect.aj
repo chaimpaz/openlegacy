@@ -19,15 +19,15 @@ privileged @SuppressWarnings("unused") aspect ItemDetails2_Aspect {
 
     
 
-    public AuditDetails ItemDetails2.getAuditDetails(){
-    	return this.auditDetails;
+    public String ItemDetails2.getItemNumber(){
+    	return this.itemNumber;
     }
     
 
 
 
-    public String ItemDetails2.getItemNumber(){
-    	return this.itemNumber;
+    public AuditDetails ItemDetails2.getAuditDetails(){
+    	return this.auditDetails;
     }
     
 

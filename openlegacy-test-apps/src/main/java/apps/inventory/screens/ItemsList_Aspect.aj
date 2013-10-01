@@ -19,10 +19,13 @@ privileged @SuppressWarnings("unused") aspect ItemsList_Aspect {
 
     
 
-    public String ItemsList.getErrorMessage(){
-    	return this.errorMessage;
+    public String ItemsList.getPositionTo(){
+    	return this.positionTo;
     }
     
+    public void ItemsList.setPositionTo(String positionTo){
+    	this.positionTo = positionTo;
+    }
 
 
 
@@ -33,13 +36,10 @@ privileged @SuppressWarnings("unused") aspect ItemsList_Aspect {
 
 
 
-    public String ItemsList.getPositionTo(){
-    	return this.positionTo;
+    public String ItemsList.getErrorMessage(){
+    	return this.errorMessage;
     }
     
-    public void ItemsList.setPositionTo(String positionTo){
-    	this.positionTo = positionTo;
-    }
 
 
 
